@@ -1,3 +1,6 @@
+using System.CodeDom;
+using System.Diagnostics;
+
 namespace modified_structure_analysis
 {
     public class Band
@@ -6,8 +9,8 @@ namespace modified_structure_analysis
 
         private List<float> _values;
 
-        private float _minimum;
-        private float _maximum;
+        private float _minimum = float.MaxValue;
+        private float _maximum = float.MinValue;
 
         public string Name => _name;
 

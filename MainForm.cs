@@ -4,6 +4,15 @@ namespace modified_structure_analysis
     {
         private List<Band> _bands;
 
+        private int _resolution = 30;
+        private int _xMin = int.MaxValue;
+        private int _yMin = int.MaxValue;
+        private int _xMax = int.MinValue;
+        private int _yMax = int.MinValue;
+
+        private int _width;
+        private int _height;
+
         public MainForm()
         {
             InitializeComponent();
@@ -20,6 +29,8 @@ namespace modified_structure_analysis
         {
             dataGridView1.Rows.Clear();
             dataGridView1.Columns.Clear();
+
+            _bands = new List<Band>();
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -38,10 +49,10 @@ namespace modified_structure_analysis
 
             List<string> hd = new List<string>();
 
-            foreach (string v in reader.ReadLine().Split('\t'))
+            foreach (string s in reader.ReadLine().Split('\t'))
             {
-                dataGridView1.Columns.Add(v, v);
-                hd.Add(v);
+                dataGridView1.Columns.Add(s, s);
+                hd.Add(s);
             }
 
             TextTableColumnSelector columnSelector = new TextTableColumnSelector(hd);
@@ -51,12 +62,65 @@ namespace modified_structure_analysis
 
             List<TextTableColumnSelector.FieldType> fieldTypes = columnSelector.GetFieldTypes();
 
+            string[] values;
+            float v;
+
             while (!reader.EndOfStream)
             {
-                dataGridView1.Rows.Add(reader.ReadLine().Split('\t'));
+                values = reader.ReadLine().Split('\t');
+                dataGridView1.Rows.Add(values);
+
+                for (int i = 0; i < fieldTypes.Count; i++)
+                {
+                    v = float.Parse(values[i]);
+
+                    switch(fieldTypes[i])
+                    {
+                        case TextTableColumnSelector.FieldType.X:
+                            _xMin = Math.Min(_xMin, (int)v);
+                            _xMax = Math.Max(_xMax, (int)v);
+                            break;
+                        case TextTableColumnSelector.FieldType.Y:
+                            _yMin = Math.Min(_yMin, (int)v);
+                            _yMax = Math.Max(_yMax, (int)v);
+                            break;
+                        case TextTableColumnSelector.FieldType.Band:
+                            Band? band = GetBand(hd[i], true);
+
+                            if (band == null)
+                                break;
+
+                            band.AddValue(v);
+                            break;
+                        case TextTableColumnSelector.FieldType.None:
+                        default:
+                            continue;
+                    }
+                }
             }
 
             reader.Close();
+
+            _width = (_xMax - _xMin) / _resolution;
+            _height = (_yMax - _yMin) / _resolution;
+        }
+
+        private Band? GetBand(string name, bool createIsNull)
+        {
+            foreach (Band band in _bands)
+            {
+                if (band.Name == name)
+                    return band;
+            }
+
+            if (createIsNull)
+            {
+                Band band = new Band(name);
+                _bands.Add(band);
+                return band;
+            }
+
+            return null;
         }
     }
 }
