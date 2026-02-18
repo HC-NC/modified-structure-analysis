@@ -25,21 +25,28 @@ namespace modified_structure_analysis
             Application.Exit();
         }
 
+        private void UpdateBandsList()
+        {
+            foreach (Band band in _bands)
+                bandListBox.Items.Add(band);
+
+            bandListBox.SelectedIndex = 0;
+        }
+
         private void openToolStripMenuItem_Click(Object sender, EventArgs e)
         {
-            dataGridView1.Rows.Clear();
-            dataGridView1.Columns.Clear();
-
-            _bands = new List<Band>();
-
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                _bands = new List<Band>();
+
                 switch (Path.GetExtension(openFileDialog1.FileName))
                 {
                     case ".txt":
                         ReadTextFile();
                         break;
                 }
+
+                UpdateBandsList();
             }
         }
 
@@ -51,7 +58,6 @@ namespace modified_structure_analysis
 
             foreach (string s in reader.ReadLine().Split('\t'))
             {
-                dataGridView1.Columns.Add(s, s);
                 hd.Add(s);
             }
 
@@ -68,13 +74,12 @@ namespace modified_structure_analysis
             while (!reader.EndOfStream)
             {
                 values = reader.ReadLine().Split('\t');
-                dataGridView1.Rows.Add(values);
 
                 for (int i = 0; i < fieldTypes.Count; i++)
                 {
                     v = float.Parse(values[i]);
 
-                    switch(fieldTypes[i])
+                    switch (fieldTypes[i])
                     {
                         case TextTableColumnSelector.FieldType.X:
                             _xMin = Math.Min(_xMin, (int)v);
@@ -121,6 +126,16 @@ namespace modified_structure_analysis
             }
 
             return null;
+        }
+
+        private void bandListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Band? band = bandListBox.SelectedItem as Band;
+
+            if (band == null)
+                return;
+
+            bandPropertyGrid.SelectedObject = band;
         }
     }
 }

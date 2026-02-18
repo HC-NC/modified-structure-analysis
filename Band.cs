@@ -1,5 +1,6 @@
-using System.CodeDom;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace modified_structure_analysis
 {
@@ -12,7 +13,25 @@ namespace modified_structure_analysis
         private float _minimum = float.MaxValue;
         private float _maximum = float.MinValue;
 
+        [DisplayName("Name")]
+        [Description("Band name")]
+        [Category("_")]
         public string Name => _name;
+
+        [DisplayName("Values")]
+        [Description("Sample values")]
+        [Category("_")]
+        public ReadOnlyCollection<float> Values => _values.AsReadOnly();
+
+        [DisplayName("Minimum")]
+        [Description("Minimum sample value")]
+        [Category("Statistics")]
+        public float Minimum => _minimum;
+
+        [DisplayName("Maximum")]
+        [Description("Maximum sample value")]
+        [Category("Statistics")]
+        public float Maximum => _maximum;
 
         public Band(string name)
         {
@@ -27,6 +46,11 @@ namespace modified_structure_analysis
 
             _minimum = Math.Min(value, _minimum);
             _maximum = Math.Max(value, _maximum);
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }
