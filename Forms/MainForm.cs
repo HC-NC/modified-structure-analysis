@@ -9,10 +9,10 @@ namespace modified_structure_analysis
         private List<Band> _bands;
 
         private int _resolution = 30;
-        private int _xMin = int.MaxValue;
-        private int _yMin = int.MaxValue;
-        private int _xMax = int.MinValue;
-        private int _yMax = int.MinValue;
+        private int _xMin;
+        private int _yMin;
+        private int _xMax;
+        private int _yMax;
 
         private int _width;
         private int _height;
@@ -118,6 +118,12 @@ namespace modified_structure_analysis
             ResetImage(sender, e);
         }
 
+        private void CalculateBandsStatistics()
+        {
+            foreach (Band band in _bands)
+                band.CalculateStatistics();
+        }
+
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -138,6 +144,7 @@ namespace modified_structure_analysis
 
                 UpdateBandsList();
                 UpdateImage(sender, e);
+                CalculateBandsStatistics();
             }
         }
 
