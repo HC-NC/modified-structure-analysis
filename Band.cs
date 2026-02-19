@@ -52,5 +52,10 @@ namespace modified_structure_analysis
         {
             return Name;
         }
+
+        public float Normalize(float v)
+        {
+            return (v - _minimum) / (_maximum - _minimum);
+        }
     }
 }
