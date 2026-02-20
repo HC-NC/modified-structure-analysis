@@ -11,7 +11,7 @@ namespace modified_structure_analysis
         private List<float> _values;
 
         private float _sum = 0;
-        private float _count = 0;
+        private int _count = 0;
         private float _minimum = float.MaxValue;
         private float _maximum = float.MinValue;
         private float _mean;
@@ -38,7 +38,7 @@ namespace modified_structure_analysis
         [DisplayName("Count")]
         [Description("Count of sample value")]
         [Category("Statistics")]
-        public float Count => _count;
+        public int Count => _count;
 
         [DisplayName("Minimum")]
         [Description("Minimum sample value")]
@@ -120,6 +120,11 @@ namespace modified_structure_analysis
 
             _skewness /= _count * MathF.Pow(_sigma, 3);
             _kurtosis = _kurtosis / (_count * MathF.Pow(_sigma, 4)) - 3;
+        }
+
+        public float GetValue(int i)
+        {
+            return _values[i];
         }
     }
 }

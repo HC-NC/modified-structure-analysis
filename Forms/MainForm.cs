@@ -1,5 +1,10 @@
 using modified_structure_analysis.Properties;
+using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
+using OxyPlot.WindowsForms;
 using System.ComponentModel;
+using System.Diagnostics.Metrics;
 using System.Drawing.Drawing2D;
 
 namespace modified_structure_analysis
@@ -234,39 +239,78 @@ namespace modified_structure_analysis
                 return;
 
             bandPropertyGrid.SelectedObject = band;
+
+            BuildHistogram();
         }
 
-        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void BuildHistogram()
         {
-            BackgroundWorker? worker = sender as BackgroundWorker;
+            Band? band = bandListBox.SelectedItem as Band;
 
-            if (worker == null)
+            if (band == null)
                 return;
 
+            int columnsCount = (int)MathF.Sqrt(band.Count);
+            float columnsWidth = (band.Maximum - band.Minimum) / columnsCount;
+
+            var histSeries = new HistogramSeries();
+            var lineSeries = new LineSeries();
+
+            int pointsCount;
+            float assesCount;
+
+            float min;
+            float x;
+
+            for (int i = 0; i < columnsCount; i++)
+            {
+                pointsCount = 0;
+                assesCount = 0;
+
+                min = i * columnsWidth + band.Minimum;
+
+                for (int j = 0; j < band.Count; j++)
+                {
+                    x = band.GetValue(j);
+
+                    if (min <= x && x < min + columnsWidth)
+                        pointsCount++;
+
+                    if (x <= min)
+                        assesCount++;
+                }
+
+                histSeries.Items.Add(new HistogramItem(min, min + columnsWidth, (float)pointsCount / band.Count, pointsCount));
+                lineSeries.Points.Add(new DataPoint(min, assesCount / band.Count));
+            }
+
+            PlotModel plot = new PlotModel();
+
+            plot.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Minimum = band.Minimum, Maximum = band.Maximum });
+            plot.Axes.Add(new LinearAxis() { Position = AxisPosition.Left, Minimum = 0, Key = "axesY1" });
+            plot.Axes.Add(new LinearAxis() { Position = AxisPosition.Right, Minimum = 0, Maximum = 1d, Key = "axesY2" });
+
+            histSeries.YAxisKey = "axesY1";
+            lineSeries.YAxisKey = "axesY2";
+
+            lineSeries.Color = OxyColor.FromRgb(255, 0, 0);
+
+            plot.Series.Add(histSeries);
+            plot.Series.Add(lineSeries);
+
+            histogramPlotView.Model = plot;
         }
 
-        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void histogramPlotView_DoubleClick(object sender, EventArgs e)
         {
-            mainStatusLabel.Text = e.UserState?.ToString();
-            mainProgressBar.Value = e.ProgressPercentage;
+            histogramPlotView.Model.ResetAllAxes();
+            histogramPlotView.Refresh();
         }
 
-        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void dataTabControl_Selected(object sender, TabControlEventArgs e)
         {
-            if (e.Cancelled)
-            {
-                MessageBox.Show("Operation was canceled");
-            }
-            else if (e.Error != null)
-            {
-                string msg = String.Format("An error occurred: {0}", e.Error.Message);
-                MessageBox.Show(msg);
-            }
-            else
-            {
-                string msg = String.Format("Result = {0}", e.Result);
-                MessageBox.Show(msg);
-            }
+            if (e.TabPage == histogramTabPage)
+                BuildHistogram();
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
@@ -314,7 +358,7 @@ namespace modified_structure_analysis
             const int WM_KEYDOWN = 0x100;
             const int WM_SYSKEYDOWN = 0x104;
 
-            if ((msg.Msg == WM_KEYDOWN) || (msg.Msg == WM_SYSKEYDOWN))
+            if (pictureBox.Focused && ((msg.Msg == WM_KEYDOWN) || (msg.Msg == WM_SYSKEYDOWN)))
             {
                 switch (keyData)
                 {
@@ -384,6 +428,11 @@ namespace modified_structure_analysis
             e.Graphics.DrawImage(_img, _imgx, _imgy);
         }
 
+        private void pictureBox_Click(object sender, EventArgs e)
+        {
+            pictureBox.Focus();
+        }
+
         private void pictureBox_MouseDown(object sender, EventArgs e)
         {
             MouseEventArgs mouse = e as MouseEventArgs;
@@ -432,6 +481,39 @@ namespace modified_structure_analysis
                 _imgy = (int)(_starty + (deltaY / _zoom));
 
                 pictureBox.Refresh();
+            }
+        }
+
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker? worker = sender as BackgroundWorker;
+
+            if (worker == null)
+                return;
+
+        }
+
+        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            mainStatusLabel.Text = e.UserState?.ToString();
+            mainProgressBar.Value = e.ProgressPercentage;
+        }
+
+        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                MessageBox.Show("Operation was canceled");
+            }
+            else if (e.Error != null)
+            {
+                string msg = String.Format("An error occurred: {0}", e.Error.Message);
+                MessageBox.Show(msg);
+            }
+            else
+            {
+                string msg = String.Format("Result = {0}", e.Result);
+                MessageBox.Show(msg);
             }
         }
     }
