@@ -1,9 +1,11 @@
 using modified_structure_analysis.Properties;
 using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Legends;
 using OxyPlot.Series;
 using OxyPlot.WindowsForms;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Drawing.Drawing2D;
 
@@ -94,6 +96,8 @@ namespace modified_structure_analysis
                 { _greenBand = band; greenToolStripDropDownButton.Text = _greenBand.ToString(); });
                 blueToolStripDropDownButton.DropDownItems.Add(band.Name, null, (object? sender, EventArgs e) =>
                 { _blueBand = band; blueToolStripDropDownButton.Text = _blueBand.ToString(); });
+
+                correlationDataGridView.Columns.Add(new DataGridViewTextBoxColumn() { HeaderText = band.Name });
             }
 
             bandListBox.SelectedIndex = 0;
@@ -109,9 +113,9 @@ namespace modified_structure_analysis
                 {
                     int i = y * _width + x;
 
-                    byte r = (byte)(_redBand.Normalize(_redBand.Values[i]) * 255);
-                    byte g = (byte)(_greenBand.Normalize(_greenBand.Values[i]) * 255);
-                    byte b = (byte)(_blueBand.Normalize(_blueBand.Values[i]) * 255);
+                    byte r = (byte)(_redBand.GetNormalizedValue(i) * 255);
+                    byte g = (byte)(_greenBand.GetNormalizedValue(i) * 255);
+                    byte b = (byte)(_blueBand.GetNormalizedValue(i) * 255);
 
                     Color color = Color.FromArgb(r, g, b);
 
@@ -126,7 +130,10 @@ namespace modified_structure_analysis
         private void CalculateBandsStatistics()
         {
             foreach (Band band in _bands)
+            {
                 band.CalculateStatistics();
+                band.Normalize();
+            }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -140,6 +147,8 @@ namespace modified_structure_analysis
                 _xMax = int.MinValue;
                 _yMax = int.MinValue;
 
+                correlationDataGridView.Columns.Clear();
+
                 switch (Path.GetExtension(openFileDialog1.FileName))
                 {
                     case ".txt":
@@ -150,6 +159,7 @@ namespace modified_structure_analysis
                 UpdateBandsList();
                 UpdateImage(sender, e);
                 CalculateBandsStatistics();
+                CalcCorrelation();
             }
         }
 
@@ -250,7 +260,7 @@ namespace modified_structure_analysis
             if (band == null)
                 return;
 
-            int columnsCount = (int)MathF.Sqrt(band.Count);
+            int columnsCount = BrooksCarrutherDivisionRule(band.Count);
             float columnsWidth = (band.Maximum - band.Minimum) / columnsCount;
 
             var histSeries = new HistogramSeries();
@@ -301,16 +311,117 @@ namespace modified_structure_analysis
             histogramPlotView.Model = plot;
         }
 
-        private void histogramPlotView_DoubleClick(object sender, EventArgs e)
+        private void BuildNormalizedHistograms()
         {
-            histogramPlotView.Model.ResetAllAxes();
-            histogramPlotView.Refresh();
+            PlotModel plot = new PlotModel();
+            plot.Legends.Add(new Legend());
+
+            foreach (Band band in _bands)
+            {
+                int columnsCount = BrooksCarrutherDivisionRule(band.Count);
+                float columnsWidth = 1f / columnsCount;
+
+                var series = new FunctionSeries();
+                series.Title = band.Name;
+
+                int pointsCount;
+
+                float min;
+                float x;
+
+                for (int i = 0; i < columnsCount; i++)
+                {
+                    pointsCount = 0;
+
+                    min = i * columnsWidth;
+
+                    for (int j = 0; j < band.Count; j++)
+                    {
+                        x = band.GetNormalizedValue(j);
+
+                        if (min <= x && x < min + columnsWidth)
+                            pointsCount++;
+                    }
+
+                    series.Points.Add(new DataPoint(min, (float)pointsCount / band.Count / columnsWidth));
+                }
+
+                plot.Series.Add(series);
+            }
+
+            plotView1.Model = plot;
         }
 
-        private void dataTabControl_Selected(object sender, TabControlEventArgs e)
+        private void CalcCorrelation()
+        {
+            DataGridViewRow row;
+
+            Band bandX;
+            Band bandY;
+
+            for (int bandXI = 0; bandXI < _bands.Count; bandXI++)
+            {
+                row = new DataGridViewRow();
+
+                bandX = _bands[bandXI];
+
+                for (int bandYI = 0; bandYI < _bands.Count; bandYI++)
+                {
+                    if (bandYI == bandXI)
+                    {
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Style = new DataGridViewCellStyle() { BackColor = Color.Black } });
+                        continue;
+                    }
+
+                    if (bandYI < bandXI)
+                    {
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = correlationDataGridView.Rows[bandYI].Cells[bandXI].Value });
+                        continue;
+                    }
+
+                    bandY = _bands[bandYI];
+
+                    if (bandX.Count != bandY.Count)
+                    {
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = "Error" });
+                        continue;
+                    }
+
+                    float tmp = 0;
+
+                    for (int i = 0; i < bandX.Count; i++)
+                    {
+                        tmp += F(bandX, i) * F(bandY, i);
+                    }
+
+                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = tmp / (bandX.Count - 1) });
+                }
+
+                int rowID = correlationDataGridView.Rows.Add(row);
+                correlationDataGridView.Rows[rowID].HeaderCell.Value = bandX.Name;
+            }
+
+            float F(Band band, int i)
+            {
+                return (band.GetValue(i) - band.Mean) / band.Sigma;
+            }
+        }
+
+        private void TabControl_Selected(object sender, TabControlEventArgs e)
         {
             if (e.TabPage == histogramTabPage)
                 BuildHistogram();
+
+            if (e.TabPage == tabPage2)
+                BuildNormalizedHistograms();
+        }
+
+        private void PlotView_DoubleClick(object sender, EventArgs e)
+        {
+            PlotView plotView = (PlotView)sender;
+
+            plotView.Model.ResetAllAxes();
+            plotView.Refresh();
         }
 
         protected override void OnMouseWheel(MouseEventArgs e)
@@ -437,7 +548,7 @@ namespace modified_structure_analysis
         {
             MouseEventArgs mouse = e as MouseEventArgs;
 
-            if (mouse.Button == MouseButtons.Left)
+            if (mouse.Button == MouseButtons.Right)
             {
                 if (!_mousepressed)
                 {
@@ -445,6 +556,8 @@ namespace modified_structure_analysis
                     _mouseDown = mouse.Location;
                     _startx = _imgx;
                     _starty = _imgy;
+
+                    Cursor.Current = Cursors.Hand;
                 }
             }
         }
@@ -452,6 +565,8 @@ namespace modified_structure_analysis
         private void pictureBox_MouseUp(object sender, EventArgs e)
         {
             _mousepressed = false;
+
+            Cursor.Current = Cursors.Default;
         }
 
         private void pictureBox_MouseEnter(object sender, EventArgs e)
@@ -468,7 +583,7 @@ namespace modified_structure_analysis
         {
             MouseEventArgs mouse = e as MouseEventArgs;
 
-            if (mouse.Button == MouseButtons.Left)
+            if (mouse.Button == MouseButtons.Right)
             {
                 Point mousePosNow = mouse.Location;
 
@@ -515,6 +630,21 @@ namespace modified_structure_analysis
                 string msg = String.Format("Result = {0}", e.Result);
                 MessageBox.Show(msg);
             }
+        }
+
+        private int StargesDivisionRule(int v)
+        {
+            return (int)(Math.Log(v) / Math.Log(2) + 1);
+        }
+
+        private int BrooksCarrutherDivisionRule(int v)
+        {
+            return (int)(5 * Math.Log(v));
+        }
+
+        private int HeinholdHeideDivisionRule(int v)
+        {
+            return (int)(Math.Sqrt(v));
         }
     }
 }

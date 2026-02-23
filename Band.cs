@@ -9,6 +9,7 @@ namespace modified_structure_analysis
         private string _name;
 
         private List<float> _values;
+        private List<float> _normalizeValues; 
 
         private float _sum = 0;
         private int _count = 0;
@@ -80,6 +81,7 @@ namespace modified_structure_analysis
             _name = name;
 
             _values = new List<float>();
+            _normalizeValues = new List<float>();
         }
 
         public void AddValue(float value)
@@ -95,6 +97,14 @@ namespace modified_structure_analysis
         public override string ToString()
         {
             return Name;
+        }
+
+        public void Normalize()
+        {
+            _normalizeValues.Clear();
+
+            foreach (var v in _values) 
+                _normalizeValues.Add(Normalize(v));
         }
 
         public float Normalize(float v)
@@ -125,6 +135,14 @@ namespace modified_structure_analysis
         public float GetValue(int i)
         {
             return _values[i];
+        }
+
+        public float GetNormalizedValue(int i)
+        {
+            if (_normalizeValues.Count == 0 || _normalizeValues.Count != _values.Count)
+                Normalize();
+
+            return _normalizeValues[i];
         }
     }
 }

@@ -59,6 +59,9 @@
             histogramTabPage = new TabPage();
             histogramPlotView = new OxyPlot.WindowsForms.PlotView();
             tabPage2 = new TabPage();
+            splitContainer3 = new SplitContainer();
+            correlationDataGridView = new DataGridView();
+            plotView1 = new OxyPlot.WindowsForms.PlotView();
             backgroundWorker = new System.ComponentModel.BackgroundWorker();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
@@ -82,6 +85,12 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
             toolStrip1.SuspendLayout();
             histogramTabPage.SuspendLayout();
+            tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer3).BeginInit();
+            splitContainer3.Panel1.SuspendLayout();
+            splitContainer3.Panel2.SuspendLayout();
+            splitContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)correlationDataGridView).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
@@ -196,6 +205,7 @@
             tabControl1.Size = new Size(1178, 679);
             tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 7;
+            tabControl1.Selected += TabControl_Selected;
             // 
             // dataTabPage
             // 
@@ -257,7 +267,7 @@
             dataTabControl.Size = new Size(860, 635);
             dataTabControl.SizeMode = TabSizeMode.Fixed;
             dataTabControl.TabIndex = 0;
-            dataTabControl.Selected += dataTabControl_Selected;
+            dataTabControl.Selected += TabControl_Selected;
             // 
             // viewportTabPage
             // 
@@ -379,10 +389,11 @@
             histogramPlotView.ZoomHorizontalCursor = Cursors.SizeWE;
             histogramPlotView.ZoomRectangleCursor = Cursors.SizeNWSE;
             histogramPlotView.ZoomVerticalCursor = Cursors.SizeNS;
-            histogramPlotView.DoubleClick += histogramPlotView_DoubleClick;
+            histogramPlotView.DoubleClick += PlotView_DoubleClick;
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(splitContainer3);
             tabPage2.Location = new Point(4, 34);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
@@ -390,6 +401,51 @@
             tabPage2.TabIndex = 1;
             tabPage2.Text = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer3
+            // 
+            splitContainer3.Dock = DockStyle.Fill;
+            splitContainer3.Location = new Point(3, 3);
+            splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            splitContainer3.Panel1.Controls.Add(correlationDataGridView);
+            // 
+            // splitContainer3.Panel2
+            // 
+            splitContainer3.Panel2.Controls.Add(plotView1);
+            splitContainer3.Size = new Size(1164, 635);
+            splitContainer3.SplitterDistance = 550;
+            splitContainer3.TabIndex = 2;
+            // 
+            // correlationDataGridView
+            // 
+            correlationDataGridView.AllowUserToAddRows = false;
+            correlationDataGridView.AllowUserToDeleteRows = false;
+            correlationDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            correlationDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            correlationDataGridView.Dock = DockStyle.Fill;
+            correlationDataGridView.Location = new Point(0, 0);
+            correlationDataGridView.Name = "correlationDataGridView";
+            correlationDataGridView.ReadOnly = true;
+            correlationDataGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            correlationDataGridView.Size = new Size(550, 635);
+            correlationDataGridView.TabIndex = 1;
+            // 
+            // plotView1
+            // 
+            plotView1.Dock = DockStyle.Fill;
+            plotView1.Location = new Point(0, 0);
+            plotView1.Name = "plotView1";
+            plotView1.PanCursor = Cursors.Hand;
+            plotView1.Size = new Size(610, 635);
+            plotView1.TabIndex = 0;
+            plotView1.Text = "plotView1";
+            plotView1.ZoomHorizontalCursor = Cursors.SizeWE;
+            plotView1.ZoomRectangleCursor = Cursors.SizeNWSE;
+            plotView1.ZoomVerticalCursor = Cursors.SizeNS;
+            plotView1.DoubleClick += PlotView_DoubleClick;
             // 
             // backgroundWorker
             // 
@@ -438,6 +494,12 @@
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
             histogramTabPage.ResumeLayout(false);
+            tabPage2.ResumeLayout(false);
+            splitContainer3.Panel1.ResumeLayout(false);
+            splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
+            splitContainer3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)correlationDataGridView).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -475,5 +537,8 @@
         private ToolStripButton toolStripButton1;
         private PictureBox pictureBox;
         private OxyPlot.WindowsForms.PlotView histogramPlotView;
+        private OxyPlot.WindowsForms.PlotView plotView1;
+        private DataGridView correlationDataGridView;
+        private SplitContainer splitContainer3;
     }
 }
