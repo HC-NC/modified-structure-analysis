@@ -6,6 +6,8 @@ namespace modified_structure_analysis
 {
     public class Band
     {
+        private const float AUTO_BETTA = 0.951889f;
+
         private string _name;
 
         private List<float> _values;
@@ -20,6 +22,9 @@ namespace modified_structure_analysis
         private float _variance = 0;
         private float _skewness = 0;
         private float _kurtosis = 0;
+
+        private float _kernelC;
+        private float _normalizeKernelC;
 
         [DisplayName("Name")]
         [Description("Band name")]
@@ -76,6 +81,9 @@ namespace modified_structure_analysis
         [Category("Statistics")]
         public float Kurtosis => _kurtosis;
 
+        public float KernelC => _kernelC;
+        public float NormalizeKernelC => _normalizeKernelC;
+
         public Band(string name)
         {
             _name = name;
@@ -103,7 +111,7 @@ namespace modified_structure_analysis
         {
             _normalizeValues.Clear();
 
-            foreach (var v in _values) 
+            foreach (var v in _values)
                 _normalizeValues.Add(Normalize(v));
         }
 
@@ -130,6 +138,9 @@ namespace modified_structure_analysis
 
             _skewness /= _count * MathF.Pow(_sigma, 3);
             _kurtosis = _kurtosis / (_count * MathF.Pow(_sigma, 4)) - 3;
+
+            _kernelC = AUTO_BETTA * _sigma * MathF.Pow(_count, -1f / 5f);
+            _normalizeKernelC = _kernelC / (_maximum - _minimum);
         }
 
         public float GetValue(int i)

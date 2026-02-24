@@ -13,7 +13,7 @@ namespace modified_structure_analysis
 {
     public partial class MainForm : Form
     {
-        private List<Band> _bands;
+        private List<Band> _bands = new List<Band>();
 
         private int _resolution = 30;
         private int _xMin;
@@ -105,6 +105,9 @@ namespace modified_structure_analysis
 
         private void UpdateImage(object sender, EventArgs e)
         {
+            if (_width == 0 || _height == 0)
+                return;
+
             Bitmap bitmap = new Bitmap(_width, _height);
 
             for (int y = 0; y < _height; y++)
@@ -140,7 +143,7 @@ namespace modified_structure_analysis
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                _bands = new List<Band>();
+                _bands.Clear();
 
                 _xMin = int.MaxValue;
                 _yMin = int.MaxValue;
@@ -155,6 +158,9 @@ namespace modified_structure_analysis
                         ReadTextFile();
                         break;
                 }
+
+                if (_bands.Count == 0)
+                    return;
 
                 UpdateBandsList();
                 UpdateImage(sender, e);
@@ -311,6 +317,16 @@ namespace modified_structure_analysis
             histogramPlotView.Model = plot;
         }
 
+        private double GetKernelGrade(Band band, double v)
+        {
+            double result = 0;
+
+            for (int i = 0; i < band.Count; i++)
+                result += GetEpanechnikovKernel((v - band.GetNormalizedValue(i)) / band.NormalizeKernelC);
+
+            return result / (band.Count * band.NormalizeKernelC);
+        }
+
         private void BuildNormalizedHistograms()
         {
             PlotModel plot = new PlotModel();
@@ -318,32 +334,17 @@ namespace modified_structure_analysis
 
             foreach (Band band in _bands)
             {
-                int columnsCount = BrooksCarrutherDivisionRule(band.Count);
-                float columnsWidth = 1f / columnsCount;
+                int pointsCount = 100;
 
                 var series = new FunctionSeries();
                 series.Title = band.Name;
 
-                int pointsCount;
-
-                float min;
                 float x;
 
-                for (int i = 0; i < columnsCount; i++)
+                for (int i = 0; i < pointsCount; i++)
                 {
-                    pointsCount = 0;
-
-                    min = i * columnsWidth;
-
-                    for (int j = 0; j < band.Count; j++)
-                    {
-                        x = band.GetNormalizedValue(j);
-
-                        if (min <= x && x < min + columnsWidth)
-                            pointsCount++;
-                    }
-
-                    series.Points.Add(new DataPoint(min, (float)pointsCount / band.Count / columnsWidth));
+                    x = (float)i / pointsCount;
+                    series.Points.Add(new DataPoint(x, GetKernelGrade(band, x)));
                 }
 
                 plot.Series.Add(series);
@@ -645,6 +646,56 @@ namespace modified_structure_analysis
         private int HeinholdHeideDivisionRule(int v)
         {
             return (int)(Math.Sqrt(v));
+        }
+
+        private double GetUniformKernel(double u)
+        {
+            return Math.Abs(u) <= 1 ? 0.5 : 0;
+        }
+
+        private double GetTriangularKernel(double u)
+        {
+            return Math.Abs(u) <= 1 ? 1 - Math.Abs(u) : 0;
+        }
+
+        private double GetEpanechnikovKernel(double u)
+        {
+            return Math.Abs(u) <= 1 ? 3d / 4d * (1 - Math.Pow(u, 2)) : 0;
+        }
+
+        private double GetQuarticKernel(double u)
+        {
+            return Math.Abs(u) <= 1 ? 15d / 16d * Math.Pow(1 - Math.Pow(u, 2), 2) : 0;
+        }
+
+        private double GetTriweightKernel(double u)
+        {
+            return Math.Abs(u) <= 1 ? 35d / 32d * Math.Pow(1 - Math.Pow(u, 2), 3) : 0;
+        }
+
+        private double GetTricubeKernel(double u)
+        {
+            return Math.Abs(u) <= 1 ? 70d / 81d * Math.Pow(1 - Math.Pow(Math.Abs(u), 3), 3) : 0;
+        }
+
+        private double GetGaussianKernel(double u)
+        {
+            return 1 / Math.Sqrt(2 * Math.PI) * Math.Exp(-Math.Pow(u, 2) / 2);
+        }
+
+        private double GetCosineKernel(double u)
+        {
+            return Math.Abs(u) <= 1 ? Math.PI / 4 * Math.Cos(Math.PI / 2 * u) : 0;
+        }
+
+        private double GetLogisticKernel(double u)
+        {
+            return 1 / (Math.Exp(u) + 2 + Math.Exp(-u));
+        }
+
+        private double GetSigmoidFunctionKernel(double u)
+        {
+            return 2 / Math.PI * 1 / (Math.Exp(u) + Math.Exp(-u));
         }
     }
 }
