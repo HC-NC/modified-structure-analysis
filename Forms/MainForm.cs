@@ -53,6 +53,14 @@ namespace modified_structure_analysis
             greenToolStripDropDownButton.DropDownItems.Clear();
             blueToolStripDropDownButton.DropDownItems.Clear();
 
+            comboBox1.Items.Clear();
+            comboBox2.Items.Clear();
+            comboBox3.Items.Clear();
+
+            comboBox1.SelectedItem = null;
+            comboBox2.SelectedItem = null;
+            comboBox3.SelectedItem = null;
+
             if (_bands.Count == 0)
                 return;
             else if (_bands.Count >= 3)
@@ -84,6 +92,10 @@ namespace modified_structure_analysis
                 { _blueBand = band; blueToolStripDropDownButton.Text = _blueBand.ToString(); });
 
                 correlationDataGridView.Columns.Add(new DataGridViewTextBoxColumn() { HeaderText = band.Name });
+
+                comboBox1.Items.Add(band);
+                comboBox2.Items.Add(band);
+                comboBox3.Items.Add(band);
             }
 
             bandListBox.SelectedIndex = 0;
@@ -506,6 +518,67 @@ namespace modified_structure_analysis
         private double GetSigmoidFunctionKernel(double u)
         {
             return 2 / Math.PI * 1 / (Math.Exp(u) + Math.Exp(-u));
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Band band1 = comboBox1.SelectedItem as Band;
+            Band band2 = comboBox2.SelectedItem as Band;
+            Band band3 = comboBox3.SelectedItem as Band;
+
+            if (band1 == null || band2 == null || band3 == null || band1 == band2 || band1 == band3 || band2 == band3)
+            {
+                MessageBox.Show("Error!!!");
+                return;
+            }
+
+            Bitmap bitmap = new Bitmap(_width, _height);
+
+            for (int y = 0; y < _height; y++)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    int i = y * _width + x;
+
+                    float band1v = band1.GetNormalizedValue(i);
+                    float band2v = band2.GetNormalizedValue(i);
+                    float band3v = band3.GetNormalizedValue(i);
+
+                    double band1p = 0;
+                    double band2p = 0;
+                    double band3p = 0;
+
+                    //double band12p = 0;
+
+                    for (int j = 0; j < band1.Count; j++)
+                    {
+                        band1p += GetEpanechnikovKernel((band1v - band1.GetNormalizedValue(j)) / band1.NormalizeKernelC);
+                        band2p += GetEpanechnikovKernel((band2v - band2.GetNormalizedValue(j)) / band2.NormalizeKernelC);
+                        band3p += GetEpanechnikovKernel((band3v - band3.GetNormalizedValue(j)) / band3.NormalizeKernelC);
+
+                        //band12p += GetEpanechnikovKernel((band1v - band1.GetNormalizedValue(j)) / band1.NormalizeKernelC) * GetEpanechnikovKernel((band2v - band2.GetNormalizedValue(j)) / band2.NormalizeKernelC);
+                    }
+
+                    band1p /= band1.Count * band1.NormalizeKernelC;
+                    band2p /= band2.Count * band2.NormalizeKernelC;
+                    band3p /= band3.Count * band3.NormalizeKernelC;
+
+                    //band12p /= band1.Count * band1.NormalizeKernelC * band2.NormalizeKernelC;
+
+                    if (band1p > band2p && band1p > band3p)
+                        bitmap.SetPixel(x, y, Color.Red);
+                    else if (band2p > band1p && band2p > band3p)
+                        bitmap.SetPixel(x, y, Color.Green);
+                    else if (band3p > band1p && band3p > band2p)
+                        bitmap.SetPixel(x, y, Color.Blue);
+                    else
+                        bitmap.SetPixel(x, y, Color.Black);
+                }
+
+                Debug.WriteLine($"Classification prog: {y}/{_height}");
+            }
+
+            viewport2.UpdateImage(bitmap);
         }
     }
 }
