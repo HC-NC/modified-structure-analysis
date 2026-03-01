@@ -49,7 +49,6 @@
             dataTabControl = new TabControl();
             viewportTabPage = new TabPage();
             toolStripContainer1 = new ToolStripContainer();
-            pictureBox = new PictureBox();
             toolStrip1 = new ToolStrip();
             redToolStripDropDownButton = new ToolStripDropDownButton();
             greenToolStripDropDownButton = new ToolStripDropDownButton();
@@ -58,11 +57,13 @@
             toolStripButton1 = new ToolStripButton();
             histogramTabPage = new TabPage();
             histogramPlotView = new OxyPlot.WindowsForms.PlotView();
-            tabPage2 = new TabPage();
+            explorationTabPage = new TabPage();
             splitContainer3 = new SplitContainer();
-            correlationDataGridView = new DataGridView();
             plotView1 = new OxyPlot.WindowsForms.PlotView();
+            correlationDataGridView = new DataGridView();
+            classificationTabPage = new TabPage();
             backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            viewport1 = new modified_structure_analysis.Forms.Viewport();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -82,10 +83,9 @@
             toolStripContainer1.ContentPanel.SuspendLayout();
             toolStripContainer1.TopToolStripPanel.SuspendLayout();
             toolStripContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
             toolStrip1.SuspendLayout();
             histogramTabPage.SuspendLayout();
-            tabPage2.SuspendLayout();
+            explorationTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer3).BeginInit();
             splitContainer3.Panel1.SuspendLayout();
             splitContainer3.Panel2.SuspendLayout();
@@ -196,8 +196,10 @@
             // tabControl1
             // 
             tabControl1.Controls.Add(dataTabPage);
-            tabControl1.Controls.Add(tabPage2);
+            tabControl1.Controls.Add(explorationTabPage);
+            tabControl1.Controls.Add(classificationTabPage);
             tabControl1.Dock = DockStyle.Fill;
+            tabControl1.ItemSize = new Size(150, 30);
             tabControl1.Location = new Point(0, 33);
             tabControl1.Multiline = true;
             tabControl1.Name = "tabControl1";
@@ -260,6 +262,7 @@
             dataTabControl.Controls.Add(viewportTabPage);
             dataTabControl.Controls.Add(histogramTabPage);
             dataTabControl.Dock = DockStyle.Fill;
+            dataTabControl.ItemSize = new Size(150, 30);
             dataTabControl.Location = new Point(0, 0);
             dataTabControl.Multiline = true;
             dataTabControl.Name = "dataTabControl";
@@ -285,7 +288,7 @@
             // 
             // toolStripContainer1.ContentPanel
             // 
-            toolStripContainer1.ContentPanel.Controls.Add(pictureBox);
+            toolStripContainer1.ContentPanel.Controls.Add(viewport1);
             toolStripContainer1.ContentPanel.Size = new Size(846, 557);
             toolStripContainer1.Dock = DockStyle.Fill;
             toolStripContainer1.LeftToolStripPanelVisible = false;
@@ -299,23 +302,6 @@
             // toolStripContainer1.TopToolStripPanel
             // 
             toolStripContainer1.TopToolStripPanel.Controls.Add(toolStrip1);
-            // 
-            // pictureBox
-            // 
-            pictureBox.Dock = DockStyle.Fill;
-            pictureBox.Location = new Point(0, 0);
-            pictureBox.Name = "pictureBox";
-            pictureBox.Size = new Size(846, 557);
-            pictureBox.TabIndex = 0;
-            pictureBox.TabStop = false;
-            pictureBox.Click += pictureBox_Click;
-            pictureBox.Paint += pictureBox_Paint;
-            pictureBox.DoubleClick += ResetImage;
-            pictureBox.MouseDown += pictureBox_MouseDown;
-            pictureBox.MouseEnter += pictureBox_MouseEnter;
-            pictureBox.MouseLeave += pictureBox_MouseLeave;
-            pictureBox.MouseMove += pictureBox_MouseMove;
-            pictureBox.MouseUp += pictureBox_MouseUp;
             // 
             // toolStrip1
             // 
@@ -391,33 +377,49 @@
             histogramPlotView.ZoomVerticalCursor = Cursors.SizeNS;
             histogramPlotView.DoubleClick += PlotView_DoubleClick;
             // 
-            // tabPage2
+            // explorationTabPage
             // 
-            tabPage2.Controls.Add(splitContainer3);
-            tabPage2.Location = new Point(4, 34);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1170, 641);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "tabPage2";
-            tabPage2.UseVisualStyleBackColor = true;
+            explorationTabPage.Controls.Add(splitContainer3);
+            explorationTabPage.Location = new Point(4, 34);
+            explorationTabPage.Name = "explorationTabPage";
+            explorationTabPage.Padding = new Padding(3);
+            explorationTabPage.Size = new Size(1170, 641);
+            explorationTabPage.TabIndex = 1;
+            explorationTabPage.Text = "Exploration";
+            explorationTabPage.UseVisualStyleBackColor = true;
             // 
             // splitContainer3
             // 
             splitContainer3.Dock = DockStyle.Fill;
+            splitContainer3.FixedPanel = FixedPanel.Panel2;
             splitContainer3.Location = new Point(3, 3);
             splitContainer3.Name = "splitContainer3";
+            splitContainer3.Orientation = Orientation.Horizontal;
             // 
             // splitContainer3.Panel1
             // 
-            splitContainer3.Panel1.Controls.Add(correlationDataGridView);
+            splitContainer3.Panel1.Controls.Add(plotView1);
             // 
             // splitContainer3.Panel2
             // 
-            splitContainer3.Panel2.Controls.Add(plotView1);
+            splitContainer3.Panel2.Controls.Add(correlationDataGridView);
             splitContainer3.Size = new Size(1164, 635);
-            splitContainer3.SplitterDistance = 550;
+            splitContainer3.SplitterDistance = 435;
             splitContainer3.TabIndex = 2;
+            // 
+            // plotView1
+            // 
+            plotView1.Dock = DockStyle.Fill;
+            plotView1.Location = new Point(0, 0);
+            plotView1.Name = "plotView1";
+            plotView1.PanCursor = Cursors.Hand;
+            plotView1.Size = new Size(1164, 435);
+            plotView1.TabIndex = 0;
+            plotView1.Text = "plotView1";
+            plotView1.ZoomHorizontalCursor = Cursors.SizeWE;
+            plotView1.ZoomRectangleCursor = Cursors.SizeNWSE;
+            plotView1.ZoomVerticalCursor = Cursors.SizeNS;
+            plotView1.DoubleClick += PlotView_DoubleClick;
             // 
             // correlationDataGridView
             // 
@@ -430,22 +432,18 @@
             correlationDataGridView.Name = "correlationDataGridView";
             correlationDataGridView.ReadOnly = true;
             correlationDataGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            correlationDataGridView.Size = new Size(550, 635);
+            correlationDataGridView.Size = new Size(1164, 196);
             correlationDataGridView.TabIndex = 1;
             // 
-            // plotView1
+            // classificationTabPage
             // 
-            plotView1.Dock = DockStyle.Fill;
-            plotView1.Location = new Point(0, 0);
-            plotView1.Name = "plotView1";
-            plotView1.PanCursor = Cursors.Hand;
-            plotView1.Size = new Size(610, 635);
-            plotView1.TabIndex = 0;
-            plotView1.Text = "plotView1";
-            plotView1.ZoomHorizontalCursor = Cursors.SizeWE;
-            plotView1.ZoomRectangleCursor = Cursors.SizeNWSE;
-            plotView1.ZoomVerticalCursor = Cursors.SizeNS;
-            plotView1.DoubleClick += PlotView_DoubleClick;
+            classificationTabPage.Location = new Point(4, 34);
+            classificationTabPage.Name = "classificationTabPage";
+            classificationTabPage.Padding = new Padding(3);
+            classificationTabPage.Size = new Size(1170, 641);
+            classificationTabPage.TabIndex = 2;
+            classificationTabPage.Text = "Classification";
+            classificationTabPage.UseVisualStyleBackColor = true;
             // 
             // backgroundWorker
             // 
@@ -454,6 +452,14 @@
             backgroundWorker.DoWork += backgroundWorker_DoWork;
             backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
+            // 
+            // viewport1
+            // 
+            viewport1.Dock = DockStyle.Fill;
+            viewport1.Location = new Point(0, 0);
+            viewport1.Name = "viewport1";
+            viewport1.Size = new Size(846, 557);
+            viewport1.TabIndex = 0;
             // 
             // MainForm
             // 
@@ -490,11 +496,10 @@
             toolStripContainer1.TopToolStripPanel.PerformLayout();
             toolStripContainer1.ResumeLayout(false);
             toolStripContainer1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
             histogramTabPage.ResumeLayout(false);
-            tabPage2.ResumeLayout(false);
+            explorationTabPage.ResumeLayout(false);
             splitContainer3.Panel1.ResumeLayout(false);
             splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
@@ -521,7 +526,7 @@
         private TabPage dataTabPage;
         private SplitContainer splitContainer1;
         private SplitContainer splitContainer2;
-        private TabPage tabPage2;
+        private TabPage explorationTabPage;
         private TabControl dataTabControl;
         private TabPage viewportTabPage;
         private TabPage histogramTabPage;
@@ -535,10 +540,11 @@
         private ToolStripDropDownButton blueToolStripDropDownButton;
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripButton toolStripButton1;
-        private PictureBox pictureBox;
         private OxyPlot.WindowsForms.PlotView histogramPlotView;
         private OxyPlot.WindowsForms.PlotView plotView1;
         private DataGridView correlationDataGridView;
         private SplitContainer splitContainer3;
+        private TabPage classificationTabPage;
+        private Forms.Viewport viewport1;
     }
 }
