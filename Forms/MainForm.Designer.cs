@@ -64,6 +64,8 @@
             correlationDataGridView = new DataGridView();
             classificationTabPage = new TabPage();
             splitContainer4 = new SplitContainer();
+            label3 = new Label();
+            comboBox3 = new ComboBox();
             button1 = new Button();
             label2 = new Label();
             label1 = new Label();
@@ -71,8 +73,6 @@
             comboBox1 = new ComboBox();
             viewport2 = new modified_structure_analysis.Forms.Viewport();
             backgroundWorker = new System.ComponentModel.BackgroundWorker();
-            comboBox3 = new ComboBox();
-            label3 = new Label();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -491,6 +491,23 @@
             splitContainer4.SplitterDistance = 257;
             splitContainer4.TabIndex = 0;
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(38, 199);
+            label3.Name = "label3";
+            label3.Size = new Size(71, 25);
+            label3.TabIndex = 6;
+            label3.Text = "Param3";
+            // 
+            // comboBox3
+            // 
+            comboBox3.FormattingEnabled = true;
+            comboBox3.Location = new Point(38, 227);
+            comboBox3.Name = "comboBox3";
+            comboBox3.Size = new Size(182, 33);
+            comboBox3.TabIndex = 5;
+            // 
             // button1
             // 
             button1.Location = new Point(38, 306);
@@ -550,23 +567,6 @@
             backgroundWorker.DoWork += backgroundWorker_DoWork;
             backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
-            // 
-            // comboBox3
-            // 
-            comboBox3.FormattingEnabled = true;
-            comboBox3.Location = new Point(38, 227);
-            comboBox3.Name = "comboBox3";
-            comboBox3.Size = new Size(182, 33);
-            comboBox3.TabIndex = 5;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(38, 199);
-            label3.Name = "label3";
-            label3.Size = new Size(71, 25);
-            label3.TabIndex = 6;
-            label3.Text = "Param3";
             // 
             // MainForm
             // 
