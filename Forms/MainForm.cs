@@ -15,11 +15,7 @@ namespace modified_structure_analysis
     {
         private List<Band> _bands = new List<Band>();
 
-        private int _resolution = 30;
-        private int _xMin;
-        private int _yMin;
-        private int _xMax;
-        private int _yMax;
+        private double _cellSize = 30.0;
 
         private int _width;
         private int _height;
@@ -27,6 +23,8 @@ namespace modified_structure_analysis
         private Band _redBand;
         private Band _greenBand;
         private Band _blueBand;
+
+        private GeoTransform? _geoTransform;
 
         public MainForm()
         {
@@ -153,11 +151,6 @@ namespace modified_structure_analysis
             {
                 _bands.Clear();
 
-                _xMin = int.MaxValue;
-                _yMin = int.MaxValue;
-                _xMax = int.MinValue;
-                _yMax = int.MinValue;
-
                 correlationDataGridView.Columns.Clear();
 
                 switch (Path.GetExtension(openFileDialog1.FileName))
@@ -193,53 +186,140 @@ namespace modified_structure_analysis
             if (columnSelector.ShowDialog() == DialogResult.Cancel)
                 return;
 
+            _cellSize = columnSelector.GetResolution();
+
             List<TextTableColumnSelector.FieldType> fieldTypes = columnSelector.GetFieldTypes();
+
+            int xIndex = fieldTypes.IndexOf(TextTableColumnSelector.FieldType.X);
+            int yIndex = fieldTypes.IndexOf(TextTableColumnSelector.FieldType.Y);
+
+            List<int> bandIndices = new List<int>();
+            for (int i = 0; i < fieldTypes.Count; i++)
+            {
+                if (fieldTypes[i] == TextTableColumnSelector.FieldType.Band)
+                    bandIndices.Add(i);
+            }
 
             string[] values;
             int lineNumber = 1;
+
+            double minX = double.MaxValue;
+            double maxX = double.MinValue;
+            double minY = double.MaxValue;
+            double maxY = double.MinValue;
+
+            List<(double x, double y, Dictionary<string, float> bands)> rawData = new();
 
             while (!reader.EndOfStream)
             {
                 lineNumber++;
                 values = reader.ReadLine().Split('\t');
 
-                for (int i = 0; i < fieldTypes.Count; i++)
+                if (xIndex < 0 || yIndex < 0 || bandIndices.Count == 0)
                 {
-                    if (!float.TryParse(values[i], out float v))
+                    MessageBox.Show("Error: X, Y and at least one Band column are required.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (!double.TryParse(values[xIndex], out double x) || !double.TryParse(values[yIndex], out double y))
+                {
+                    MessageBox.Show($"Warning: Cannot parse coordinates at line {lineNumber}. Skipping.", "Parse Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    continue;
+                }
+
+                minX = Math.Min(minX, x);
+                maxX = Math.Max(maxX, x);
+                minY = Math.Min(minY, y);
+                maxY = Math.Max(maxY, y);
+
+                Dictionary<string, float> bandValues = new();
+
+                foreach (int bandIdx in bandIndices)
+                {
+                    if (!float.TryParse(values[bandIdx], out float v))
                     {
-                        MessageBox.Show($"Warning: Cannot parse value '{values[i]}' at line {lineNumber}, column {i + 1}. Skipping.", "Parse Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show($"Warning: Cannot parse value '{values[bandIdx]}' at line {lineNumber}, column {bandIdx + 1}. Skipping.", "Parse Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         continue;
                     }
-
-                    switch (fieldTypes[i])
-                    {
-                        case TextTableColumnSelector.FieldType.X:
-                            _xMin = Math.Min(_xMin, (int)v);
-                            _xMax = Math.Max(_xMax, (int)v);
-                            break;
-                        case TextTableColumnSelector.FieldType.Y:
-                            _yMin = Math.Min(_yMin, (int)v);
-                            _yMax = Math.Max(_yMax, (int)v);
-                            break;
-                        case TextTableColumnSelector.FieldType.Band:
-                            Band? band = GetBand(hd[i], true);
-
-                            if (band == null)
-                                break;
-
-                            band.AddValue(v);
-                            break;
-                        case TextTableColumnSelector.FieldType.None:
-                        default:
-                            continue;
-                    }
+                    bandValues[hd[bandIdx]] = v;
                 }
+
+                rawData.Add((x, y, bandValues));
             }
 
             reader.Close();
 
-            _width = (_xMax - _xMin) / _resolution;
-            _height = (_yMax - _yMin) / _resolution;
+            if (rawData.Count == 0)
+            {
+                MessageBox.Show("No valid data found in file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            foreach (int bandIdx in bandIndices)
+            {
+                Band band = new Band(hd[bandIdx]);
+                _bands.Add(band);
+            }
+
+            double dataRangeX = maxX - minX;
+            double dataRangeY = maxY - minY;
+
+            if (dataRangeX == 0 || dataRangeY == 0)
+            {
+                MessageBox.Show("Error: Data has zero range in X or Y direction.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            _width = Math.Max(1, (int)(dataRangeX / _cellSize));
+            _height = Math.Max(1, (int)(dataRangeY / _cellSize));
+
+            Dictionary<(int x, int y), Dictionary<string, float>> gridData = new();
+
+            foreach (var point in rawData)
+            {
+                int gridX = (int)Math.Floor((point.x - minX) / _cellSize);
+                int gridY = (int)Math.Floor((point.y - minY) / _cellSize);
+
+                gridX = Math.Clamp(gridX, 0, _width - 1);
+                gridY = Math.Clamp(gridY, 0, _height - 1);
+
+                if (!gridData.ContainsKey((gridX, gridY)))
+                    gridData[(gridX, gridY)] = new Dictionary<string, float>();
+
+                foreach (var kvp in point.bands)
+                {
+                    if (gridData[(gridX, gridY)].ContainsKey(kvp.Key))
+                        gridData[(gridX, gridY)][kvp.Key] = (gridData[(gridX, gridY)][kvp.Key] + kvp.Value) / 2;
+                    else
+                        gridData[(gridX, gridY)][kvp.Key] = kvp.Value;
+                }
+            }
+
+            foreach (Band band in _bands)
+            {
+                band.SetDimensions(_width, _height);
+                band.SetGeoTransform(new GeoTransform(minX, maxY, _cellSize, -_cellSize));
+            }
+
+            foreach (var cell in gridData)
+            {
+                int flatIndex = cell.Key.y * _width + cell.Key.x;
+
+                foreach (Band band in _bands)
+                {
+                    if (cell.Value.TryGetValue(band.Name, out float val))
+                    {
+                        band.SetPixelValue(cell.Key.x, cell.Key.y, val);
+                    }
+                }
+            }
+
+            foreach (Band band in _bands)
+            {
+                band.CalculateStatistics();
+            }
+
+            _geoTransform = new GeoTransform(minX, maxY, _cellSize, -_cellSize);
         }
 
         private Band? GetBand(string name, bool createIsNull)

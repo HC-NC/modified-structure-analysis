@@ -32,8 +32,13 @@
             panel1 = new Panel();
             cancelButton = new Button();
             acceptButton = new Button();
+            panel2 = new Panel();
+            label1 = new Label();
+            resolutionNumericUpDown = new NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
+            panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)resolutionNumericUpDown).BeginInit();
             SuspendLayout();
             // 
             // dataGridView1
@@ -84,6 +89,36 @@
             acceptButton.UseVisualStyleBackColor = true;
             acceptButton.Click += acceptButton_Click;
             // 
+            // panel2
+            // 
+            panel2.AutoSize = true;
+            panel2.Controls.Add(resolutionNumericUpDown);
+            panel2.Controls.Add(label1);
+            panel2.Dock = DockStyle.Bottom;
+            panel2.Location = new Point(0, 158);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(378, 37);
+            panel2.TabIndex = 2;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(12, 5);
+            label1.Name = "label1";
+            label1.Size = new Size(95, 25);
+            label1.TabIndex = 0;
+            label1.Text = "Resolution";
+            // 
+            // resolutionNumericUpDown
+            // 
+            resolutionNumericUpDown.DecimalPlaces = 3;
+            resolutionNumericUpDown.Location = new Point(136, 3);
+            resolutionNumericUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            resolutionNumericUpDown.Name = "resolutionNumericUpDown";
+            resolutionNumericUpDown.Size = new Size(230, 31);
+            resolutionNumericUpDown.TabIndex = 1;
+            resolutionNumericUpDown.Value = new decimal(new int[] { 30, 0, 0, 0 });
+            // 
             // TextTableColumnSelector
             // 
             AcceptButton = acceptButton;
@@ -91,6 +126,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = cancelButton;
             ClientSize = new Size(378, 244);
+            Controls.Add(panel2);
             Controls.Add(dataGridView1);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.SizableToolWindow;
@@ -100,7 +136,11 @@
             Load += FormLoad;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             panel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)resolutionNumericUpDown).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -109,5 +149,8 @@
         private Panel panel1;
         private Button cancelButton;
         private Button acceptButton;
+        private Panel panel2;
+        private NumericUpDown resolutionNumericUpDown;
+        private Label label1;
     }
 }

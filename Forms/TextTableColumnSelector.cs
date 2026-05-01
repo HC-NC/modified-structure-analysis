@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -55,6 +55,11 @@ namespace modified_structure_analysis
             }
 
             return fields;
+        }
+
+        public double GetResolution()
+        {
+            return (double)resolutionNumericUpDown.Value;
         }
 
         private void acceptButton_Click(object sender, EventArgs e)
