@@ -6,12 +6,10 @@ namespace modified_structure_analysis
 {
     public class Band
     {
-        private const float AUTO_BETTA = 0.951889f;
-
         private string _name;
 
         private List<float> _values;
-        private List<float> _normalizeValues; 
+        private List<float> _normalizeValues;
 
         private float _sum = 0;
         private int _count = 0;
@@ -25,6 +23,7 @@ namespace modified_structure_analysis
 
         private float _kernelC;
         private float _normalizeKernelC;
+        private KernelType _kernelType = KernelType.Epanechnikov;
 
         [DisplayName("Name")]
         [Description("Band name")]
@@ -84,6 +83,20 @@ namespace modified_structure_analysis
         public float KernelC => _kernelC;
         public float NormalizeKernelC => _normalizeKernelC;
 
+        [DisplayName("Kernel Type")]
+        [Description("Kernel function type for density estimation")]
+        [Category("Kernel")]
+        public KernelType KernelType
+        {
+            get => _kernelType;
+            set
+            {
+                _kernelType = value;
+                _kernelC = (float)KernelFunctions.GetDefaultBandwidth(_sigma, _count);
+                _normalizeKernelC = _kernelC / (_maximum - _minimum);
+            }
+        }
+
         public Band(string name)
         {
             _name = name;
@@ -139,8 +152,18 @@ namespace modified_structure_analysis
             _skewness /= _count * MathF.Pow(_sigma, 3);
             _kurtosis = _kurtosis / (_count * MathF.Pow(_sigma, 4)) - 3;
 
-            _kernelC = AUTO_BETTA * _sigma * MathF.Pow(_count, -1f / 5f);
+            _kernelC = (float)KernelFunctions.GetDefaultBandwidth(_sigma, _count);
             _normalizeKernelC = _kernelC / (_maximum - _minimum);
+        }
+
+        public double GetKernelDensityEstimate(float v)
+        {
+            double result = 0;
+            for (int i = 0; i < _count; i++)
+            {
+                result += KernelFunctions.GetKernel(_kernelType, (v - GetNormalizedValue(i)) / _normalizeKernelC);
+            }
+            return result / (_count * _normalizeKernelC);
         }
 
         public float GetValue(int i)

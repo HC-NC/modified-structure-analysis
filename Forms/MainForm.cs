@@ -6,8 +6,8 @@ using OxyPlot.Series;
 using OxyPlot.WindowsForms;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.Metrics;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 
 namespace modified_structure_analysis
 {
@@ -107,6 +107,12 @@ namespace modified_structure_analysis
                 return;
 
             Bitmap bitmap = new Bitmap(_width, _height);
+            Rectangle rect = new Rectangle(0, 0, _width, _height);
+            System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            IntPtr ptr = bmpData.Scan0;
+            int bytes = Math.Abs(bmpData.Stride) * _height;
+            byte[] rgbValues = new byte[bytes];
 
             for (int y = 0; y < _height; y++)
             {
@@ -118,11 +124,16 @@ namespace modified_structure_analysis
                     byte g = (byte)(_greenBand.GetNormalizedValue(i) * 255);
                     byte b = (byte)(_blueBand.GetNormalizedValue(i) * 255);
 
-                    Color color = Color.FromArgb(r, g, b);
-
-                    bitmap.SetPixel(x, y, color);
+                    int idx = (y * bmpData.Stride) + (x * 4);
+                    rgbValues[idx] = b;
+                    rgbValues[idx + 1] = g;
+                    rgbValues[idx + 2] = r;
+                    rgbValues[idx + 3] = 255;
                 }
             }
+
+            Marshal.Copy(rgbValues, 0, ptr, bytes);
+            bitmap.UnlockBits(bmpData);
 
             viewport1.UpdateImage(bitmap);
         }
@@ -185,15 +196,20 @@ namespace modified_structure_analysis
             List<TextTableColumnSelector.FieldType> fieldTypes = columnSelector.GetFieldTypes();
 
             string[] values;
-            float v;
+            int lineNumber = 1;
 
             while (!reader.EndOfStream)
             {
+                lineNumber++;
                 values = reader.ReadLine().Split('\t');
 
                 for (int i = 0; i < fieldTypes.Count; i++)
                 {
-                    v = float.Parse(values[i]);
+                    if (!float.TryParse(values[i], out float v))
+                    {
+                        MessageBox.Show($"Warning: Cannot parse value '{values[i]}' at line {lineNumber}, column {i + 1}. Skipping.", "Parse Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        continue;
+                    }
 
                     switch (fieldTypes[i])
                     {
@@ -314,16 +330,6 @@ namespace modified_structure_analysis
             histogramPlotView.Model = plot;
         }
 
-        private double GetKernelGrade(Band band, double v)
-        {
-            double result = 0;
-
-            for (int i = 0; i < band.Count; i++)
-                result += GetEpanechnikovKernel((v - band.GetNormalizedValue(i)) / band.NormalizeKernelC);
-
-            return result / (band.Count * band.NormalizeKernelC);
-        }
-
         private void BuildNormalizedHistograms()
         {
             PlotModel plot = new PlotModel();
@@ -341,7 +347,7 @@ namespace modified_structure_analysis
                 for (int i = 0; i < pointsCount; i++)
                 {
                     x = (float)i / pointsCount;
-                    series.Points.Add(new DataPoint(x, GetKernelGrade(band, x)));
+                    series.Points.Add(new DataPoint(x, band.GetKernelDensityEstimate(x)));
                 }
 
                 plot.Series.Add(series);
@@ -422,39 +428,6 @@ namespace modified_structure_analysis
             plotView.Refresh();
         }
 
-        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            BackgroundWorker? worker = sender as BackgroundWorker;
-
-            if (worker == null)
-                return;
-
-        }
-
-        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            mainStatusLabel.Text = e.UserState?.ToString();
-            mainProgressBar.Value = e.ProgressPercentage;
-        }
-
-        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (e.Cancelled)
-            {
-                MessageBox.Show("Operation was canceled");
-            }
-            else if (e.Error != null)
-            {
-                string msg = String.Format("An error occurred: {0}", e.Error.Message);
-                MessageBox.Show(msg);
-            }
-            else
-            {
-                string msg = String.Format("Result = {0}", e.Result);
-                MessageBox.Show(msg);
-            }
-        }
-
         private int StargesDivisionRule(int v)
         {
             return (int)(Math.Log(v) / Math.Log(2) + 1);
@@ -470,55 +443,7 @@ namespace modified_structure_analysis
             return (int)(Math.Sqrt(v));
         }
 
-        private double GetUniformKernel(double u)
-        {
-            return Math.Abs(u) <= 1 ? 0.5 : 0;
-        }
-
-        private double GetTriangularKernel(double u)
-        {
-            return Math.Abs(u) <= 1 ? 1 - Math.Abs(u) : 0;
-        }
-
-        private double GetEpanechnikovKernel(double u)
-        {
-            return Math.Abs(u) <= 1 ? 3d / 4d * (1 - Math.Pow(u, 2)) : 0;
-        }
-
-        private double GetQuarticKernel(double u)
-        {
-            return Math.Abs(u) <= 1 ? 15d / 16d * Math.Pow(1 - Math.Pow(u, 2), 2) : 0;
-        }
-
-        private double GetTriweightKernel(double u)
-        {
-            return Math.Abs(u) <= 1 ? 35d / 32d * Math.Pow(1 - Math.Pow(u, 2), 3) : 0;
-        }
-
-        private double GetTricubeKernel(double u)
-        {
-            return Math.Abs(u) <= 1 ? 70d / 81d * Math.Pow(1 - Math.Pow(Math.Abs(u), 3), 3) : 0;
-        }
-
-        private double GetGaussianKernel(double u)
-        {
-            return 1 / Math.Sqrt(2 * Math.PI) * Math.Exp(-Math.Pow(u, 2) / 2);
-        }
-
-        private double GetCosineKernel(double u)
-        {
-            return Math.Abs(u) <= 1 ? Math.PI / 4 * Math.Cos(Math.PI / 2 * u) : 0;
-        }
-
-        private double GetLogisticKernel(double u)
-        {
-            return 1 / (Math.Exp(u) + 2 + Math.Exp(-u));
-        }
-
-        private double GetSigmoidFunctionKernel(double u)
-        {
-            return 2 / Math.PI * 1 / (Math.Exp(u) + Math.Exp(-u));
-        }
+        
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -532,7 +457,40 @@ namespace modified_structure_analysis
                 return;
             }
 
+            backgroundWorker.RunWorkerAsync(new ClassificationParams(band1, band2, band3));
+        }
+
+        private class ClassificationParams
+        {
+            public Band Band1 { get; }
+            public Band Band2 { get; }
+            public Band Band3 { get; }
+
+            public ClassificationParams(Band b1, Band b2, Band b3)
+            {
+                Band1 = b1;
+                Band2 = b2;
+                Band3 = b3;
+            }
+        }
+
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker? worker = sender as BackgroundWorker;
+            ClassificationParams? p = e.Argument as ClassificationParams;
+
+            if (worker == null || p == null)
+                return;
+
             Bitmap bitmap = new Bitmap(_width, _height);
+            Rectangle rect = new Rectangle(0, 0, _width, _height);
+            System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            IntPtr ptr = bmpData.Scan0;
+            int bytes = Math.Abs(bmpData.Stride) * _height;
+            byte[] rgbValues = new byte[bytes];
+
+            Marshal.Copy(ptr, rgbValues, 0, bytes);
 
             for (int y = 0; y < _height; y++)
             {
@@ -540,48 +498,86 @@ namespace modified_structure_analysis
                 {
                     int i = y * _width + x;
 
-                    float band1v = band1.GetNormalizedValue(i);
-                    float band2v = band2.GetNormalizedValue(i);
-                    float band3v = band3.GetNormalizedValue(i);
+                    float band1v = p.Band1.GetNormalizedValue(i);
+                    float band2v = p.Band2.GetNormalizedValue(i);
+                    float band3v = p.Band3.GetNormalizedValue(i);
 
                     double band1p = 0;
                     double band2p = 0;
                     double band3p = 0;
 
-                    //double band12p = 0;
-
-                    for (int j = 0; j < band1.Count; j++)
+                    for (int j = 0; j < p.Band1.Count; j++)
                     {
                         if (i == j)
                             continue;
 
-                        band1p += GetEpanechnikovKernel((band1v - band1.GetNormalizedValue(j)) / band1.NormalizeKernelC);
-                        band2p += GetEpanechnikovKernel((band2v - band2.GetNormalizedValue(j)) / band2.NormalizeKernelC);
-                        band3p += GetEpanechnikovKernel((band3v - band3.GetNormalizedValue(j)) / band3.NormalizeKernelC);
-
-                        //band12p += GetEpanechnikovKernel((band1v - band1.GetNormalizedValue(j)) / band1.NormalizeKernelC) * GetEpanechnikovKernel((band2v - band2.GetNormalizedValue(j)) / band2.NormalizeKernelC);
+                        band1p += KernelFunctions.GetKernel(p.Band1.KernelType, (band1v - p.Band1.GetNormalizedValue(j)) / p.Band1.NormalizeKernelC);
+                        band2p += KernelFunctions.GetKernel(p.Band2.KernelType, (band2v - p.Band2.GetNormalizedValue(j)) / p.Band2.NormalizeKernelC);
+                        band3p += KernelFunctions.GetKernel(p.Band3.KernelType, (band3v - p.Band3.GetNormalizedValue(j)) / p.Band3.NormalizeKernelC);
                     }
 
-                    band1p /= band1.Count * band1.NormalizeKernelC;
-                    band2p /= band2.Count * band2.NormalizeKernelC;
-                    band3p /= band3.Count * band3.NormalizeKernelC;
+                    band1p /= p.Band1.Count * p.Band1.NormalizeKernelC;
+                    band2p /= p.Band2.Count * p.Band2.NormalizeKernelC;
+                    band3p /= p.Band3.Count * p.Band3.NormalizeKernelC;
 
-                    //band12p /= band1.Count * band1.NormalizeKernelC * band2.NormalizeKernelC;
+                    int idx = (y * bmpData.Stride) + (x * 4);
 
                     if (band1p > band2p && band1p > band3p)
-                        bitmap.SetPixel(x, y, Color.Red);
+                    {
+                        rgbValues[idx] = 0;
+                        rgbValues[idx + 1] = 0;
+                        rgbValues[idx + 2] = 255;
+                    }
                     else if (band2p > band1p && band2p > band3p)
-                        bitmap.SetPixel(x, y, Color.Green);
+                    {
+                        rgbValues[idx] = 0;
+                        rgbValues[idx + 1] = 255;
+                        rgbValues[idx + 2] = 0;
+                    }
                     else if (band3p > band1p && band3p > band2p)
-                        bitmap.SetPixel(x, y, Color.Blue);
+                    {
+                        rgbValues[idx] = 255;
+                        rgbValues[idx + 1] = 0;
+                        rgbValues[idx + 2] = 0;
+                    }
                     else
-                        bitmap.SetPixel(x, y, Color.Black);
+                    {
+                        rgbValues[idx] = 0;
+                        rgbValues[idx + 1] = 0;
+                        rgbValues[idx + 2] = 0;
+                    }
+                    rgbValues[idx + 3] = 255;
                 }
 
-                Debug.WriteLine($"Classification prog: {y}/{_height}");
+                worker.ReportProgress((int)((y + 1) * 100.0 / _height), $"Classification: {y + 1}/{_height}");
             }
 
-            viewport2.UpdateImage(bitmap);
+            Marshal.Copy(rgbValues, 0, ptr, bytes);
+            bitmap.UnlockBits(bmpData);
+
+            e.Result = bitmap;
+        }
+
+        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                MessageBox.Show("Operation was canceled");
+            }
+            else if (e.Error != null)
+            {
+                MessageBox.Show($"An error occurred: {e.Error.Message}");
+            }
+            else
+            {
+                viewport2.UpdateImage(e.Result as Bitmap);
+            }
+        }
+
+        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            mainStatusLabel.Text = e.UserState?.ToString();
+            mainProgressBar.Value = e.ProgressPercentage;
         }
     }
 }
