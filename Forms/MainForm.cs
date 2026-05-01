@@ -26,6 +26,23 @@ namespace modified_structure_analysis
 
         private GeoTransform? _geoTransform;
 
+        private ComboBox scatterXComboBox;
+        private ComboBox scatterYComboBox;
+        private Button buildScatterButton;
+        private PlotView scatterPlotView;
+        private ComboBox profileBandComboBox;
+        private ComboBox profileAxisComboBox;
+        private NumericUpDown profilePositionNumeric;
+        private Button buildProfileButton;
+        private PlotView profilePlotView;
+        private ListBox kdeBandsListBox;
+        private Button kdeSingleButton;
+        private Button kdeProductButton;
+        private Button kdeMultivariateButton;
+        private Button kdeClearButton;
+        private PlotView kdePlotView;
+        private PlotModel? _kdeModel;
+
         public MainForm()
         {
             InitializeComponent();
@@ -35,8 +52,304 @@ namespace modified_structure_analysis
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            //mainStatusLabel.Visible = false;
-            //mainProgressBar.Visible = false;
+            InitializeExplorationUI();
+        }
+
+        private void InitializeExplorationUI()
+        {
+            var scatterPanel = new Panel { Dock = DockStyle.Top, Height = 45 };
+            scatterXComboBox = new ComboBox { Left = 10, Top = 10, Width = 150 };
+            scatterYComboBox = new ComboBox { Left = 170, Top = 10, Width = 150 };
+            buildScatterButton = new Button { Left = 330, Top = 8, Width = 80, Text = "Build" };
+            buildScatterButton.Click += BuildScatterPlot;
+            scatterPanel.Controls.AddRange(new Control[] { scatterXComboBox, scatterYComboBox, buildScatterButton });
+
+            var labelX = new Label { Left = 10, Top = 35, Width = 150, Text = "X Axis:" };
+            var labelY = new Label { Left = 170, Top = 35, Width = 150, Text = "Y Axis:" };
+            scatterPanel.Controls.AddRange(new Control[] { labelX, labelY });
+
+            scatterPlotView = new PlotView { Dock = DockStyle.Fill };
+
+            var scatterContainer = new SplitContainer { Dock = DockStyle.Fill, Orientation = Orientation.Vertical };
+            scatterContainer.Panel1.Controls.Add(scatterPanel);
+            scatterContainer.Panel2.Controls.Add(scatterPlotView);
+            scatterContainer.SplitterDistance = 45;
+
+            var profilePanel = new Panel { Dock = DockStyle.Top, Height = 45 };
+            profileBandComboBox = new ComboBox { Left = 10, Top = 10, Width = 120 };
+            profileAxisComboBox = new ComboBox { Left = 140, Top = 10, Width = 100 };
+            profileAxisComboBox.Items.AddRange(new string[] { "Horizontal", "Vertical" });
+            profileAxisComboBox.SelectedIndex = 0;
+            profilePositionNumeric = new NumericUpDown { Left = 250, Top = 10, Width = 80, Maximum = 10000 };
+            profilePositionNumeric.Value = 50;
+            buildProfileButton = new Button { Left = 340, Top = 8, Width = 80, Text = "Profile" };
+            buildProfileButton.Click += BuildProfilePlot;
+            profilePanel.Controls.AddRange(new Control[] { profileBandComboBox, profileAxisComboBox, profilePositionNumeric, buildProfileButton });
+
+            var labelBand = new Label { Left = 10, Top = 35, Width = 120, Text = "Band:" };
+            var labelAxis = new Label { Left = 140, Top = 35, Width = 100, Text = "Axis:" };
+            var labelPos = new Label { Left = 250, Top = 35, Width = 80, Text = "Position:" };
+            profilePanel.Controls.AddRange(new Control[] { labelBand, labelAxis, labelPos });
+
+            profilePlotView = new PlotView { Dock = DockStyle.Fill };
+
+            var profileContainer = new SplitContainer { Dock = DockStyle.Fill, Orientation = Orientation.Vertical };
+            profileContainer.Panel1.Controls.Add(profilePanel);
+            profileContainer.Panel2.Controls.Add(profilePlotView);
+            profileContainer.SplitterDistance = 45;
+
+            var kdePanel = new Panel { Dock = DockStyle.Top, Height = 70 };
+            kdeBandsListBox = new ListBox { Left = 10, Top = 10, Width = 200, Height = 50, SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended };
+            kdeSingleButton = new Button { Left = 220, Top = 8, Width = 80, Text = "Single" };
+            kdeSingleButton.Click += KdeSingle;
+            kdeProductButton = new Button { Left = 310, Top = 8, Width = 80, Text = "Product" };
+            kdeProductButton.Click += KdeProduct;
+            kdeMultivariateButton = new Button { Left = 400, Top = 8, Width = 100, Text = "Multivar" };
+            kdeMultivariateButton.Click += KdeMultivariate;
+            kdeClearButton = new Button { Left = 510, Top = 8, Width = 70, Text = "Clear" };
+            kdeClearButton.Click += ClearKdePlot;
+            kdePanel.Controls.AddRange(new Control[] { kdeBandsListBox, kdeSingleButton, kdeProductButton, kdeMultivariateButton, kdeClearButton });
+
+            var labelKdeBands = new Label { Left = 10, Top = 35, Width = 200, Text = "Bands (multi-select):" };
+            kdePanel.Controls.Add(labelKdeBands);
+
+            kdePlotView = new PlotView { Dock = DockStyle.Fill };
+            kdePlotView.DoubleClick += PlotView_DoubleClick;
+
+            kdePlotView = new PlotView { Dock = DockStyle.Fill };
+
+            var kdeContainer = new SplitContainer { Dock = DockStyle.Fill, Orientation = Orientation.Vertical };
+            kdeContainer.Panel1.Controls.Add(kdePanel);
+            kdeContainer.Panel2.Controls.Add(kdePlotView);
+            kdeContainer.SplitterDistance = 70;
+
+            _kdeModel = new PlotModel { Title = "KDE Comparison" };
+            _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Normalized Value" });
+            _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Density" });
+            _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
+            kdePlotView.Model = _kdeModel;
+
+            var explorationPanel = new TabControl { Dock = DockStyle.Fill };
+            var scatterTab = new TabPage { Text = "Scatter Plot" };
+            var profileTab = new TabPage { Text = "Profile" };
+            var kdeTab = new TabPage { Text = "KDE" };
+            scatterTab.Controls.Add(scatterContainer);
+            profileTab.Controls.Add(profileContainer);
+            kdeTab.Controls.Add(kdeContainer);
+            explorationPanel.TabPages.Add(scatterTab);
+            explorationPanel.TabPages.Add(profileTab);
+            explorationPanel.TabPages.Add(kdeTab);
+
+            var existingControls = explorationTabPage.Controls.OfType<Control>().ToList();
+            foreach (var ctrl in existingControls)
+            {
+                explorationTabPage.Controls.Remove(ctrl);
+            }
+
+            explorationTabPage.Controls.Add(explorationPanel);
+        }
+
+        private void BuildScatterPlot(object? sender, EventArgs e)
+        {
+            if (scatterXComboBox.SelectedItem == null || scatterYComboBox.SelectedItem == null)
+                return;
+
+            Band? bandX = scatterXComboBox.SelectedItem as Band;
+            Band? bandY = scatterYComboBox.SelectedItem as Band;
+
+            if (bandX == null || bandY == null)
+                return;
+
+            var model = new PlotModel { Title = $"Scatter: {bandX.Name} vs {bandY.Name}" };
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = bandX.Name });
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = bandY.Name });
+
+            var scatterSeries = new ScatterSeries { MarkerType = MarkerType.Circle, MarkerSize = 2 };
+
+            for (int i = 0; i < _width * _height; i++)
+            {
+                float vx = bandX.GetNormalizedValue(i);
+                float vy = bandY.GetNormalizedValue(i);
+                if (vx > 0 && vy > 0)
+                {
+                    scatterSeries.Points.Add(new ScatterPoint(vx, vy));
+                }
+            }
+
+            model.Series.Add(scatterSeries);
+            scatterPlotView.Model = model;
+        }
+
+        private void BuildProfilePlot(object? sender, EventArgs e)
+        {
+            if (_bands.Count == 0 || profileBandComboBox.SelectedItem == null)
+                return;
+
+            Band band = profileBandComboBox.SelectedItem as Band;
+            if (band == null) return;
+
+            var model = new PlotModel { Title = $"Brightness Profile - {band.Name}" };
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Pixel" });
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Value" });
+
+            var lineSeries = new LineSeries();
+
+            bool isHorizontal = profileAxisComboBox.SelectedIndex == 0;
+            int position = (int)profilePositionNumeric.Value;
+
+            if (isHorizontal)
+            {
+                position = Math.Min(position, _height - 1);
+                for (int x = 0; x < _width; x++)
+                {
+                    int idx = position * _width + x;
+                    lineSeries.Points.Add(new DataPoint(x, band.GetValue(idx)));
+                }
+            }
+            else
+            {
+                position = Math.Min(position, _width - 1);
+                for (int y = 0; y < _height; y++)
+                {
+                    int idx = y * _width + position;
+                    lineSeries.Points.Add(new DataPoint(y, band.GetValue(idx)));
+                }
+            }
+
+            model.Series.Add(lineSeries);
+            profilePlotView.Model = model;
+        }
+
+        private void KdeSingle(object? sender, EventArgs e)
+        {
+            if (_kdeModel == null)
+            {
+                _kdeModel = new PlotModel { Title = "KDE Comparison" };
+                _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Normalized Value" });
+                _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Density" });
+                _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
+                kdePlotView.Model = _kdeModel;
+            }
+
+            if (kdeBandsListBox!.SelectedItems.Count == 0)
+                return;
+
+            foreach (var item in kdeBandsListBox.SelectedItems)
+            {
+                Band band = item as Band;
+                if (band == null) continue;
+
+                var series = new FunctionSeries { Title = $"Single: {band.Name}" };
+                for (double x = 0; x <= 1; x += 0.01)
+                {
+                    series.Points.Add(new DataPoint(x, band.GetKernelDensityEstimate((float)x)));
+                }
+                _kdeModel!.Series.Add(series);
+            }
+            kdePlotView.Refresh();
+        }
+
+        private void KdeProduct(object? sender, EventArgs e)
+        {
+            if (_kdeModel == null)
+            {
+                _kdeModel = new PlotModel { Title = "KDE Comparison" };
+                _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Normalized Value" });
+                _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Density" });
+                _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
+                kdePlotView.Model = _kdeModel;
+            }
+
+            if (kdeBandsListBox!.SelectedItems.Count < 2)
+            {
+                MessageBox.Show("Select at least 2 bands for Product", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedBands = new List<Band>();
+            foreach (var item in kdeBandsListBox.SelectedItems)
+            {
+                Band band = item as Band;
+                if (band != null) selectedBands.Add(band);
+            }
+
+            var series = new FunctionSeries { Title = $"Product: {string.Join("×", selectedBands.Select(b => b.Name))}" };
+            for (double x = 0; x <= 1; x += 0.01)
+            {
+                double product = 1;
+                foreach (var band in selectedBands)
+                {
+                    product *= band.GetKernelDensityEstimate((float)x);
+                }
+                series.Points.Add(new DataPoint(x, product));
+            }
+            _kdeModel!.Series.Add(series);
+            kdePlotView.Refresh();
+        }
+
+        private void KdeMultivariate(object? sender, EventArgs e)
+        {
+            if (_kdeModel == null)
+            {
+                _kdeModel = new PlotModel { Title = "KDE Comparison" };
+                _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Normalized Value" });
+                _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Density" });
+                _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
+                kdePlotView.Model = _kdeModel;
+            }
+
+            if (kdeBandsListBox!.SelectedItems.Count < 2)
+            {
+                MessageBox.Show("Select at least 2 bands for Multivariate", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedBands = new List<Band>();
+            foreach (var item in kdeBandsListBox.SelectedItems)
+            {
+                Band band = item as Band;
+                if (band != null) selectedBands.Add(band);
+            }
+
+            int n = _width * _height;
+
+            double productBandwidths = 1;
+            foreach (var b in selectedBands)
+            {
+                productBandwidths *= b.NormalizeKernelC;
+            }
+            double normalization = n * productBandwidths;
+
+            var series = new FunctionSeries { Title = $"Multivariate: {string.Join(",", selectedBands.Select(b => b.Name))}" };
+            for (double x = 0; x <= 1; x += 0.01)
+            {
+                double density = 0;
+
+                for (int pixel = 0; pixel < n; pixel++)
+                {
+                    double kernelProduct = 1;
+                    foreach (var band in selectedBands)
+                    {
+                        double v = band.GetNormalizedValue(pixel);
+                        if (v <= 0) { kernelProduct = 0; break; }
+                        kernelProduct *= KernelFunctions.GetKernel(band.KernelType, (x - v) / band.NormalizeKernelC);
+                    }
+                    density += kernelProduct;
+                }
+
+                density /= normalization;
+                series.Points.Add(new DataPoint(x, density));
+            }
+            _kdeModel!.Series.Add(series);
+            kdePlotView.Refresh();
+        }
+
+        private void ClearKdePlot(object? sender, EventArgs e)
+        {
+            if (_kdeModel == null) return;
+            _kdeModel.Series.Clear();
+            _kdeModel.Title = "KDE Comparison";
+            kdePlotView.Refresh();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -54,6 +367,11 @@ namespace modified_structure_analysis
             comboBox1.Items.Clear();
             comboBox2.Items.Clear();
             comboBox3.Items.Clear();
+
+            if (scatterXComboBox != null) scatterXComboBox.Items.Clear();
+            if (scatterYComboBox != null) scatterYComboBox.Items.Clear();
+            if (profileBandComboBox != null) profileBandComboBox.Items.Clear();
+            if (kdeBandsListBox != null) kdeBandsListBox.Items.Clear();
 
             comboBox1.SelectedItem = null;
             comboBox2.SelectedItem = null;
@@ -88,6 +406,11 @@ namespace modified_structure_analysis
                 { _greenBand = band; greenToolStripDropDownButton.Text = _greenBand.ToString(); });
                 blueToolStripDropDownButton.DropDownItems.Add(band.Name, null, (object? sender, EventArgs e) =>
                 { _blueBand = band; blueToolStripDropDownButton.Text = _blueBand.ToString(); });
+
+                if (scatterXComboBox != null) scatterXComboBox.Items.Add(band);
+                if (scatterYComboBox != null) scatterYComboBox.Items.Add(band);
+                if (profileBandComboBox != null) profileBandComboBox.Items.Add(band);
+                if (kdeBandsListBox != null) kdeBandsListBox.Items.Add(band);
 
                 correlationDataGridView.Columns.Add(new DataGridViewTextBoxColumn() { HeaderText = band.Name });
 
