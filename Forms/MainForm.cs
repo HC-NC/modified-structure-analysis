@@ -552,6 +552,9 @@ namespace modified_structure_analysis
 
                     for (int j = 0; j < band1.Count; j++)
                     {
+                        if (i == j)
+                            continue;
+
                         band1p += GetEpanechnikovKernel((band1v - band1.GetNormalizedValue(j)) / band1.NormalizeKernelC);
                         band2p += GetEpanechnikovKernel((band2v - band2.GetNormalizedValue(j)) / band2.NormalizeKernelC);
                         band3p += GetEpanechnikovKernel((band3v - band3.GetNormalizedValue(j)) / band3.NormalizeKernelC);
