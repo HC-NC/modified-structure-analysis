@@ -5,6 +5,8 @@ using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
 using OxyPlot.WindowsForms;
+using OSGeo.GDAL;
+using GdalBand = OSGeo.GDAL.Band;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
@@ -27,135 +29,123 @@ namespace modified_structure_analysis
 
         private GeoTransform? _geoTransform;
 
-        private ComboBox scatterXComboBox;
-        private ComboBox scatterYComboBox;
-        private Button buildScatterButton;
-        private PlotView scatterPlotView;
-        private ComboBox profileBandComboBox;
-        private ComboBox profileAxisComboBox;
-        private NumericUpDown profilePositionNumeric;
-        private Button buildProfileButton;
-        private PlotView profilePlotView;
-        private ListBox kdeBandsListBox;
-        private Button kdeSingleButton;
-        private Button kdeProductButton;
-        private Button kdeMultivariateButton;
-        private Button kdeClearButton;
-        private PlotView kdePlotView;
-        private PlotModel? _kdeModel;
-        private PlotSettings _plotSettings = new();
+        private PlotModel _kdeModel;
 
         public MainForm()
         {
             InitializeComponent();
 
-            openFileDialog1.Filter = "Text file|*.txt";
+            openFileDialog1.Filter = "GeoTIFF|*.tif|CSV|*.csv|Text file|*.txt";
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            InitializeExplorationUI();
-        }
-
-        private void InitializeExplorationUI()
-        {
-            var scatterPanel = new Panel { Dock = DockStyle.Top, Height = 45 };
-            scatterXComboBox = new ComboBox { Left = 10, Top = 10, Width = 150 };
-            scatterYComboBox = new ComboBox { Left = 170, Top = 10, Width = 150 };
-            buildScatterButton = new Button { Left = 330, Top = 8, Width = 80, Text = "Build" };
-            buildScatterButton.Click += BuildScatterPlot;
-            var scatterSettingsBtn = new Button { Left = 420, Top = 8, Width = 70, Text = "Settings" };
-            scatterSettingsBtn.Click += OpenPlotSettings;
-            scatterPanel.Controls.AddRange(new Control[] { scatterXComboBox, scatterYComboBox, buildScatterButton, scatterSettingsBtn });
-
-            var labelX = new Label { Left = 10, Top = 35, Width = 150, Text = "X Axis:" };
-            var labelY = new Label { Left = 170, Top = 35, Width = 150, Text = "Y Axis:" };
-            scatterPanel.Controls.AddRange(new Control[] { labelX, labelY });
-
-            scatterPlotView = new PlotView { Dock = DockStyle.Fill };
-
-            var scatterContainer = new SplitContainer { Dock = DockStyle.Fill, Orientation = Orientation.Vertical };
-            scatterContainer.Panel1.Controls.Add(scatterPanel);
-            scatterContainer.Panel2.Controls.Add(scatterPlotView);
-            scatterContainer.SplitterDistance = 45;
-
-            var profilePanel = new Panel { Dock = DockStyle.Top, Height = 45 };
-            profileBandComboBox = new ComboBox { Left = 10, Top = 10, Width = 120 };
-            profileAxisComboBox = new ComboBox { Left = 140, Top = 10, Width = 100 };
-            profileAxisComboBox.Items.AddRange(new string[] { "Horizontal", "Vertical" });
-            profileAxisComboBox.SelectedIndex = 0;
-            profilePositionNumeric = new NumericUpDown { Left = 250, Top = 10, Width = 80, Maximum = 10000 };
-            profilePositionNumeric.Value = 50;
-            buildProfileButton = new Button { Left = 340, Top = 8, Width = 80, Text = "Profile" };
-            buildProfileButton.Click += BuildProfilePlot;
-            var profileSettingsBtn = new Button { Left = 430, Top = 8, Width = 70, Text = "Settings" };
-            profileSettingsBtn.Click += OpenPlotSettings;
-            profilePanel.Controls.AddRange(new Control[] { profileBandComboBox, profileAxisComboBox, profilePositionNumeric, buildProfileButton, profileSettingsBtn });
-
-            var labelBand = new Label { Left = 10, Top = 35, Width = 120, Text = "Band:" };
-            var labelAxis = new Label { Left = 140, Top = 35, Width = 100, Text = "Axis:" };
-            var labelPos = new Label { Left = 250, Top = 35, Width = 80, Text = "Position:" };
-            profilePanel.Controls.AddRange(new Control[] { labelBand, labelAxis, labelPos });
-
-            profilePlotView = new PlotView { Dock = DockStyle.Fill };
-
-            var profileContainer = new SplitContainer { Dock = DockStyle.Fill, Orientation = Orientation.Vertical };
-            profileContainer.Panel1.Controls.Add(profilePanel);
-            profileContainer.Panel2.Controls.Add(profilePlotView);
-            profileContainer.SplitterDistance = 45;
-
-            var kdePanel = new Panel { Dock = DockStyle.Top, Height = 70 };
-            kdeBandsListBox = new ListBox { Left = 10, Top = 10, Width = 200, Height = 50, SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended };
-            kdeSingleButton = new Button { Left = 220, Top = 8, Width = 80, Text = "Single" };
-            kdeSingleButton.Click += KdeSingle;
-            kdeProductButton = new Button { Left = 310, Top = 8, Width = 80, Text = "Product" };
-            kdeProductButton.Click += KdeProduct;
-            kdeMultivariateButton = new Button { Left = 400, Top = 8, Width = 100, Text = "Multivar" };
-            kdeMultivariateButton.Click += KdeMultivariate;
-            kdeClearButton = new Button { Left = 510, Top = 8, Width = 70, Text = "Clear" };
-            kdeClearButton.Click += ClearKdePlot;
-            var kdeSettingsButton = new Button { Left = 590, Top = 8, Width = 70, Text = "Settings" };
-            kdeSettingsButton.Click += OpenPlotSettings;
-            kdePanel.Controls.AddRange(new Control[] { kdeBandsListBox, kdeSingleButton, kdeProductButton, kdeMultivariateButton, kdeClearButton, kdeSettingsButton });
-
-            var labelKdeBands = new Label { Left = 10, Top = 35, Width = 200, Text = "Bands (multi-select):" };
-            kdePanel.Controls.Add(labelKdeBands);
-
-            kdePlotView = new PlotView { Dock = DockStyle.Fill };
-            kdePlotView.DoubleClick += PlotView_DoubleClick;
-
-            kdePlotView = new PlotView { Dock = DockStyle.Fill };
-
-            var kdeContainer = new SplitContainer { Dock = DockStyle.Fill, Orientation = Orientation.Vertical };
-            kdeContainer.Panel1.Controls.Add(kdePanel);
-            kdeContainer.Panel2.Controls.Add(kdePlotView);
-            kdeContainer.SplitterDistance = 70;
-
             _kdeModel = new PlotModel { Title = "KDE Comparison" };
-            _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Normalized Value" });
-            _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Density" });
+            _kdeModel.Axes.Add(new LinearAxis { Key = "X", Position = AxisPosition.Bottom, Title = "Normalized Value", Minimum = 0d, Maximum = 1d });
+            _kdeModel.Axes.Add(new LinearAxis { Key = "Y", Position = AxisPosition.Left, Title = "Density", Minimum = 0d });
             _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
             kdePlotView.Model = _kdeModel;
-
-            var explorationPanel = new TabControl { Dock = DockStyle.Fill };
-            var scatterTab = new TabPage { Text = "Scatter Plot" };
-            var profileTab = new TabPage { Text = "Profile" };
-            var kdeTab = new TabPage { Text = "KDE" };
-            scatterTab.Controls.Add(scatterContainer);
-            profileTab.Controls.Add(profileContainer);
-            kdeTab.Controls.Add(kdeContainer);
-            explorationPanel.TabPages.Add(scatterTab);
-            explorationPanel.TabPages.Add(profileTab);
-            explorationPanel.TabPages.Add(kdeTab);
-
-            var existingControls = explorationTabPage.Controls.OfType<Control>().ToList();
-            foreach (var ctrl in existingControls)
-            {
-                explorationTabPage.Controls.Remove(ctrl);
-            }
-
-            explorationTabPage.Controls.Add(explorationPanel);
         }
+
+        //private void InitializeExplorationUI()
+        //{
+        //    var scatterPanel = new Panel { Dock = DockStyle.Top, Height = 45 };
+        //    scatterXComboBox = new ComboBox { Left = 10, Top = 10, Width = 150 };
+        //    scatterYComboBox = new ComboBox { Left = 170, Top = 10, Width = 150 };
+        //    buildScatterButton = new Button { Left = 330, Top = 8, Width = 80, Text = "Build" };
+        //    buildScatterButton.Click += BuildScatterPlot;
+        //    var scatterSettingsBtn = new Button { Left = 420, Top = 8, Width = 70, Text = "Settings" };
+        //    scatterSettingsBtn.Click += OpenPlotSettings;
+        //    scatterPanel.Controls.AddRange(new Control[] { scatterXComboBox, scatterYComboBox, buildScatterButton, scatterSettingsBtn });
+
+        //    var labelX = new Label { Left = 10, Top = 35, Width = 150, Text = "X Axis:" };
+        //    var labelY = new Label { Left = 170, Top = 35, Width = 150, Text = "Y Axis:" };
+        //    scatterPanel.Controls.AddRange(new Control[] { labelX, labelY });
+
+        //    scatterPlotView = new PlotView { Dock = DockStyle.Fill };
+
+        //    var scatterContainer = new SplitContainer { Dock = DockStyle.Fill, Orientation = Orientation.Vertical };
+        //    scatterContainer.Panel1.Controls.Add(scatterPanel);
+        //    scatterContainer.Panel2.Controls.Add(scatterPlotView);
+        //    scatterContainer.SplitterDistance = 45;
+
+        //    var profilePanel = new Panel { Dock = DockStyle.Top, Height = 45 };
+        //    profileBandComboBox = new ComboBox { Left = 10, Top = 10, Width = 120 };
+        //    profileAxisComboBox = new ComboBox { Left = 140, Top = 10, Width = 100 };
+        //    profileAxisComboBox.Items.AddRange(new string[] { "Horizontal", "Vertical" });
+        //    profileAxisComboBox.SelectedIndex = 0;
+        //    profilePositionNumeric = new NumericUpDown { Left = 250, Top = 10, Width = 80, Maximum = 10000 };
+        //    profilePositionNumeric.Value = 50;
+        //    buildProfileButton = new Button { Left = 340, Top = 8, Width = 80, Text = "Profile" };
+        //    buildProfileButton.Click += BuildProfilePlot;
+        //    var profileSettingsBtn = new Button { Left = 430, Top = 8, Width = 70, Text = "Settings" };
+        //    profileSettingsBtn.Click += OpenPlotSettings;
+        //    profilePanel.Controls.AddRange(new Control[] { profileBandComboBox, profileAxisComboBox, profilePositionNumeric, buildProfileButton, profileSettingsBtn });
+
+        //    var labelBand = new Label { Left = 10, Top = 35, Width = 120, Text = "Band:" };
+        //    var labelAxis = new Label { Left = 140, Top = 35, Width = 100, Text = "Axis:" };
+        //    var labelPos = new Label { Left = 250, Top = 35, Width = 80, Text = "Position:" };
+        //    profilePanel.Controls.AddRange(new Control[] { labelBand, labelAxis, labelPos });
+
+        //    profilePlotView = new PlotView { Dock = DockStyle.Fill };
+
+        //    var profileContainer = new SplitContainer { Dock = DockStyle.Fill, Orientation = Orientation.Vertical };
+        //    profileContainer.Panel1.Controls.Add(profilePanel);
+        //    profileContainer.Panel2.Controls.Add(profilePlotView);
+        //    profileContainer.SplitterDistance = 45;
+
+        //    var kdePanel = new Panel { Dock = DockStyle.Top, Height = 70 };
+        //    kdeBandsListBox = new ListBox { Left = 10, Top = 10, Width = 200, Height = 50, SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended };
+        //    kdeSingleButton = new Button { Left = 220, Top = 8, Width = 80, Text = "Single" };
+        //    kdeSingleButton.Click += KdeSingle;
+        //    kdeProductButton = new Button { Left = 310, Top = 8, Width = 80, Text = "Product" };
+        //    kdeProductButton.Click += KdeProduct;
+        //    kdeMultivariateButton = new Button { Left = 400, Top = 8, Width = 100, Text = "Multivar" };
+        //    kdeMultivariateButton.Click += KdeMultivariate;
+        //    kdeClearButton = new Button { Left = 510, Top = 8, Width = 70, Text = "Clear" };
+        //    kdeClearButton.Click += ClearKdePlot;
+        //    var kdeSettingsButton = new Button { Left = 590, Top = 8, Width = 70, Text = "Settings" };
+        //    kdeSettingsButton.Click += OpenPlotSettings;
+        //    kdePanel.Controls.AddRange(new Control[] { kdeBandsListBox, kdeSingleButton, kdeProductButton, kdeMultivariateButton, kdeClearButton, kdeSettingsButton });
+
+        //    var labelKdeBands = new Label { Left = 10, Top = 35, Width = 200, Text = "Bands (multi-select):" };
+        //    kdePanel.Controls.Add(labelKdeBands);
+
+        //    kdePlotView = new PlotView { Dock = DockStyle.Fill };
+        //    kdePlotView.DoubleClick += PlotView_DoubleClick;
+
+        //    kdePlotView = new PlotView { Dock = DockStyle.Fill };
+
+        //    var kdeContainer = new SplitContainer { Dock = DockStyle.Fill, Orientation = Orientation.Vertical };
+        //    kdeContainer.Panel1.Controls.Add(kdePanel);
+        //    kdeContainer.Panel2.Controls.Add(kdePlotView);
+        //    kdeContainer.SplitterDistance = 70;
+
+        //    _kdeModel = new PlotModel { Title = "KDE Comparison" };
+        //    _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Normalized Value" });
+        //    _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Density" });
+        //    _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
+        //    kdePlotView.Model = _kdeModel;
+
+        //    var explorationPanel = new TabControl { Dock = DockStyle.Fill };
+        //    var scatterTab = new TabPage { Text = "Scatter Plot" };
+        //    var profileTab = new TabPage { Text = "Profile" };
+        //    var kdeTab = new TabPage { Text = "KDE" };
+        //    scatterTab.Controls.Add(scatterContainer);
+        //    profileTab.Controls.Add(profileContainer);
+        //    kdeTab.Controls.Add(kdeContainer);
+        //    explorationPanel.TabPages.Add(scatterTab);
+        //    explorationPanel.TabPages.Add(profileTab);
+        //    explorationPanel.TabPages.Add(kdeTab);
+
+        //    var existingControls = explorationTabPage.Controls.OfType<Control>().ToList();
+        //    foreach (var ctrl in existingControls)
+        //    {
+        //        explorationTabPage.Controls.Remove(ctrl);
+        //    }
+
+        //    explorationTabPage.Controls.Add(explorationPanel);
+        //}
 
         private void BuildScatterPlot(object? sender, EventArgs e)
         {
@@ -185,98 +175,85 @@ namespace modified_structure_analysis
             }
 
             model.Series.Add(scatterSeries);
-            ApplyPlotSettings(model);
+            
             scatterPlotView.Model = model;
         }
 
-        private void BuildProfilePlot(object? sender, EventArgs e)
-        {
-            if (_bands.Count == 0 || profileBandComboBox.SelectedItem == null)
-                return;
+        //private void BuildProfilePlot(object? sender, EventArgs e)
+        //{
+        //    if (_bands.Count == 0 || profileBandComboBox.SelectedItem == null)
+        //        return;
 
-            Band band = profileBandComboBox.SelectedItem as Band;
-            if (band == null) return;
+        //    Band band = profileBandComboBox.SelectedItem as Band;
+        //    if (band == null) return;
 
-            var model = new PlotModel { Title = $"Brightness Profile - {band.Name}" };
-            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Pixel" });
-            model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Value" });
+        //    var model = new PlotModel { Title = $"Brightness Profile - {band.Name}" };
+        //    model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Pixel" });
+        //    model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Value" });
 
-            var lineSeries = new LineSeries();
+        //    var lineSeries = new LineSeries();
 
-            bool isHorizontal = profileAxisComboBox.SelectedIndex == 0;
-            int position = (int)profilePositionNumeric.Value;
+        //    bool isHorizontal = profileAxisComboBox.SelectedIndex == 0;
+        //    int position = (int)profilePositionNumeric.Value;
 
-            if (isHorizontal)
-            {
-                position = Math.Min(position, _height - 1);
-                for (int x = 0; x < _width; x++)
-                {
-                    int idx = position * _width + x;
-                    lineSeries.Points.Add(new DataPoint(x, band.GetValue(idx)));
-                }
-            }
-            else
-            {
-                position = Math.Min(position, _width - 1);
-                for (int y = 0; y < _height; y++)
-                {
-                    int idx = y * _width + position;
-                    lineSeries.Points.Add(new DataPoint(y, band.GetValue(idx)));
-                }
-            }
+        //    if (isHorizontal)
+        //    {
+        //        position = Math.Min(position, _height - 1);
+        //        for (int x = 0; x < _width; x++)
+        //        {
+        //            int idx = position * _width + x;
+        //            lineSeries.Points.Add(new DataPoint(x, band.GetValue(idx)));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        position = Math.Min(position, _width - 1);
+        //        for (int y = 0; y < _height; y++)
+        //        {
+        //            int idx = y * _width + position;
+        //            lineSeries.Points.Add(new DataPoint(y, band.GetValue(idx)));
+        //        }
+        //    }
 
-            model.Series.Add(lineSeries);
-            ApplyPlotSettings(model);
-            profilePlotView.Model = model;
-        }
+        //    model.Series.Add(lineSeries);
+        //    ApplyPlotSettings(model);
+        //    profilePlotView.Model = model;
+        //}
 
         private void KdeSingle(object? sender, EventArgs e)
         {
-            if (_kdeModel == null)
-            {
-                _kdeModel = new PlotModel { Title = "KDE Comparison" };
-                _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Normalized Value" });
-                _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Density" });
-                _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
-                ApplyPlotSettings(_kdeModel);
-                kdePlotView.Model = _kdeModel;
-            }
-
             if (kdeBandsListBox!.SelectedItems.Count == 0)
                 return;
+
+            kdePlotView.Model = null;
 
             foreach (var item in kdeBandsListBox.SelectedItems)
             {
                 Band band = item as Band;
                 if (band == null) continue;
 
-                var series = new FunctionSeries { Title = $"Single: {band.Name}" };
+                var series = new FunctionSeries { Title = $"Single: {band.Name}", XAxisKey = "X", YAxisKey = "Y" };
                 for (double x = 0; x <= 1; x += 0.01)
                 {
                     series.Points.Add(new DataPoint(x, band.GetKernelDensityEstimate((float)x)));
                 }
+
                 _kdeModel!.Series.Add(series);
             }
-            kdePlotView.Refresh();
+
+            kdePlotView.Model = _kdeModel;
+            PlotView_DoubleClick(kdePlotView, e);
         }
 
         private void KdeProduct(object? sender, EventArgs e)
         {
-            if (_kdeModel == null)
-            {
-                _kdeModel = new PlotModel { Title = "KDE Comparison" };
-                _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Normalized Value" });
-                _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Density" });
-                _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
-                ApplyPlotSettings(_kdeModel);
-                kdePlotView.Model = _kdeModel;
-            }
-
             if (kdeBandsListBox!.SelectedItems.Count < 2)
             {
                 MessageBox.Show("Select at least 2 bands for Product", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
+            kdePlotView.Model = null;
 
             var selectedBands = new List<Band>();
             foreach (var item in kdeBandsListBox.SelectedItems)
@@ -295,27 +272,22 @@ namespace modified_structure_analysis
                 }
                 series.Points.Add(new DataPoint(x, product));
             }
+
             _kdeModel!.Series.Add(series);
-            kdePlotView.Refresh();
+
+            kdePlotView.Model = _kdeModel;
+            PlotView_DoubleClick(kdePlotView, e);
         }
 
         private void KdeMultivariate(object? sender, EventArgs e)
         {
-            if (_kdeModel == null)
-            {
-                _kdeModel = new PlotModel { Title = "KDE Comparison" };
-                _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Normalized Value" });
-                _kdeModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Density" });
-                _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
-                ApplyPlotSettings(_kdeModel);
-                kdePlotView.Model = _kdeModel;
-            }
-
             if (kdeBandsListBox!.SelectedItems.Count < 2)
             {
                 MessageBox.Show("Select at least 2 bands for Multivariate", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
+            kdePlotView.Model = null;
 
             var selectedBands = new List<Band>();
             foreach (var item in kdeBandsListBox.SelectedItems)
@@ -353,16 +325,21 @@ namespace modified_structure_analysis
                 density /= normalization;
                 series.Points.Add(new DataPoint(x, density));
             }
+
             _kdeModel!.Series.Add(series);
-            kdePlotView.Refresh();
+
+            kdePlotView.Model = _kdeModel;
+            PlotView_DoubleClick(kdePlotView, e);
         }
 
         private void ClearKdePlot(object? sender, EventArgs e)
         {
             if (_kdeModel == null) return;
+
             _kdeModel.Series.Clear();
             _kdeModel.Title = "KDE Comparison";
-            kdePlotView.Refresh();
+
+            PlotView_DoubleClick(kdePlotView, e);
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -383,7 +360,7 @@ namespace modified_structure_analysis
 
             if (scatterXComboBox != null) scatterXComboBox.Items.Clear();
             if (scatterYComboBox != null) scatterYComboBox.Items.Clear();
-            if (profileBandComboBox != null) profileBandComboBox.Items.Clear();
+            //if (profileBandComboBox != null) profileBandComboBox.Items.Clear();
             if (kdeBandsListBox != null) kdeBandsListBox.Items.Clear();
 
             comboBox1.SelectedItem = null;
@@ -394,9 +371,9 @@ namespace modified_structure_analysis
                 return;
             else if (_bands.Count >= 3)
             {
-                _redBand = _bands[0];
+                _redBand = _bands[2];
                 _greenBand = _bands[1];
-                _blueBand = _bands[2];
+                _blueBand = _bands[0];
             }
             else
             {
@@ -422,7 +399,7 @@ namespace modified_structure_analysis
 
                 if (scatterXComboBox != null) scatterXComboBox.Items.Add(band);
                 if (scatterYComboBox != null) scatterYComboBox.Items.Add(band);
-                if (profileBandComboBox != null) profileBandComboBox.Items.Add(band);
+                //if (profileBandComboBox != null) profileBandComboBox.Items.Add(band);
                 if (kdeBandsListBox != null) kdeBandsListBox.Items.Add(band);
 
                 correlationDataGridView.Columns.Add(new DataGridViewTextBoxColumn() { HeaderText = band.Name });
@@ -489,10 +466,17 @@ namespace modified_structure_analysis
 
                 correlationDataGridView.Columns.Clear();
 
-                switch (Path.GetExtension(openFileDialog1.FileName))
+                switch (Path.GetExtension(openFileDialog1.FileName).ToLower())
                 {
                     case ".txt":
-                        ReadTextFile();
+                        ReadTextFile('\t');
+                        break;
+                    case ".csv":
+                        ReadCsvFile();
+                        break;
+                    case ".tif":
+                    case ".tiff":
+                        ReadGeoTiff();
                         break;
                 }
 
@@ -506,13 +490,99 @@ namespace modified_structure_analysis
             }
         }
 
-        private void ReadTextFile()
+        private void ReadCsvFile()
+        {
+            var delimSelector = new DelimiterSelector();
+            if (delimSelector.ShowDialog() != DialogResult.OK)
+                return;
+
+            char delimiter = delimSelector.SelectedDelimiter switch
+            {
+                DelimiterType.Comma => ',',
+                DelimiterType.Semicolon => ';',
+                _ => '\t'
+            };
+
+            ReadTextFile(delimiter);
+        }
+
+        private void ReadGeoTiff()
+        {
+            try
+            {
+                Gdal.AllRegister();
+
+                using (Dataset ds = Gdal.Open(openFileDialog1.FileName, Access.GA_ReadOnly))
+                {
+                    if (ds == null)
+                    {
+                        MessageBox.Show("Error: Cannot open GeoTIFF file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    _width = ds.RasterXSize;
+                    _height = ds.RasterYSize;
+
+                    double[] geoTransform = new double[6];
+                    ds.GetGeoTransform(geoTransform);
+
+                    _geoTransform = GeoTransform.FromGdalArray(geoTransform);
+                    _geoTransform.ProjectionWkt = ds.GetProjection();
+                    _geoTransform.ProjectionName = ds.GetProjectionRef();
+
+                    for (int i = 1; i <= ds.RasterCount; i++)
+                    {
+                        using (GdalBand gdalBand = ds.GetRasterBand(i))
+                        {
+                            string bandName = gdalBand.GetDescription();
+                            if (string.IsNullOrWhiteSpace(bandName))
+                            {
+                                ColorInterp colorInterp = gdalBand.GetRasterColorInterpretation();
+                                bandName = colorInterp switch
+                                {
+                                    ColorInterp.GCI_RedBand => "Red",
+                                    ColorInterp.GCI_GreenBand => "Green",
+                                    ColorInterp.GCI_BlueBand => "Blue",
+                                    ColorInterp.GCI_AlphaBand => "Alpha",
+                                    ColorInterp.GCI_GrayIndex => "Grayscale",
+                                    _ => $"Band {i}"
+                                };
+                            }
+
+                            double[] minmax = new double[2];
+                            gdalBand.ComputeRasterMinMax(minmax, 0);
+
+                            float[] values = new float[_width * _height];
+                            gdalBand.ReadRaster(0, 0, _width, _height, values, _width, _height, 0, 0);
+
+                            Band band = new Band(bandName);
+                            band.SetDimensions(_width, _height);
+                            band.SetGeoTransform(_geoTransform);
+                            band.SetMinMax((float)minmax[0], (float)minmax[1]);
+                            for (int idx = 0; idx < values.Length; idx++)
+                            {
+                                band.SetValueAt(idx, values[idx]);
+                            }
+                            _bands.Add(band);
+                        }
+                    }
+                }
+
+                _cellSize = Math.Abs(_geoTransform.PixelSizeX);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading GeoTIFF: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ReadTextFile(char delimiter = '\t')
         {
             StreamReader reader = new StreamReader(openFileDialog1.FileName);
 
             List<string> hd = new List<string>();
 
-            foreach (string s in reader.ReadLine().Split('\t'))
+            foreach (string s in reader.ReadLine().Split(delimiter))
             {
                 hd.Add(s);
             }
@@ -549,7 +619,7 @@ namespace modified_structure_analysis
             while (!reader.EndOfStream)
             {
                 lineNumber++;
-                values = reader.ReadLine().Split('\t');
+                values = reader.ReadLine().Split(delimiter);
 
                 if (xIndex < 0 || yIndex < 0 || bandIndices.Count == 0)
                 {
@@ -743,35 +813,8 @@ namespace modified_structure_analysis
             plot.Series.Add(histSeries);
             plot.Series.Add(lineSeries);
 
-            ApplyPlotSettings(plot);
+            //ApplyPlotSettings(plot);
             histogramPlotView.Model = plot;
-        }
-
-        private void BuildNormalizedHistograms()
-        {
-            PlotModel plot = new PlotModel();
-            plot.Legends.Add(new Legend());
-
-            int pointsCount = 100;
-
-            foreach (Band band in _bands)
-            {
-                var series = new FunctionSeries();
-                series.Title = band.Name;
-
-                float x;
-
-                for (int i = 0; i < pointsCount; i++)
-                {
-                    x = (float)i / pointsCount;
-                    series.Points.Add(new DataPoint(x, band.GetKernelDensityEstimate(x)));
-                }
-
-                plot.Series.Add(series);
-            }
-
-            ApplyPlotSettings(plot);
-            plotView1.Model = plot;
         }
 
         private void CalcCorrelation()
@@ -805,7 +848,7 @@ namespace modified_structure_analysis
 
                     if (bandX.Count != bandY.Count)
                     {
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = "Error" });
+                        row.Cells.Add(new DataGridViewTextBoxCell() { Style = new DataGridViewCellStyle() { BackColor = Color.Red } });
                         continue;
                     }
 
@@ -833,9 +876,6 @@ namespace modified_structure_analysis
         {
             if (e.TabPage == histogramTabPage)
                 BuildHistogram();
-
-            if (e.TabPage == explorationTabPage)
-                BuildNormalizedHistograms();
         }
 
         private void PlotView_DoubleClick(object sender, EventArgs e)
@@ -861,7 +901,7 @@ namespace modified_structure_analysis
             return (int)(Math.Sqrt(v));
         }
 
-        
+
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -998,130 +1038,130 @@ namespace modified_structure_analysis
             mainProgressBar.Value = e.ProgressPercentage;
         }
 
-        public void ApplyPlotSettings(PlotModel model)
-        {
-            foreach (var axis in model.Axes)
-            {
-                if (axis.Position == AxisPosition.Bottom)
-                    _plotSettings.XAxis.ApplyToAxis(axis);
-                else if (axis.Position == AxisPosition.Left || axis.Position == AxisPosition.Right)
-                    _plotSettings.YAxis.ApplyToAxis(axis);
-            }
+        //public void ApplyPlotSettings(PlotModel model)
+        //{
+        //    foreach (var axis in model.Axes)
+        //    {
+        //        if (axis.Position == AxisPosition.Bottom)
+        //            _plotSettings.XAxis.ApplyToAxis(axis);
+        //        else if (axis.Position == AxisPosition.Left || axis.Position == AxisPosition.Right)
+        //            _plotSettings.YAxis.ApplyToAxis(axis);
+        //    }
 
-            if (_plotSettings.Legend.IsVisible)
-            {
-                if (model.Legends.Count == 0)
-                    model.Legends.Add(new Legend());
-                model.Legends[0].LegendPosition = _plotSettings.Legend.Position;
-            }
+        //    if (_plotSettings.Legend.IsVisible)
+        //    {
+        //        if (model.Legends.Count == 0)
+        //            model.Legends.Add(new Legend());
+        //        model.Legends[0].LegendPosition = _plotSettings.Legend.Position;
+        //    }
 
-            foreach (var axis in model.Axes)
-            {
-                axis.MajorGridlineStyle = _plotSettings.Grid.IsVisible ? LineStyle.Solid : LineStyle.None;
-                axis.MinorGridlineStyle = _plotSettings.Grid.IsMinorGridVisible ? LineStyle.Dot : LineStyle.None;
-            }
-        }
+        //    foreach (var axis in model.Axes)
+        //    {
+        //        axis.MajorGridlineStyle = _plotSettings.Grid.IsVisible ? LineStyle.Solid : LineStyle.None;
+        //        axis.MinorGridlineStyle = _plotSettings.Grid.IsMinorGridVisible ? LineStyle.Dot : LineStyle.None;
+        //    }
+        //}
 
-        public PlotSettings GetPlotSettings() => _plotSettings;
+        //public PlotSettings GetPlotSettings() => _plotSettings;
 
-        public void SetPlotSettings(PlotSettings settings)
-        {
-            _plotSettings = settings;
-        }
+        //public void SetPlotSettings(PlotSettings settings)
+        //{
+        //    _plotSettings = settings;
+        //}
 
-        public void SetAxisMinMax(double? xMin, double? xMax, double? yMin, double? yMax)
-        {
-            _plotSettings.XAxis.Minimum = xMin;
-            _plotSettings.XAxis.Maximum = xMax;
-            _plotSettings.YAxis.Minimum = yMin;
-            _plotSettings.YAxis.Maximum = yMax;
-        }
+        //public void SetAxisMinMax(double? xMin, double? xMax, double? yMin, double? yMax)
+        //{
+        //    _plotSettings.XAxis.Minimum = xMin;
+        //    _plotSettings.XAxis.Maximum = xMax;
+        //    _plotSettings.YAxis.Minimum = yMin;
+        //    _plotSettings.YAxis.Maximum = yMax;
+        //}
 
-        public void SetAxisLogarithmic(bool xLog, bool yLog)
-        {
-            _plotSettings.XAxis.IsLogarithmic = xLog;
-            _plotSettings.YAxis.IsLogarithmic = yLog;
-        }
+        //public void SetAxisLogarithmic(bool xLog, bool yLog)
+        //{
+        //    _plotSettings.XAxis.IsLogarithmic = xLog;
+        //    _plotSettings.YAxis.IsLogarithmic = yLog;
+        //}
 
-        public void SetLegendVisible(bool visible)
-        {
-            _plotSettings.Legend.IsVisible = visible;
-        }
+        //public void SetLegendVisible(bool visible)
+        //{
+        //    _plotSettings.Legend.IsVisible = visible;
+        //}
 
-        public void SetLegendPosition(LegendPosition position)
-        {
-            _plotSettings.Legend.Position = position;
-        }
+        //public void SetLegendPosition(LegendPosition position)
+        //{
+        //    _plotSettings.Legend.Position = position;
+        //}
 
-        public void SetGridVisible(bool visible)
-        {
-            _plotSettings.Grid.IsVisible = visible;
-        }
+        //public void SetGridVisible(bool visible)
+        //{
+        //    _plotSettings.Grid.IsVisible = visible;
+        //}
 
-        public void RefreshAllPlots()
-        {
-            if (histogramPlotView?.Model != null)
-                ApplyPlotSettings(histogramPlotView.Model);
-            if (scatterPlotView?.Model != null)
-                ApplyPlotSettings(scatterPlotView.Model);
-            if (profilePlotView?.Model != null)
-                ApplyPlotSettings(profilePlotView.Model);
-            if (kdePlotView?.Model != null)
-                ApplyPlotSettings(kdePlotView.Model);
-            if (plotView1?.Model != null)
-                ApplyPlotSettings(plotView1.Model);
-        }
+        //public void RefreshAllPlots()
+        //{
+        //    if (histogramPlotView?.Model != null)
+        //        ApplyPlotSettings(histogramPlotView.Model);
+        //    if (scatterPlotView?.Model != null)
+        //        ApplyPlotSettings(scatterPlotView.Model);
+        //    if (profilePlotView?.Model != null)
+        //        ApplyPlotSettings(profilePlotView.Model);
+        //    if (kdePlotView?.Model != null)
+        //        ApplyPlotSettings(kdePlotView.Model);
+        //    if (kdePlotView?.Model != null)
+        //        ApplyPlotSettings(kdePlotView.Model);
+        //}
 
-        private void OpenPlotSettings(object? sender, EventArgs e)
-        {
-            var form = new Form { Text = "Plot Settings", Width = 400, Height = 350, StartPosition = FormStartPosition.CenterParent };
+        //private void OpenPlotSettings(object? sender, EventArgs e)
+        //{
+        //    var form = new Form { Text = "Plot Settings", Width = 400, Height = 350, StartPosition = FormStartPosition.CenterParent };
 
-            var chkLegend = new CheckBox { Text = "Show Legend", Left = 20, Top = 20, Width = 150, Checked = _plotSettings.Legend.IsVisible };
-            chkLegend.CheckedChanged += (s, args) => { _plotSettings.Legend.IsVisible = chkLegend.Checked; };
+        //    var chkLegend = new CheckBox { Text = "Show Legend", Left = 20, Top = 20, Width = 150, Checked = _plotSettings.Legend.IsVisible };
+        //    chkLegend.CheckedChanged += (s, args) => { _plotSettings.Legend.IsVisible = chkLegend.Checked; };
 
-            var chkGrid = new CheckBox { Text = "Show Grid", Left = 20, Top = 50, Width = 150, Checked = _plotSettings.Grid.IsVisible };
-            chkGrid.CheckedChanged += (s, args) => { _plotSettings.Grid.IsVisible = chkGrid.Checked; };
+        //    var chkGrid = new CheckBox { Text = "Show Grid", Left = 20, Top = 50, Width = 150, Checked = _plotSettings.Grid.IsVisible };
+        //    chkGrid.CheckedChanged += (s, args) => { _plotSettings.Grid.IsVisible = chkGrid.Checked; };
 
-            var lblXMin = new Label { Left = 20, Top = 90, Width = 80, Text = "X Min:" };
-            var txtXMin = new TextBox { Left = 100, Top = 88, Width = 80 };
-            if (_plotSettings.XAxis.Minimum.HasValue) txtXMin.Text = _plotSettings.XAxis.Minimum.Value.ToString();
+        //    var lblXMin = new Label { Left = 20, Top = 90, Width = 80, Text = "X Min:" };
+        //    var txtXMin = new TextBox { Left = 100, Top = 88, Width = 80 };
+        //    if (_plotSettings.XAxis.Minimum.HasValue) txtXMin.Text = _plotSettings.XAxis.Minimum.Value.ToString();
 
-            var lblXMax = new Label { Left = 190, Top = 90, Width = 80, Text = "X Max:" };
-            var txtXMax = new TextBox { Left = 270, Top = 88, Width = 80 };
-            if (_plotSettings.XAxis.Maximum.HasValue) txtXMax.Text = _plotSettings.XAxis.Maximum.Value.ToString();
+        //    var lblXMax = new Label { Left = 190, Top = 90, Width = 80, Text = "X Max:" };
+        //    var txtXMax = new TextBox { Left = 270, Top = 88, Width = 80 };
+        //    if (_plotSettings.XAxis.Maximum.HasValue) txtXMax.Text = _plotSettings.XAxis.Maximum.Value.ToString();
 
-            var lblYMin = new Label { Left = 20, Top = 130, Width = 80, Text = "Y Min:" };
-            var txtYMin = new TextBox { Left = 100, Top = 128, Width = 80 };
-            if (_plotSettings.YAxis.Minimum.HasValue) txtYMin.Text = _plotSettings.YAxis.Minimum.Value.ToString();
+        //    var lblYMin = new Label { Left = 20, Top = 130, Width = 80, Text = "Y Min:" };
+        //    var txtYMin = new TextBox { Left = 100, Top = 128, Width = 80 };
+        //    if (_plotSettings.YAxis.Minimum.HasValue) txtYMin.Text = _plotSettings.YAxis.Minimum.Value.ToString();
 
-            var lblYMax = new Label { Left = 190, Top = 130, Width = 80, Text = "Y Max:" };
-            var txtYMax = new TextBox { Left = 270, Top = 128, Width = 80 };
-            if (_plotSettings.YAxis.Maximum.HasValue) txtYMax.Text = _plotSettings.YAxis.Maximum.Value.ToString();
+        //    var lblYMax = new Label { Left = 190, Top = 130, Width = 80, Text = "Y Max:" };
+        //    var txtYMax = new TextBox { Left = 270, Top = 128, Width = 80 };
+        //    if (_plotSettings.YAxis.Maximum.HasValue) txtYMax.Text = _plotSettings.YAxis.Maximum.Value.ToString();
 
-            var cmbLegendPos = new ComboBox { Left = 100, Top = 170, Width = 150 };
-            cmbLegendPos.Items.AddRange(new string[] { "Right Top", "Left Top", "Top Right", "Top Left" });
-            cmbLegendPos.SelectedIndex = 0;
-            var lblLegendPos = new Label { Left = 20, Top = 172, Width = 80, Text = "Legend:" };
+        //    var cmbLegendPos = new ComboBox { Left = 100, Top = 170, Width = 150 };
+        //    cmbLegendPos.Items.AddRange(new string[] { "Right Top", "Left Top", "Top Right", "Top Left" });
+        //    cmbLegendPos.SelectedIndex = 0;
+        //    var lblLegendPos = new Label { Left = 20, Top = 172, Width = 80, Text = "Legend:" };
 
-            var btnApply = new Button { Text = "Apply", Left = 100, Top = 220, Width = 80 };
-            btnApply.Click += (s, args) =>
-            {
-                if (double.TryParse(txtXMin.Text, out double xMin)) _plotSettings.XAxis.Minimum = xMin;
-                if (double.TryParse(txtXMax.Text, out double xMax)) _plotSettings.XAxis.Maximum = xMax;
-                if (double.TryParse(txtYMin.Text, out double yMin)) _plotSettings.YAxis.Minimum = yMin;
-                if (double.TryParse(txtYMax.Text, out double yMax)) _plotSettings.YAxis.Maximum = yMax;
+        //    var btnApply = new Button { Text = "Apply", Left = 100, Top = 220, Width = 80 };
+        //    btnApply.Click += (s, args) =>
+        //    {
+        //        if (double.TryParse(txtXMin.Text, out double xMin)) _plotSettings.XAxis.Minimum = xMin;
+        //        if (double.TryParse(txtXMax.Text, out double xMax)) _plotSettings.XAxis.Maximum = xMax;
+        //        if (double.TryParse(txtYMin.Text, out double yMin)) _plotSettings.YAxis.Minimum = yMin;
+        //        if (double.TryParse(txtYMax.Text, out double yMax)) _plotSettings.YAxis.Maximum = yMax;
 
-                _plotSettings.Legend.IsVisible = chkLegend.Checked;
-                _plotSettings.Grid.IsVisible = chkGrid.Checked;
+        //        _plotSettings.Legend.IsVisible = chkLegend.Checked;
+        //        _plotSettings.Grid.IsVisible = chkGrid.Checked;
 
-                RefreshAllPlots();
-            };
+        //        RefreshAllPlots();
+        //    };
 
-            var btnClose = new Button { Text = "Close", Left = 190, Top = 220, Width = 80 };
-            btnClose.Click += (s, args) => form.Close();
+        //    var btnClose = new Button { Text = "Close", Left = 190, Top = 220, Width = 80 };
+        //    btnClose.Click += (s, args) => form.Close();
 
-            form.Controls.AddRange(new Control[] { chkLegend, chkGrid, lblXMin, txtXMin, lblXMax, txtXMax, lblYMin, txtYMin, lblYMax, txtYMax, cmbLegendPos, lblLegendPos, btnApply, btnClose });
-            form.ShowDialog();
-        }
+        //    form.Controls.AddRange(new Control[] { chkLegend, chkGrid, lblXMin, txtXMin, lblXMax, txtXMax, lblYMin, txtYMin, lblYMax, txtYMax, cmbLegendPos, lblLegendPos, btnApply, btnClose });
+        //    form.ShowDialog();
+        //}
     }
 }

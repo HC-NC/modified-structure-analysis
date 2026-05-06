@@ -42,7 +42,7 @@
             bandPropertyGrid = new PropertyGrid();
             groupBox1 = new GroupBox();
             groupBox2 = new GroupBox();
-            tabControl1 = new TabControl();
+            mainTabControl = new TabControl();
             dataTabPage = new TabPage();
             splitContainer1 = new SplitContainer();
             splitContainer2 = new SplitContainer();
@@ -59,9 +59,24 @@
             histogramTabPage = new TabPage();
             histogramPlotView = new OxyPlot.WindowsForms.PlotView();
             explorationTabPage = new TabPage();
-            splitContainer3 = new SplitContainer();
-            plotView1 = new OxyPlot.WindowsForms.PlotView();
+            explorationTabControl = new TabControl();
+            tabPage1 = new TabPage();
             correlationDataGridView = new DataGridView();
+            tabPage2 = new TabPage();
+            splitContainer3 = new SplitContainer();
+            kdeBandsListBox = new ListBox();
+            kdeSingleButton = new Button();
+            kdeProductButton = new Button();
+            kdeMultivariateButton = new Button();
+            kdeClearButton = new Button();
+            kdePlotView = new OxyPlot.WindowsForms.PlotView();
+            tabPage3 = new TabPage();
+            splitContainer5 = new SplitContainer();
+            buildScatterButton = new Button();
+            scatterYComboBox = new ComboBox();
+            scatterXComboBox = new ComboBox();
+            scatterPlotView = new OxyPlot.WindowsForms.PlotView();
+            tabPage4 = new TabPage();
             classificationTabPage = new TabPage();
             splitContainer4 = new SplitContainer();
             label3 = new Label();
@@ -77,7 +92,7 @@
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
-            tabControl1.SuspendLayout();
+            mainTabControl.SuspendLayout();
             dataTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -95,11 +110,19 @@
             toolStrip1.SuspendLayout();
             histogramTabPage.SuspendLayout();
             explorationTabPage.SuspendLayout();
+            explorationTabControl.SuspendLayout();
+            tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)correlationDataGridView).BeginInit();
+            tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer3).BeginInit();
             splitContainer3.Panel1.SuspendLayout();
             splitContainer3.Panel2.SuspendLayout();
             splitContainer3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)correlationDataGridView).BeginInit();
+            tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer5).BeginInit();
+            splitContainer5.Panel1.SuspendLayout();
+            splitContainer5.Panel2.SuspendLayout();
+            splitContainer5.SuspendLayout();
             classificationTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer4).BeginInit();
             splitContainer4.Panel1.SuspendLayout();
@@ -207,21 +230,21 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Properties";
             // 
-            // tabControl1
+            // mainTabControl
             // 
-            tabControl1.Controls.Add(dataTabPage);
-            tabControl1.Controls.Add(explorationTabPage);
-            tabControl1.Controls.Add(classificationTabPage);
-            tabControl1.Dock = DockStyle.Fill;
-            tabControl1.ItemSize = new Size(150, 30);
-            tabControl1.Location = new Point(0, 33);
-            tabControl1.Multiline = true;
-            tabControl1.Name = "tabControl1";
-            tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1178, 679);
-            tabControl1.SizeMode = TabSizeMode.Fixed;
-            tabControl1.TabIndex = 7;
-            tabControl1.Selected += TabControl_Selected;
+            mainTabControl.Controls.Add(dataTabPage);
+            mainTabControl.Controls.Add(explorationTabPage);
+            mainTabControl.Controls.Add(classificationTabPage);
+            mainTabControl.Dock = DockStyle.Fill;
+            mainTabControl.ItemSize = new Size(150, 30);
+            mainTabControl.Location = new Point(0, 33);
+            mainTabControl.Multiline = true;
+            mainTabControl.Name = "mainTabControl";
+            mainTabControl.SelectedIndex = 0;
+            mainTabControl.Size = new Size(1178, 679);
+            mainTabControl.SizeMode = TabSizeMode.Fixed;
+            mainTabControl.TabIndex = 7;
+            mainTabControl.Selected += TabControl_Selected;
             // 
             // dataTabPage
             // 
@@ -401,7 +424,7 @@
             // 
             // explorationTabPage
             // 
-            explorationTabPage.Controls.Add(splitContainer3);
+            explorationTabPage.Controls.Add(explorationTabControl);
             explorationTabPage.Location = new Point(4, 34);
             explorationTabPage.Name = "explorationTabPage";
             explorationTabPage.Padding = new Padding(3);
@@ -410,52 +433,224 @@
             explorationTabPage.Text = "Exploration";
             explorationTabPage.UseVisualStyleBackColor = true;
             // 
-            // splitContainer3
+            // explorationTabControl
             // 
-            splitContainer3.Dock = DockStyle.Fill;
-            splitContainer3.FixedPanel = FixedPanel.Panel2;
-            splitContainer3.Location = new Point(3, 3);
-            splitContainer3.Name = "splitContainer3";
-            splitContainer3.Orientation = Orientation.Horizontal;
+            explorationTabControl.Controls.Add(tabPage1);
+            explorationTabControl.Controls.Add(tabPage2);
+            explorationTabControl.Controls.Add(tabPage3);
+            explorationTabControl.Controls.Add(tabPage4);
+            explorationTabControl.Dock = DockStyle.Fill;
+            explorationTabControl.ItemSize = new Size(135, 30);
+            explorationTabControl.Location = new Point(3, 3);
+            explorationTabControl.Name = "explorationTabControl";
+            explorationTabControl.SelectedIndex = 0;
+            explorationTabControl.Size = new Size(1164, 635);
+            explorationTabControl.SizeMode = TabSizeMode.Fixed;
+            explorationTabControl.TabIndex = 0;
             // 
-            // splitContainer3.Panel1
+            // tabPage1
             // 
-            splitContainer3.Panel1.Controls.Add(plotView1);
-            // 
-            // splitContainer3.Panel2
-            // 
-            splitContainer3.Panel2.Controls.Add(correlationDataGridView);
-            splitContainer3.Size = new Size(1164, 635);
-            splitContainer3.SplitterDistance = 435;
-            splitContainer3.TabIndex = 2;
-            // 
-            // plotView1
-            // 
-            plotView1.Dock = DockStyle.Fill;
-            plotView1.Location = new Point(0, 0);
-            plotView1.Name = "plotView1";
-            plotView1.PanCursor = Cursors.Hand;
-            plotView1.Size = new Size(1164, 435);
-            plotView1.TabIndex = 0;
-            plotView1.Text = "plotView1";
-            plotView1.ZoomHorizontalCursor = Cursors.SizeWE;
-            plotView1.ZoomRectangleCursor = Cursors.SizeNWSE;
-            plotView1.ZoomVerticalCursor = Cursors.SizeNS;
-            plotView1.DoubleClick += PlotView_DoubleClick;
+            tabPage1.Controls.Add(correlationDataGridView);
+            tabPage1.Location = new Point(4, 34);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(1156, 597);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Correlation";
+            tabPage1.UseVisualStyleBackColor = true;
             // 
             // correlationDataGridView
             // 
-            correlationDataGridView.AllowUserToAddRows = false;
-            correlationDataGridView.AllowUserToDeleteRows = false;
             correlationDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            correlationDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             correlationDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             correlationDataGridView.Dock = DockStyle.Fill;
-            correlationDataGridView.Location = new Point(0, 0);
+            correlationDataGridView.Location = new Point(3, 3);
             correlationDataGridView.Name = "correlationDataGridView";
-            correlationDataGridView.ReadOnly = true;
             correlationDataGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            correlationDataGridView.Size = new Size(1164, 196);
-            correlationDataGridView.TabIndex = 1;
+            correlationDataGridView.Size = new Size(1150, 591);
+            correlationDataGridView.TabIndex = 0;
+            // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(splitContainer3);
+            tabPage2.Location = new Point(4, 34);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(1156, 597);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "KDE";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer3
+            // 
+            splitContainer3.Dock = DockStyle.Fill;
+            splitContainer3.Location = new Point(3, 3);
+            splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            splitContainer3.Panel1.Controls.Add(kdeBandsListBox);
+            splitContainer3.Panel1.Controls.Add(kdeSingleButton);
+            splitContainer3.Panel1.Controls.Add(kdeProductButton);
+            splitContainer3.Panel1.Controls.Add(kdeMultivariateButton);
+            splitContainer3.Panel1.Controls.Add(kdeClearButton);
+            // 
+            // splitContainer3.Panel2
+            // 
+            splitContainer3.Panel2.Controls.Add(kdePlotView);
+            splitContainer3.Size = new Size(1150, 591);
+            splitContainer3.SplitterDistance = 383;
+            splitContainer3.TabIndex = 0;
+            // 
+            // kdeBandsListBox
+            // 
+            kdeBandsListBox.Dock = DockStyle.Fill;
+            kdeBandsListBox.FormattingEnabled = true;
+            kdeBandsListBox.Location = new Point(0, 0);
+            kdeBandsListBox.Name = "kdeBandsListBox";
+            kdeBandsListBox.SelectionMode = SelectionMode.MultiExtended;
+            kdeBandsListBox.Size = new Size(383, 454);
+            kdeBandsListBox.TabIndex = 0;
+            // 
+            // kdeSingleButton
+            // 
+            kdeSingleButton.AutoSize = true;
+            kdeSingleButton.Dock = DockStyle.Bottom;
+            kdeSingleButton.Location = new Point(0, 454);
+            kdeSingleButton.Name = "kdeSingleButton";
+            kdeSingleButton.Size = new Size(383, 35);
+            kdeSingleButton.TabIndex = 1;
+            kdeSingleButton.Text = "Single";
+            kdeSingleButton.UseVisualStyleBackColor = true;
+            kdeSingleButton.Click += KdeSingle;
+            // 
+            // kdeProductButton
+            // 
+            kdeProductButton.Dock = DockStyle.Bottom;
+            kdeProductButton.Location = new Point(0, 489);
+            kdeProductButton.Name = "kdeProductButton";
+            kdeProductButton.Size = new Size(383, 34);
+            kdeProductButton.TabIndex = 2;
+            kdeProductButton.Text = "Product";
+            kdeProductButton.UseVisualStyleBackColor = true;
+            kdeProductButton.Click += KdeProduct;
+            // 
+            // kdeMultivariateButton
+            // 
+            kdeMultivariateButton.Dock = DockStyle.Bottom;
+            kdeMultivariateButton.Location = new Point(0, 523);
+            kdeMultivariateButton.Name = "kdeMultivariateButton";
+            kdeMultivariateButton.Size = new Size(383, 34);
+            kdeMultivariateButton.TabIndex = 8;
+            kdeMultivariateButton.Text = "Multivar";
+            kdeMultivariateButton.UseVisualStyleBackColor = true;
+            kdeMultivariateButton.Click += KdeMultivariate;
+            // 
+            // kdeClearButton
+            // 
+            kdeClearButton.Dock = DockStyle.Bottom;
+            kdeClearButton.Location = new Point(0, 557);
+            kdeClearButton.Name = "kdeClearButton";
+            kdeClearButton.Size = new Size(383, 34);
+            kdeClearButton.TabIndex = 9;
+            kdeClearButton.Text = "Clear";
+            kdeClearButton.UseVisualStyleBackColor = true;
+            kdeClearButton.Click += ClearKdePlot;
+            // 
+            // kdePlotView
+            // 
+            kdePlotView.Dock = DockStyle.Fill;
+            kdePlotView.Location = new Point(0, 0);
+            kdePlotView.Name = "kdePlotView";
+            kdePlotView.PanCursor = Cursors.Hand;
+            kdePlotView.Size = new Size(763, 591);
+            kdePlotView.TabIndex = 1;
+            kdePlotView.Text = "plotView1";
+            kdePlotView.ZoomHorizontalCursor = Cursors.SizeWE;
+            kdePlotView.ZoomRectangleCursor = Cursors.SizeNWSE;
+            kdePlotView.ZoomVerticalCursor = Cursors.SizeNS;
+            kdePlotView.DoubleClick += PlotView_DoubleClick;
+            // 
+            // tabPage3
+            // 
+            tabPage3.Controls.Add(splitContainer5);
+            tabPage3.Location = new Point(4, 34);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(3);
+            tabPage3.Size = new Size(1156, 597);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "Scatter Plot";
+            tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer5
+            // 
+            splitContainer5.Dock = DockStyle.Fill;
+            splitContainer5.Location = new Point(3, 3);
+            splitContainer5.Name = "splitContainer5";
+            // 
+            // splitContainer5.Panel1
+            // 
+            splitContainer5.Panel1.Controls.Add(buildScatterButton);
+            splitContainer5.Panel1.Controls.Add(scatterYComboBox);
+            splitContainer5.Panel1.Controls.Add(scatterXComboBox);
+            // 
+            // splitContainer5.Panel2
+            // 
+            splitContainer5.Panel2.Controls.Add(scatterPlotView);
+            splitContainer5.Size = new Size(1150, 591);
+            splitContainer5.SplitterDistance = 383;
+            splitContainer5.TabIndex = 0;
+            // 
+            // buildScatterButton
+            // 
+            buildScatterButton.Location = new Point(92, 293);
+            buildScatterButton.Name = "buildScatterButton";
+            buildScatterButton.Size = new Size(112, 34);
+            buildScatterButton.TabIndex = 2;
+            buildScatterButton.Text = "Build";
+            buildScatterButton.UseVisualStyleBackColor = true;
+            buildScatterButton.Click += BuildScatterPlot;
+            // 
+            // scatterYComboBox
+            // 
+            scatterYComboBox.FormattingEnabled = true;
+            scatterYComboBox.Location = new Point(93, 137);
+            scatterYComboBox.Name = "scatterYComboBox";
+            scatterYComboBox.Size = new Size(182, 33);
+            scatterYComboBox.TabIndex = 1;
+            // 
+            // scatterXComboBox
+            // 
+            scatterXComboBox.FormattingEnabled = true;
+            scatterXComboBox.Location = new Point(93, 83);
+            scatterXComboBox.Name = "scatterXComboBox";
+            scatterXComboBox.Size = new Size(182, 33);
+            scatterXComboBox.TabIndex = 0;
+            // 
+            // scatterPlotView
+            // 
+            scatterPlotView.Dock = DockStyle.Fill;
+            scatterPlotView.Location = new Point(0, 0);
+            scatterPlotView.Name = "scatterPlotView";
+            scatterPlotView.PanCursor = Cursors.Hand;
+            scatterPlotView.Size = new Size(763, 591);
+            scatterPlotView.TabIndex = 2;
+            scatterPlotView.Text = "plotView1";
+            scatterPlotView.ZoomHorizontalCursor = Cursors.SizeWE;
+            scatterPlotView.ZoomRectangleCursor = Cursors.SizeNWSE;
+            scatterPlotView.ZoomVerticalCursor = Cursors.SizeNS;
+            scatterPlotView.DoubleClick += PlotView_DoubleClick;
+            // 
+            // tabPage4
+            // 
+            tabPage4.Location = new Point(4, 34);
+            tabPage4.Name = "tabPage4";
+            tabPage4.Padding = new Padding(3);
+            tabPage4.Size = new Size(1156, 597);
+            tabPage4.TabIndex = 3;
+            tabPage4.Text = "Profile";
+            tabPage4.UseVisualStyleBackColor = true;
             // 
             // classificationTabPage
             // 
@@ -573,7 +768,7 @@
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1178, 744);
-            Controls.Add(tabControl1);
+            Controls.Add(mainTabControl);
             Controls.Add(statusStrip1);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
@@ -586,7 +781,7 @@
             statusStrip1.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox2.ResumeLayout(false);
-            tabControl1.ResumeLayout(false);
+            mainTabControl.ResumeLayout(false);
             dataTabPage.ResumeLayout(false);
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
@@ -607,11 +802,20 @@
             toolStrip1.PerformLayout();
             histogramTabPage.ResumeLayout(false);
             explorationTabPage.ResumeLayout(false);
+            explorationTabControl.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)correlationDataGridView).EndInit();
+            tabPage2.ResumeLayout(false);
             splitContainer3.Panel1.ResumeLayout(false);
+            splitContainer3.Panel1.PerformLayout();
             splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
             splitContainer3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)correlationDataGridView).EndInit();
+            tabPage3.ResumeLayout(false);
+            splitContainer5.Panel1.ResumeLayout(false);
+            splitContainer5.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer5).EndInit();
+            splitContainer5.ResumeLayout(false);
             classificationTabPage.ResumeLayout(false);
             splitContainer4.Panel1.ResumeLayout(false);
             splitContainer4.Panel1.PerformLayout();
@@ -635,7 +839,7 @@
         private PropertyGrid bandPropertyGrid;
         private GroupBox groupBox1;
         private GroupBox groupBox2;
-        private TabControl tabControl1;
+        private TabControl mainTabControl;
         private TabPage dataTabPage;
         private SplitContainer splitContainer1;
         private SplitContainer splitContainer2;
@@ -654,9 +858,6 @@
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripButton toolStripButton1;
         private OxyPlot.WindowsForms.PlotView histogramPlotView;
-        private OxyPlot.WindowsForms.PlotView plotView1;
-        private DataGridView correlationDataGridView;
-        private SplitContainer splitContainer3;
         private TabPage classificationTabPage;
         private Forms.Viewport viewport1;
         private SplitContainer splitContainer4;
@@ -668,5 +869,23 @@
         private Button button1;
         private Label label3;
         private ComboBox comboBox3;
+        private TabControl explorationTabControl;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private TabPage tabPage3;
+        private TabPage tabPage4;
+        private DataGridView correlationDataGridView;
+        private SplitContainer splitContainer3;
+        private ListBox kdeBandsListBox;
+        private Button kdeProductButton;
+        private Button kdeSingleButton;
+        private Button kdeMultivariateButton;
+        private Button kdeClearButton;
+        private OxyPlot.WindowsForms.PlotView kdePlotView;
+        private SplitContainer splitContainer5;
+        private ComboBox scatterYComboBox;
+        private ComboBox scatterXComboBox;
+        private Button buildScatterButton;
+        private OxyPlot.WindowsForms.PlotView scatterPlotView;
     }
 }

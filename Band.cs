@@ -148,6 +148,12 @@ namespace modified_structure_analysis
             _spatialData[(x, y)] = value;
         }
 
+        public void SetMinMax(float min, float max)
+        {
+            _minimum = min;
+            _maximum = max;
+        }
+
         public void SetGeoTransform(GeoTransform transform)
         {
             _geoTransform = transform;
@@ -169,14 +175,20 @@ namespace modified_structure_analysis
         public void SetPixelValue(int x, int y, float value)
         {
             int idx = y * _originalWidth + x;
-            if (idx >= 0 && idx < _pixelValues!.Length)
+            SetValueAt(idx, value);
+        }
+
+        public void SetValueAt(int index, float value)
+        {
+            if (index >= 0 && index < _pixelValues!.Length)
             {
-                _pixelValues[idx] = value;
+                _pixelValues[index] = value;
                 if (!float.IsNaN(value))
                 {
                     _sum += value;
                     _minimum = MathF.Min(value, _minimum);
                     _maximum = MathF.Max(value, _maximum);
+                    _count++;
                 }
             }
         }
