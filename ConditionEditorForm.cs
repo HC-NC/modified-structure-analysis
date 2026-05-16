@@ -246,8 +246,9 @@ public class ConditionEditorForm : Form
 
         if (_rightConstantRadio.Checked)
         {
-            if (double.TryParse(_rightConstantTextBox.Text, out double val))
-                ResultCondition.RightSide.ConstantValue = val;
+            if (!double.TryParse(_rightConstantTextBox.Text, out double val))
+                val = 0.0;
+            ResultCondition.RightSide.ConstantValue = val;
         }
         else
         {

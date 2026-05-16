@@ -865,119 +865,70 @@ namespace modified_structure_analysis
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Band band1 = comboBox1.SelectedItem as Band;
-            Band band2 = comboBox2.SelectedItem as Band;
-            Band band3 = comboBox3.SelectedItem as Band;
-
-            if (band1 == null || band2 == null || band3 == null || band1 == band2 || band1 == band3 || band2 == band3)
+            if (_classificationRules.Count == 0)
             {
-                MessageBox.Show("Error!!!");
+                MessageBox.Show("No classification rules defined. Please add rules first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            backgroundWorker.RunWorkerAsync(new ClassificationParams(band1, band2, band3));
-        }
-
-        private class ClassificationParams
-        {
-            public Band Band1 { get; }
-            public Band Band2 { get; }
-            public Band Band3 { get; }
-
-            public ClassificationParams(Band b1, Band b2, Band b3)
+            if (_bands.Count == 0)
             {
-                Band1 = b1;
-                Band2 = b2;
-                Band3 = b3;
+                MessageBox.Show("No bands loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
+
+            backgroundWorker.RunWorkerAsync(_classificationRules);
         }
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker? worker = sender as BackgroundWorker;
-            ClassificationParams? p = e.Argument as ClassificationParams;
+            List<ClassificationRule>? rules = e.Argument as List<ClassificationRule>;
 
-            if (worker == null || p == null)
+            if (worker == null || rules == null || _bands.Count == 0)
                 return;
 
-            Bitmap bitmap = new Bitmap(_width, _height);
-            Rectangle rect = new Rectangle(0, 0, _width, _height);
+            var engine = new ClassificationEngine(_bands, rules);
+            var result = engine.Run();
+
+            worker.ReportProgress(50, "Generating bitmap...");
+
+            Bitmap bitmap = new Bitmap(result.Width, result.Height);
+            Rectangle rect = new Rectangle(0, 0, result.Width, result.Height);
             System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
             IntPtr ptr = bmpData.Scan0;
-            int bytes = Math.Abs(bmpData.Stride) * _height;
+            int bytes = Math.Abs(bmpData.Stride) * result.Height;
             byte[] rgbValues = new byte[bytes];
 
-            Marshal.Copy(ptr, rgbValues, 0, bytes);
-
-            int prog = 0;
-
-            Parallel.For(0, _height, (y, state) =>
+            for (int y = 0; y < result.Height; y++)
             {
-                for (int x = 0; x < _width; x++)
+                for (int x = 0; x < result.Width; x++)
                 {
-                    int i = y * _width + x;
-
-                    float band1v = p.Band1.GetNormalizedValue(i);
-                    float band2v = p.Band2.GetNormalizedValue(i);
-                    float band3v = p.Band3.GetNormalizedValue(i);
-
-                    double band1p = 0;
-                    double band2p = 0;
-                    double band3p = 0;
-
-                    for (int j = 0; j < p.Band1.Count; j++)
-                    {
-                        if (i == j)
-                            continue;
-
-                        band1p += KernelFunctions.GetKernel(p.Band1.KernelType, (band1v - p.Band1.GetNormalizedValue(j)) / p.Band1.NormalizeKernelC);
-                        band2p += KernelFunctions.GetKernel(p.Band2.KernelType, (band2v - p.Band2.GetNormalizedValue(j)) / p.Band2.NormalizeKernelC);
-                        band3p += KernelFunctions.GetKernel(p.Band3.KernelType, (band3v - p.Band3.GetNormalizedValue(j)) / p.Band3.NormalizeKernelC);
-                    }
-
-                    band1p /= p.Band1.Count * p.Band1.NormalizeKernelC;
-                    band2p /= p.Band2.Count * p.Band2.NormalizeKernelC;
-                    band3p /= p.Band3.Count * p.Band3.NormalizeKernelC;
+                    int i = y * result.Width + x;
+                    Color color = result.GetPixelColor(i);
 
                     int idx = (y * bmpData.Stride) + (x * 4);
-
-                    if (band1p > band2p && band1p > band3p)
-                    {
-                        rgbValues[idx] = 0;
-                        rgbValues[idx + 1] = 0;
-                        rgbValues[idx + 2] = 255;
-                    }
-                    else if (band2p > band1p && band2p > band3p)
-                    {
-                        rgbValues[idx] = 0;
-                        rgbValues[idx + 1] = 255;
-                        rgbValues[idx + 2] = 0;
-                    }
-                    else if (band3p > band1p && band3p > band2p)
-                    {
-                        rgbValues[idx] = 255;
-                        rgbValues[idx + 1] = 0;
-                        rgbValues[idx + 2] = 0;
-                    }
-                    else
-                    {
-                        rgbValues[idx] = 0;
-                        rgbValues[idx + 1] = 0;
-                        rgbValues[idx + 2] = 0;
-                    }
-                    rgbValues[idx + 3] = 255;
+                    rgbValues[idx] = color.B;
+                    rgbValues[idx + 1] = color.G;
+                    rgbValues[idx + 2] = color.R;
+                    rgbValues[idx + 3] = color.A;
                 }
 
-                prog++;
+                if (worker.CancellationPending)
+                {
+                    e.Cancel = true;
+                    bitmap.UnlockBits(bmpData);
+                    return;
+                }
 
-                worker.ReportProgress((int)((prog) * 100.0 / _height), $"Classification: {prog}/{_height}");
-            });
+                worker.ReportProgress(50 + (y * 50 / result.Height), $"Rendering: {y}/{result.Height}");
+            }
 
             Marshal.Copy(rgbValues, 0, ptr, bytes);
             bitmap.UnlockBits(bmpData);
 
-            e.Result = bitmap;
+            e.Result = (bitmap, result);
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -992,7 +943,20 @@ namespace modified_structure_analysis
             }
             else
             {
-                viewport2.UpdateImage(e.Result as Bitmap);
+                if (e.Result is ValueTuple<Bitmap, ClassificationResult> result)
+                {
+                    viewport2.UpdateImage(result.Item1);
+
+                    var stats = result.Item2.GetClassStatistics();
+                    var statsText = "Classification Statistics:\n";
+                    for (int i = 0; i < result.Item2.Rules.Count; i++)
+                    {
+                        string ruleName = result.Item2.Rules[i].GenerateName();
+                        statsText += $"Class {i} ({ruleName}): {stats.GetValueOrDefault(i, 0)} pixels\n";
+                    }
+                    statsText += $"Undefined: {stats.GetValueOrDefault(-1, 0)} pixels";
+                    MessageBox.Show(statsText, "Classification Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
         }
 
