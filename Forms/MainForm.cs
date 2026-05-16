@@ -27,6 +27,8 @@ namespace modified_structure_analysis
 
         private GeoTransform? _geoTransform;
 
+        private List<ClassificationRule> _classificationRules = new();
+
         private PlotModel _kdeModel;
 
         public MainForm()
@@ -44,6 +46,57 @@ namespace modified_structure_analysis
             _kdeModel.Axes.Add(new LinearAxis { Key = "Y", Position = AxisPosition.Left, Title = "Density", Minimum = 0d });
             _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
             kdePlotView.Model = _kdeModel;
+
+            dataGridView1.CellClick += DataGridView1_CellClick;
+        }
+
+        private void DataGridView1_CellClick(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            if (e.ColumnIndex == 2)
+            {
+                var rule = _classificationRules[e.RowIndex];
+                var editor = new RuleEditorForm(_bands, rule);
+                if (editor.ShowDialog() == DialogResult.OK)
+                {
+                    UpdateClassificationRulesGrid();
+                }
+            }
+        }
+
+        private void AddClassificationRule(object sender, EventArgs e)
+        {
+            var editor = new RuleEditorForm(_bands, null);
+            if (editor.ShowDialog() == DialogResult.OK)
+            {
+                _classificationRules.Add(editor.ResultRule);
+                UpdateClassificationRulesGrid();
+            }
+        }
+
+        private void UpdateClassificationRulesGrid()
+        {
+            dataGridView1.Rows.Clear();
+            foreach (var rule in _classificationRules)
+            {
+                int rowIndex = dataGridView1.Rows.Add();
+                var row = dataGridView1.Rows[rowIndex];
+
+                row.Cells[0].Value = CreateColorBitmap(rule.Color);
+                row.Cells[1].Value = rule.GenerateName();
+            }
+        }
+
+        private Bitmap CreateColorBitmap(Color color)
+        {
+            Bitmap bmp = new Bitmap(20, 20);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.Clear(color);
+                g.DrawRectangle(Pens.Black, 0, 0, 19, 19);
+            }
+            return bmp;
         }
 
         private void BuildScatterPlot(object? sender, EventArgs e)

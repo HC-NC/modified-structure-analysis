@@ -81,6 +81,7 @@
             scatterPlotView = new OxyPlot.WindowsForms.PlotView();
             classificationTabPage = new TabPage();
             splitContainer4 = new SplitContainer();
+            button2 = new Button();
             dataGridView1 = new DataGridView();
             ColorColumn = new DataGridViewImageColumn();
             NameColumn = new DataGridViewTextBoxColumn();
@@ -734,6 +735,7 @@
             // 
             // splitContainer4.Panel1
             // 
+            splitContainer4.Panel1.Controls.Add(button2);
             splitContainer4.Panel1.Controls.Add(dataGridView1);
             splitContainer4.Panel1.Controls.Add(groupBox5);
             // 
@@ -744,6 +746,16 @@
             splitContainer4.SplitterDistance = 300;
             splitContainer4.TabIndex = 0;
             // 
+            // button2
+            // 
+            button2.Location = new Point(47, 25);
+            button2.Name = "button2";
+            button2.Size = new Size(112, 34);
+            button2.TabIndex = 9;
+            button2.Text = "button2";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += AddClassificationRule;
+            // 
             // dataGridView1
             // 
             dataGridView1.AllowUserToAddRows = false;
@@ -752,7 +764,7 @@
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { ColorColumn, NameColumn, EditColumn });
-            dataGridView1.Location = new Point(6, 26);
+            dataGridView1.Location = new Point(6, 74);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.RowHeadersWidth = 62;
@@ -1125,5 +1137,6 @@
         private DataGridViewImageColumn ColorColumn;
         private DataGridViewTextBoxColumn NameColumn;
         private DataGridViewButtonColumn EditColumn;
+        private Button button2;
     }
 }
