@@ -243,31 +243,31 @@ namespace modified_structure_analysis
             _minimum = float.MaxValue;
             _maximum = float.MinValue;
 
-            foreach (float v in _pixelValues)
+            Parallel.ForEach(_pixelValues, (v) =>
             {
-                if (!float.IsNaN(v))
+                if (!float.IsNaN(v) && v > 0)
                 {
                     _count++;
                     _sum += v;
                     _minimum = MathF.Min(v, _minimum);
                     _maximum = MathF.Max(v, _maximum);
                 }
-            }
+            });
 
             if (_count == 0)
                 return;
 
             _mean = _sum / _count;
 
-            foreach (float v in _pixelValues)
+            Parallel.ForEach(_pixelValues, (v) =>
             {
-                if (!float.IsNaN(v))
+                if (!float.IsNaN(v) && v > 0)
                 {
                     _variance += MathF.Pow(v - _mean, 2);
                     _skewness += MathF.Pow(v - _mean, 3);
                     _kurtosis += MathF.Pow(v - _mean, 4);
                 }
-            }
+            });
 
             _variance /= _count - 1;
 

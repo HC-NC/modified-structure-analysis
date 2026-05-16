@@ -33,7 +33,8 @@ namespace modified_structure_analysis
         {
             InitializeComponent();
 
-            openFileDialog1.Filter = "All|*.tif;*.csv;*.txt|GeoTIFF|*.tif|CSV|*.csv|Text file|*.txt";
+            openFileDialog1.Filter = "All|*.tif;*.tiff;*.img;*.csv;*.txt|GeoTIFF|*.tif;*.tiff|ERDAS|*.img|CSV|*.csv|Text file|*.txt";
+            openFileDialog1.Multiselect = true;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -73,7 +74,7 @@ namespace modified_structure_analysis
             }
 
             model.Series.Add(scatterSeries);
-            
+
             scatterPlotView.Model = model;
         }
 
@@ -293,7 +294,11 @@ namespace modified_structure_analysis
                     rgbValues[idx] = b;
                     rgbValues[idx + 1] = g;
                     rgbValues[idx + 2] = r;
-                    rgbValues[idx + 3] = 255;
+
+                    if (r == 0 && g == 0 && b == 0)
+                        rgbValues[idx + 3] = 0;
+                    else
+                        rgbValues[idx + 3] = 255;
                 }
             }
 
@@ -317,21 +322,42 @@ namespace modified_structure_analysis
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 _bands.Clear();
-
+                _geoTransform = null;
                 correlationDataGridView.Columns.Clear();
 
-                switch (Path.GetExtension(openFileDialog1.FileName).ToLower())
+                string[] fileNames = openFileDialog1.FileNames;
+
+                foreach (string fileName in fileNames)
                 {
-                    case ".txt":
-                        ReadTextFile('\t');
-                        break;
-                    case ".csv":
-                        ReadCsvFile();
-                        break;
-                    case ".tif":
-                    case ".tiff":
-                        ReadGeoTiff();
-                        break;
+                    string ext = Path.GetExtension(fileName).ToLower();
+
+                    switch (ext)
+                    {
+                        case ".txt":
+                        case ".csv":
+                            if (_bands.Count > 0)
+                            {
+                                MessageBox.Show("Cannot mix text files with image files. Please open them separately.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                _bands.Clear();
+                                return;
+                            }
+                            if (ext == ".csv")
+                                ReadCsvFile(fileName);
+                            else
+                                ReadTextFile(fileName, '\t');
+                            break;
+                        case ".tif":
+                        case ".tiff":
+                        case ".img":
+                            if (_geoTransform != null && (_bands.Count > 0 && _bands[0].GeoTransform == null))
+                            {
+                                MessageBox.Show("Cannot mix text files with image files. Please open them separately.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                _bands.Clear();
+                                return;
+                            }
+                            LoadGeoTiff(fileName);
+                            break;
+                    }
                 }
 
                 if (_bands.Count == 0)
@@ -344,7 +370,7 @@ namespace modified_structure_analysis
             }
         }
 
-        private void ReadCsvFile()
+        private void ReadCsvFile(string fileName)
         {
             var delimSelector = new DelimiterSelector();
             if (delimSelector.ShowDialog() != DialogResult.OK)
@@ -357,60 +383,80 @@ namespace modified_structure_analysis
                 _ => '\t'
             };
 
-            ReadTextFile(delimiter);
+            ReadTextFile(fileName, delimiter);
         }
 
-        private void ReadGeoTiff()
+        private void LoadGeoTiff(string fileName)
         {
             try
             {
                 Gdal.AllRegister();
 
-                using (Dataset ds = Gdal.Open(openFileDialog1.FileName, Access.GA_ReadOnly))
+                using (Dataset ds = Gdal.Open(fileName, Access.GA_ReadOnly))
                 {
                     if (ds == null)
                     {
-                        MessageBox.Show("Error: Cannot open GeoTIFF file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Error: Cannot open GeoTIFF file: {fileName}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
-                    _width = ds.RasterXSize;
-                    _height = ds.RasterYSize;
+                    int width = ds.RasterXSize;
+                    int height = ds.RasterYSize;
 
                     double[] geoTransform = new double[6];
                     ds.GetGeoTransform(geoTransform);
 
-                    _geoTransform = GeoTransform.FromGdalArray(geoTransform);
-                    _geoTransform.ProjectionWkt = ds.GetProjection();
-                    _geoTransform.ProjectionName = ds.GetProjectionRef();
+                    GeoTransform newGeoTransform = GeoTransform.FromGdalArray(geoTransform);
+                    newGeoTransform.ProjectionWkt = ds.GetProjection();
+                    newGeoTransform.ProjectionName = ds.GetProjectionRef();
+
+                    if (_geoTransform != null)
+                    {
+                        if (!IsGeoTransformEqual(_geoTransform, newGeoTransform))
+                        {
+                            MessageBox.Show($"Error: GeoTransform mismatch!\n\nFile: {Path.GetFileName(fileName)}\nExpected: Origin=({_geoTransform.OriginX}, {_geoTransform.OriginY}), PixelSize=({_geoTransform.PixelSizeX}, {_geoTransform.PixelSizeY})\nGot: Origin=({newGeoTransform.OriginX}, {newGeoTransform.OriginY}), PixelSize=({newGeoTransform.PixelSizeX}, {newGeoTransform.PixelSizeY})",
+                                "GeoTransform Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        if (!string.IsNullOrEmpty(_geoTransform.ProjectionWkt) && !string.IsNullOrEmpty(newGeoTransform.ProjectionWkt))
+                        {
+                            if (_geoTransform.ProjectionWkt != newGeoTransform.ProjectionWkt)
+                            {
+                                MessageBox.Show($"Error: Projection mismatch!\n\nFile: {Path.GetFileName(fileName)}\nExpected: {_geoTransform.ProjectionName}\nGot: {newGeoTransform.ProjectionName}",
+                                    "Projection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _geoTransform = newGeoTransform;
+                        _width = width;
+                        _height = height;
+                        _cellSize = Math.Abs(_geoTransform.PixelSizeX);
+                    }
 
                     for (int i = 1; i <= ds.RasterCount; i++)
                     {
                         using (GdalBand gdalBand = ds.GetRasterBand(i))
                         {
-                            string bandName = gdalBand.GetDescription();
-                            if (string.IsNullOrWhiteSpace(bandName))
-                            {
-                                ColorInterp colorInterp = gdalBand.GetRasterColorInterpretation();
-                                bandName = colorInterp switch
-                                {
-                                    ColorInterp.GCI_RedBand => "Red",
-                                    ColorInterp.GCI_GreenBand => "Green",
-                                    ColorInterp.GCI_BlueBand => "Blue",
-                                    ColorInterp.GCI_AlphaBand => "Alpha",
-                                    ColorInterp.GCI_GrayIndex => "Grayscale",
-                                    _ => $"Band {i}"
-                                };
-                            }
+                            string bandName = Path.GetFileNameWithoutExtension(fileName);
+                            if (ds.RasterCount > 1)
+                                bandName += $"_{i}";
+
+                            string desc = gdalBand.GetDescription();
+                            if (!string.IsNullOrWhiteSpace(desc))
+                                bandName = desc;
 
                             double[] minmax = new double[2];
                             gdalBand.ComputeRasterMinMax(minmax, 0);
 
-                            float[] values = new float[_width * _height];
-                            gdalBand.ReadRaster(0, 0, _width, _height, values, _width, _height, 0, 0);
+                            float[] values = new float[width * height];
+                            gdalBand.ReadRaster(0, 0, width, height, values, width, height, 0, 0);
 
                             Band band = new Band(bandName);
-                            band.SetDimensions(_width, _height);
+                            band.SetDimensions(width, height);
                             band.SetGeoTransform(_geoTransform);
                             band.SetMinMax((float)minmax[0], (float)minmax[1]);
                             for (int idx = 0; idx < values.Length; idx++)
@@ -421,8 +467,6 @@ namespace modified_structure_analysis
                         }
                     }
                 }
-
-                _cellSize = Math.Abs(_geoTransform.PixelSizeX);
             }
             catch (Exception ex)
             {
@@ -430,9 +474,18 @@ namespace modified_structure_analysis
             }
         }
 
-        private void ReadTextFile(char delimiter = '\t')
+        private bool IsGeoTransformEqual(GeoTransform gt1, GeoTransform gt2)
         {
-            StreamReader reader = new StreamReader(openFileDialog1.FileName);
+            const double eps = 1e-6;
+            return Math.Abs(gt1.OriginX - gt2.OriginX) < eps &&
+                   Math.Abs(gt1.OriginY - gt2.OriginY) < eps &&
+                   Math.Abs(gt1.PixelSizeX - gt2.PixelSizeX) < eps &&
+                   Math.Abs(gt1.PixelSizeY - gt2.PixelSizeY) < eps;
+        }
+
+        private void ReadTextFile(string fileName, char delimiter = '\t')
+        {
+            StreamReader reader = new StreamReader(fileName);
 
             List<string> hd = new List<string>();
 
@@ -622,35 +675,37 @@ namespace modified_structure_analysis
             int columnsCount = BrooksCarrutherDivisionRule(band.Count);
             float columnsWidth = (band.Maximum - band.Minimum) / columnsCount;
 
+            int[] pointses = new int[columnsCount];
+            int[] asseses = new int[columnsCount];
+
+            for(int i = 0; i < band.Count; i++)
+            {
+                float x = band.GetValue(i);
+
+                if (x == 0)
+                    continue;
+
+                for (int j = 0; j < columnsCount; j++)
+                {
+                    float min = j * columnsWidth + band.Minimum;
+
+                    if (min <= x && x < min + columnsWidth)
+                        pointses[j]++;
+
+                    if (x <= min)
+                        asseses[j]++;
+                }
+            }
+
             var histSeries = new HistogramSeries();
             var lineSeries = new LineSeries();
 
-            int pointsCount;
-            float assesCount;
-
-            float min;
-            float x;
-
             for (int i = 0; i < columnsCount; i++)
             {
-                pointsCount = 0;
-                assesCount = 0;
+                float min = i * columnsWidth + band.Minimum;
 
-                min = i * columnsWidth + band.Minimum;
-
-                for (int j = 0; j < band.Count; j++)
-                {
-                    x = band.GetValue(j);
-
-                    if (min <= x && x < min + columnsWidth)
-                        pointsCount++;
-
-                    if (x <= min)
-                        assesCount++;
-                }
-
-                histSeries.Items.Add(new HistogramItem(min, min + columnsWidth, (float)pointsCount / band.Count, pointsCount));
-                lineSeries.Points.Add(new DataPoint(min, assesCount / band.Count));
+                histSeries.Items.Add(new HistogramItem(min, min + columnsWidth, (float)pointses[i] / band.Count, pointses[i]));
+                lineSeries.Points.Add(new DataPoint(min, (float)asseses[i] / band.Count));
             }
 
             PlotModel plot = new PlotModel();
@@ -754,8 +809,6 @@ namespace modified_structure_analysis
         {
             return (int)(Math.Sqrt(v));
         }
-
-
 
         private void button1_Click(object sender, EventArgs e)
         {
