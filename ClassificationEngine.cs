@@ -9,7 +9,7 @@ public class ClassificationEngine
     private int _width;
     private int _height;
 
-    private const int SingleValueCacheSteps = 1000;
+    private int _singleCacheSteps;
 
     private ConcurrentDictionary<(int bandIndex, int valueIndex), float> _singleDensityCache = new();
     private ConcurrentDictionary<(List<int> bandIndices, int pixelIndex), float> _productDensityCache = new();
@@ -29,6 +29,16 @@ public class ClassificationEngine
             _width = _bands[0].OriginalWidth;
             _height = _bands[0].OriginalHeight;
         }
+
+        float avgKernelC = 0;
+        foreach (var band in _bands)
+            avgKernelC += band.NormalizeKernelC;
+        avgKernelC = _bands.Count > 0 ? avgKernelC / _bands.Count : 0.01f;
+
+        _singleCacheSteps = Math.Clamp((int)(500 / avgKernelC), 100, 5000);
+
+        int totalPixels = _width * _height;
+        _sampleSize = Math.Min(totalPixels, Math.Max(2000, (int)(Math.Sqrt(totalPixels) * 4)));
     }
 
     public ClassificationResult Run()
@@ -121,7 +131,7 @@ public class ClassificationEngine
             return 0;
 
         float normalizedValue = _bands[bandIndex].GetNormalizedValue(pixelIndex);
-        int valueIndex = (int)(normalizedValue * SingleValueCacheSteps);
+        int valueIndex = (int)(normalizedValue * _singleCacheSteps);
 
         var key = (bandIndex, valueIndex);
         if (_singleDensityCache.TryGetValue(key, out float cached))
@@ -216,8 +226,6 @@ public class ClassificationEngine
 
     private void InitializeSampleIndices(int totalPixels)
     {
-        _sampleSize = Math.Max(100, (int)Math.Sqrt(totalPixels));
-        _sampleSize = Math.Min(_sampleSize, totalPixels);
         _sampleIndices = new int[_sampleSize];
 
         if (_sampleSize == totalPixels)
@@ -227,13 +235,28 @@ public class ClassificationEngine
         }
         else
         {
-            var random = new Random(42);
+            var random = new Random(Guid.NewGuid().GetHashCode());
             var indices = new HashSet<int>();
             while (indices.Count < _sampleSize)
             {
                 indices.Add(random.Next(totalPixels));
             }
             indices.CopyTo(_sampleIndices);
+        }
+
+        _sampleInitialized = true;
+    }
+
+    public void ReshuffleSamples()
+    {
+        int totalPixels = _width * _height;
+        if (_sampleSize == totalPixels) return;
+
+        var random = new Random(Guid.NewGuid().GetHashCode());
+        for (int i = _sampleSize - 1; i > 0; i--)
+        {
+            int j = random.Next(i + 1);
+            (_sampleIndices[i], _sampleIndices[j]) = (_sampleIndices[j], _sampleIndices[i]);
         }
     }
 
