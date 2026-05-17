@@ -264,17 +264,9 @@ namespace modified_structure_analysis
             greenToolStripDropDownButton.DropDownItems.Clear();
             blueToolStripDropDownButton.DropDownItems.Clear();
 
-            comboBox1.Items.Clear();
-            comboBox2.Items.Clear();
-            comboBox3.Items.Clear();
-
             scatterXListBox.Items.Clear();
             scatterYListBox.Items.Clear();
             kdeBandsListBox.Items.Clear();
-
-            comboBox1.SelectedItem = null;
-            comboBox2.SelectedItem = null;
-            comboBox3.SelectedItem = null;
 
             if (_bands.Count == 0)
                 return;
@@ -311,10 +303,6 @@ namespace modified_structure_analysis
                 kdeBandsListBox.Items.Add(band);
 
                 correlationDataGridView.Columns.Add(new DataGridViewTextBoxColumn() { HeaderText = band.Name });
-
-                comboBox1.Items.Add(band);
-                comboBox2.Items.Add(band);
-                comboBox3.Items.Add(band);
             }
 
             bandListBox.SelectedIndex = 0;

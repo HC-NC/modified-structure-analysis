@@ -112,7 +112,7 @@ public class ConditionEditorForm : Form
         top += 25;
 
         var lblRightConst = new Label { Left = left, Top = top, Width = labelW, Text = "Value:" };
-        _rightConstantTextBox = new TextBox { Left = left + labelW, Top = top, Width = 80, Text = "0.5" };
+        _rightConstantTextBox = new TextBox { Left = left + labelW, Top = top, Width = 80, Text = "0,5" };
         top += 30;
 
         _rightDensityTypeComboBox = new ComboBox { Left = left, Top = top, Width = 150 };
@@ -156,7 +156,6 @@ public class ConditionEditorForm : Form
     private void UpdateLeftVisibility()
     {
         bool isSingle = _leftDensityTypeComboBox.SelectedIndex == 0;
-        _leftBandsListBox.Enabled = !isSingle;
     }
 
     private void UpdateRightVisibility()

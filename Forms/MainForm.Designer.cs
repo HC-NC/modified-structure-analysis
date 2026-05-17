@@ -81,20 +81,10 @@
             scatterPlotView = new OxyPlot.WindowsForms.PlotView();
             classificationTabPage = new TabPage();
             splitContainer4 = new SplitContainer();
-            button2 = new Button();
             dataGridView1 = new DataGridView();
             ColorColumn = new DataGridViewImageColumn();
             NameColumn = new DataGridViewTextBoxColumn();
             EditColumn = new DataGridViewButtonColumn();
-            groupBox5 = new GroupBox();
-            tableLayoutPanel1 = new TableLayoutPanel();
-            label1 = new Label();
-            comboBox3 = new ComboBox();
-            label3 = new Label();
-            comboBox2 = new ComboBox();
-            label2 = new Label();
-            comboBox1 = new ComboBox();
-            button1 = new Button();
             tabControl1 = new TabControl();
             tabPage4 = new TabPage();
             toolStripContainer2 = new ToolStripContainer();
@@ -103,6 +93,9 @@
             toolStripLabel1 = new ToolStripLabel();
             tabPage5 = new TabPage();
             backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            toolStrip3 = new ToolStrip();
+            toolStripButton2 = new ToolStripButton();
+            toolStripButton3 = new ToolStripButton();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -150,14 +143,13 @@
             splitContainer4.Panel2.SuspendLayout();
             splitContainer4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            groupBox5.SuspendLayout();
-            tableLayoutPanel1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
             toolStripContainer2.ContentPanel.SuspendLayout();
             toolStripContainer2.TopToolStripPanel.SuspendLayout();
             toolStripContainer2.SuspendLayout();
             toolStrip2.SuspendLayout();
+            toolStrip3.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -735,9 +727,8 @@
             // 
             // splitContainer4.Panel1
             // 
-            splitContainer4.Panel1.Controls.Add(button2);
             splitContainer4.Panel1.Controls.Add(dataGridView1);
-            splitContainer4.Panel1.Controls.Add(groupBox5);
+            splitContainer4.Panel1.Controls.Add(toolStrip3);
             // 
             // splitContainer4.Panel2
             // 
@@ -745,16 +736,6 @@
             splitContainer4.Size = new Size(1164, 635);
             splitContainer4.SplitterDistance = 300;
             splitContainer4.TabIndex = 0;
-            // 
-            // button2
-            // 
-            button2.Location = new Point(47, 25);
-            button2.Name = "button2";
-            button2.Size = new Size(112, 34);
-            button2.TabIndex = 9;
-            button2.Text = "button2";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += AddClassificationRule;
             // 
             // dataGridView1
             // 
@@ -764,11 +745,14 @@
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { ColorColumn, NameColumn, EditColumn });
-            dataGridView1.Location = new Point(6, 74);
+            dataGridView1.Dock = DockStyle.Fill;
+            dataGridView1.Location = new Point(0, 34);
+            dataGridView1.MultiSelect = false;
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.RowHeadersWidth = 62;
-            dataGridView1.Size = new Size(288, 225);
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.Size = new Size(300, 601);
             dataGridView1.TabIndex = 8;
             // 
             // ColorColumn
@@ -793,105 +777,6 @@
             EditColumn.MinimumWidth = 8;
             EditColumn.Name = "EditColumn";
             EditColumn.Width = 48;
-            // 
-            // groupBox5
-            // 
-            groupBox5.Controls.Add(tableLayoutPanel1);
-            groupBox5.Controls.Add(button1);
-            groupBox5.Dock = DockStyle.Bottom;
-            groupBox5.Location = new Point(0, 424);
-            groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(300, 211);
-            groupBox5.TabIndex = 7;
-            groupBox5.TabStop = false;
-            groupBox5.Text = "test";
-            // 
-            // tableLayoutPanel1
-            // 
-            tableLayoutPanel1.AutoSize = true;
-            tableLayoutPanel1.ColumnCount = 2;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.Controls.Add(label1, 0, 0);
-            tableLayoutPanel1.Controls.Add(comboBox3, 1, 2);
-            tableLayoutPanel1.Controls.Add(label3, 0, 2);
-            tableLayoutPanel1.Controls.Add(comboBox2, 1, 1);
-            tableLayoutPanel1.Controls.Add(label2, 0, 1);
-            tableLayoutPanel1.Controls.Add(comboBox1, 1, 0);
-            tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(3, 27);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 3;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.Size = new Size(294, 125);
-            tableLayoutPanel1.TabIndex = 5;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(3, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(71, 25);
-            label1.TabIndex = 2;
-            label1.Text = "Param1";
-            // 
-            // comboBox3
-            // 
-            comboBox3.Dock = DockStyle.Fill;
-            comboBox3.FormattingEnabled = true;
-            comboBox3.Location = new Point(80, 81);
-            comboBox3.Name = "comboBox3";
-            comboBox3.Size = new Size(211, 33);
-            comboBox3.TabIndex = 5;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(3, 78);
-            label3.Name = "label3";
-            label3.Size = new Size(71, 25);
-            label3.TabIndex = 6;
-            label3.Text = "Param3";
-            // 
-            // comboBox2
-            // 
-            comboBox2.Dock = DockStyle.Fill;
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new Point(80, 42);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(211, 33);
-            comboBox2.TabIndex = 1;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(3, 39);
-            label2.Name = "label2";
-            label2.Size = new Size(71, 25);
-            label2.TabIndex = 3;
-            label2.Text = "Param2";
-            // 
-            // comboBox1
-            // 
-            comboBox1.Dock = DockStyle.Fill;
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(80, 3);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(211, 33);
-            comboBox1.TabIndex = 0;
-            // 
-            // button1
-            // 
-            button1.Dock = DockStyle.Bottom;
-            button1.Location = new Point(3, 152);
-            button1.Name = "button1";
-            button1.Size = new Size(294, 56);
-            button1.TabIndex = 4;
-            button1.Text = "Calc";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
             // 
             // tabControl1
             // 
@@ -980,6 +865,38 @@
             backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             // 
+            // toolStrip3
+            // 
+            toolStrip3.GripStyle = ToolStripGripStyle.Hidden;
+            toolStrip3.ImageScalingSize = new Size(24, 24);
+            toolStrip3.Items.AddRange(new ToolStripItem[] { toolStripButton2, toolStripButton3 });
+            toolStrip3.Location = new Point(0, 0);
+            toolStrip3.Name = "toolStrip3";
+            toolStrip3.Size = new Size(300, 34);
+            toolStrip3.TabIndex = 9;
+            toolStrip3.Text = "toolStrip3";
+            // 
+            // toolStripButton2
+            // 
+            toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton2.Image = (Image)resources.GetObject("toolStripButton2.Image");
+            toolStripButton2.ImageTransparentColor = Color.Magenta;
+            toolStripButton2.Name = "toolStripButton2";
+            toolStripButton2.Size = new Size(50, 29);
+            toolStripButton2.Text = "Add";
+            toolStripButton2.Click += AddClassificationRule;
+            // 
+            // toolStripButton3
+            // 
+            toolStripButton3.Alignment = ToolStripItemAlignment.Right;
+            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton3.Image = (Image)resources.GetObject("toolStripButton3.Image");
+            toolStripButton3.ImageTransparentColor = Color.Magenta;
+            toolStripButton3.Name = "toolStripButton3";
+            toolStripButton3.Size = new Size(48, 29);
+            toolStripButton3.Text = "Calc";
+            toolStripButton3.Click += button1_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -1041,14 +958,11 @@
             groupBox4.ResumeLayout(false);
             classificationTabPage.ResumeLayout(false);
             splitContainer4.Panel1.ResumeLayout(false);
+            splitContainer4.Panel1.PerformLayout();
             splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer4).EndInit();
             splitContainer4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            groupBox5.ResumeLayout(false);
-            groupBox5.PerformLayout();
-            tableLayoutPanel1.ResumeLayout(false);
-            tableLayoutPanel1.PerformLayout();
             tabControl1.ResumeLayout(false);
             tabPage4.ResumeLayout(false);
             toolStripContainer2.ContentPanel.ResumeLayout(false);
@@ -1058,6 +972,8 @@
             toolStripContainer2.PerformLayout();
             toolStrip2.ResumeLayout(false);
             toolStrip2.PerformLayout();
+            toolStrip3.ResumeLayout(false);
+            toolStrip3.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1098,13 +1014,6 @@
         private Forms.Viewport viewport1;
         private SplitContainer splitContainer4;
         private Forms.Viewport viewport2;
-        private ComboBox comboBox2;
-        private ComboBox comboBox1;
-        private Label label2;
-        private Label label1;
-        private Button button1;
-        private Label label3;
-        private ComboBox comboBox3;
         private TabControl explorationTabControl;
         private TabPage tabPage1;
         private TabPage tabPage2;
@@ -1131,12 +1040,12 @@
         private ToolStripContainer toolStripContainer2;
         private ToolStrip toolStrip2;
         private ToolStripLabel toolStripLabel1;
-        private GroupBox groupBox5;
-        private TableLayoutPanel tableLayoutPanel1;
         private DataGridView dataGridView1;
         private DataGridViewImageColumn ColorColumn;
         private DataGridViewTextBoxColumn NameColumn;
         private DataGridViewButtonColumn EditColumn;
-        private Button button2;
+        private ToolStrip toolStrip3;
+        private ToolStripButton toolStripButton2;
+        private ToolStripButton toolStripButton3;
     }
 }

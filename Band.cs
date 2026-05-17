@@ -38,11 +38,6 @@ namespace modified_structure_analysis
         [Category("_")]
         public string Name => _name;
 
-        [DisplayName("Values")]
-        [Description("Sample values")]
-        [Category("_")]
-        public ReadOnlyCollection<float> Values => _values.AsReadOnly();
-
         [DisplayName("Sum")]
         [Description("Sum of sample value")]
         [Category("Statistics")]

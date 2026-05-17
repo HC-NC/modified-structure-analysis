@@ -157,7 +157,7 @@ public class ClassificationEngine
 
         double productBandwidths = 1.0;
         double sum = 0.0;
-        int n = _bands[0].Values.Count;
+        int n = _bands[0].Count;
 
         foreach (int idx in bandIndices)
         {
