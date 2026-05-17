@@ -788,7 +788,7 @@ namespace modified_structure_analysis
             int[] pointses = new int[columnsCount];
             int[] asseses = new int[columnsCount];
 
-            for(int i = 0; i < band.Count; i++)
+            for (int i = 0; i < band.Count; i++)
             {
                 float x = band.GetValue(i);
 
@@ -946,7 +946,6 @@ namespace modified_structure_analysis
                 return;
 
             int totalPixels = _width * _height;
-            int lastReportedProgress = -1;
             int reportInterval = Math.Max(1, totalPixels / 100);
 
             worker.ReportProgress(0, "Starting classification...");
@@ -954,37 +953,31 @@ namespace modified_structure_analysis
             var engine = new ClassificationEngine(_bands, rules);
 
             var classificationResult = new ClassificationResult(_width, _height, rules);
-            int currentPixel = 0;
+            int processedPixels = 0;
 
-            for (int y = 0; y < _height; y++)
+            Parallel.For(0, totalPixels, () => 0, (pixelIndex, loopState, localCount) =>
             {
-                for (int x = 0; x < _width; x++)
+                int? classIndex = engine.EvaluatePixel(pixelIndex);
+
+                if (classIndex.HasValue)
+                    classificationResult.SetClass(pixelIndex, classIndex.Value);
+
+                int newCount = localCount + 1;
+                if (newCount >= reportInterval)
                 {
-                    int pixelIndex = y * _width + x;
-                    int? classIndex = engine.EvaluatePixel(pixelIndex);
-
-                    if (classIndex.HasValue)
-                        classificationResult.SetClass(pixelIndex, classIndex.Value);
-
-                    currentPixel++;
-
-                    if (worker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-
-                    if (currentPixel % reportInterval == 0 || currentPixel == totalPixels)
-                    {
-                        int progress = (currentPixel * 50) / totalPixels;
-                        if (progress != lastReportedProgress)
-                        {
-                            lastReportedProgress = progress;
-                            worker.ReportProgress(progress, $"Classifying: {currentPixel}/{totalPixels} pixels ({progress}%)");
-                        }
-                    }
+                    int toReport = Interlocked.Add(ref processedPixels, newCount);
+                    int progress = (toReport * 50) / totalPixels;
+                    worker.ReportProgress(progress, $"Classifying: {toReport}/{totalPixels} pixels");
+                    return 0;
                 }
-            }
+                return newCount;
+            },
+            localCount =>
+            {
+                int finalCount = Interlocked.Add(ref processedPixels, localCount);
+                int progress = (finalCount * 50) / totalPixels;
+                worker.ReportProgress(progress, $"Classifying: {finalCount}/{totalPixels} pixels ({progress}%)");
+            });
 
             worker.ReportProgress(50, "Generating bitmap...");
 

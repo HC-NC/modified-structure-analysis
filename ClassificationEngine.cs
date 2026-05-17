@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+
 namespace modified_structure_analysis;
 
 public class ClassificationEngine
@@ -8,9 +10,9 @@ public class ClassificationEngine
     private int _height;
 
     private const int SingleValueCacheSteps = 1000;
-    private Dictionary<(int bandIndex, int valueIndex), float> _singleDensityCache = new();
-    private Dictionary<(List<int> bandIndices, int pixelIndex), float> _productDensityCache = new();
-    private Dictionary<(List<int> bandIndices, int pixelIndex), float> _multivariateDensityCache = new();
+    private ConcurrentDictionary<(int bandIndex, int valueIndex), float> _singleDensityCache = new();
+    private ConcurrentDictionary<(List<int> bandIndices, int pixelIndex), float> _productDensityCache = new();
+    private ConcurrentDictionary<(List<int> bandIndices, int pixelIndex), float> _multivariateDensityCache = new();
 
     public ClassificationEngine(List<Band> bands, List<ClassificationRule> rules)
     {
