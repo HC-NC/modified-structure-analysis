@@ -948,6 +948,7 @@ namespace modified_structure_analysis
             int totalPixels = _width * _height;
             int reportInterval = Math.Max(1, totalPixels / 100);
 
+            DateTime startTime = DateTime.Now;
             worker.ReportProgress(0, "Starting classification...");
 
             var engine = new ClassificationEngine(_bands, rules);
@@ -962,24 +963,26 @@ namespace modified_structure_analysis
                 if (classIndex.HasValue)
                     classificationResult.SetClass(pixelIndex, classIndex.Value);
 
-                int newCount = localCount + 1;
-                if (newCount >= reportInterval)
-                {
-                    int toReport = Interlocked.Add(ref processedPixels, newCount);
-                    int progress = (toReport * 50) / totalPixels;
-                    worker.ReportProgress(progress, $"Classifying: {toReport}/{totalPixels} pixels");
-                    return 0;
-                }
-                return newCount;
+                return localCount + 1;
             },
             localCount =>
             {
                 int finalCount = Interlocked.Add(ref processedPixels, localCount);
-                int progress = (finalCount * 50) / totalPixels;
-                worker.ReportProgress(progress, $"Classifying: {finalCount}/{totalPixels} pixels ({progress}%)");
+                int progress = (finalCount * 99) / totalPixels;
+
+                TimeSpan elapsed = DateTime.Now - startTime;
+                double pixelsPerMs = finalCount / Math.Max(1.0, elapsed.TotalMilliseconds);
+                int remainingPixels = totalPixels - finalCount;
+                double remainingMsDouble = remainingPixels / Math.Max(0.01, pixelsPerMs);
+                TimeSpan remaining = TimeSpan.FromMilliseconds(remainingMsDouble);
+                string remainingStr = remaining.TotalSeconds < 60
+                    ? $"~{remaining.TotalSeconds:F0}s"
+                    : $"~{remaining.TotalMinutes:F1}m";
+
+                worker.ReportProgress(progress, $"Classifying: {finalCount}/{totalPixels} ({progress}%) ETA: {remainingStr}");
             });
 
-            worker.ReportProgress(50, "Generating bitmap...");
+            worker.ReportProgress(99, "Rendering bitmap...");
 
             Bitmap bitmap = new Bitmap(_width, _height);
             Rectangle rect = new Rectangle(0, 0, _width, _height);
@@ -988,9 +991,6 @@ namespace modified_structure_analysis
             IntPtr ptr = bmpData.Scan0;
             int bytes = Math.Abs(bmpData.Stride) * _height;
             byte[] rgbValues = new byte[bytes];
-
-            int lastRenderProgress = 49;
-            int renderReportInterval = Math.Max(1, _height / 55);
 
             for (int y = 0; y < _height; y++)
             {
@@ -1004,16 +1004,6 @@ namespace modified_structure_analysis
                     rgbValues[idx + 1] = color.G;
                     rgbValues[idx + 2] = color.R;
                     rgbValues[idx + 3] = color.A;
-                }
-
-                if (y % renderReportInterval == 0 || y == _height - 1)
-                {
-                    int progress = 50 + (y * 50 / _height);
-                    if (progress != lastRenderProgress)
-                    {
-                        lastRenderProgress = progress;
-                        worker.ReportProgress(progress, $"Rendering: {y}/{_height} rows ({progress}%)");
-                    }
                 }
             }
 
