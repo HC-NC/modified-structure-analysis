@@ -42,7 +42,7 @@ public class ClassificationEngine
         return classificationResult;
     }
 
-    private int? EvaluatePixel(int pixelIndex)
+    public int? EvaluatePixel(int pixelIndex)
     {
         for (int ruleIndex = 0; ruleIndex < _rules.Count; ruleIndex++)
         {

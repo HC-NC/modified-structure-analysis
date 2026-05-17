@@ -89,6 +89,9 @@
             toolStripButton2 = new ToolStripButton();
             toolStripButton3 = new ToolStripButton();
             toolStripButton4 = new ToolStripButton();
+            toolStripSeparator3 = new ToolStripSeparator();
+            toolStripButton5 = new ToolStripButton();
+            toolStripButton6 = new ToolStripButton();
             tabControl1 = new TabControl();
             tabPage4 = new TabPage();
             toolStripContainer2 = new ToolStripContainer();
@@ -783,7 +786,7 @@
             // 
             toolStrip3.GripStyle = ToolStripGripStyle.Hidden;
             toolStrip3.ImageScalingSize = new Size(24, 24);
-            toolStrip3.Items.AddRange(new ToolStripItem[] { toolStripButton2, toolStripButton3, toolStripButton4 });
+            toolStrip3.Items.AddRange(new ToolStripItem[] { toolStripButton2, toolStripButton3, toolStripButton4, toolStripSeparator3, toolStripButton5, toolStripButton6 });
             toolStrip3.Location = new Point(0, 0);
             toolStrip3.Name = "toolStrip3";
             toolStrip3.Size = new Size(300, 34);
@@ -796,8 +799,8 @@
             toolStripButton2.Image = (Image)resources.GetObject("toolStripButton2.Image");
             toolStripButton2.ImageTransparentColor = Color.Magenta;
             toolStripButton2.Name = "toolStripButton2";
-            toolStripButton2.Size = new Size(50, 29);
-            toolStripButton2.Text = "Add";
+            toolStripButton2.Size = new Size(34, 29);
+            toolStripButton2.Text = "+";
             toolStripButton2.Click += AddClassificationRule;
             // 
             // toolStripButton3
@@ -817,9 +820,34 @@
             toolStripButton4.Image = (Image)resources.GetObject("toolStripButton4.Image");
             toolStripButton4.ImageTransparentColor = Color.Magenta;
             toolStripButton4.Name = "toolStripButton4";
-            toolStripButton4.Size = new Size(80, 29);
-            toolStripButton4.Text = "Remove";
+            toolStripButton4.Size = new Size(34, 29);
+            toolStripButton4.Text = "-";
             toolStripButton4.Click += DeleteClassificationRule;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 34);
+            // 
+            // toolStripButton5
+            // 
+            toolStripButton5.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton5.Image = (Image)resources.GetObject("toolStripButton5.Image");
+            toolStripButton5.ImageTransparentColor = Color.Magenta;
+            toolStripButton5.Name = "toolStripButton5";
+            toolStripButton5.Size = new Size(34, 29);
+            toolStripButton5.Text = "↑";
+            toolStripButton5.Click += MoveRuleUp;
+            // 
+            // toolStripButton6
+            // 
+            toolStripButton6.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton6.Image = (Image)resources.GetObject("toolStripButton6.Image");
+            toolStripButton6.ImageTransparentColor = Color.Magenta;
+            toolStripButton6.Name = "toolStripButton6";
+            toolStripButton6.Size = new Size(34, 29);
+            toolStripButton6.Text = "↓";
+            toolStripButton6.Click += MoveRuleDown;
             // 
             // tabControl1
             // 
@@ -1059,5 +1087,8 @@
         private ToolStripButton toolStripButton2;
         private ToolStripButton toolStripButton3;
         private ToolStripButton toolStripButton4;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripButton toolStripButton5;
+        private ToolStripButton toolStripButton6;
     }
 }

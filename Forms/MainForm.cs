@@ -98,6 +98,52 @@ namespace modified_structure_analysis
             }
         }
 
+        private void MoveRuleUp(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int selectedIndex = dataGridView1.SelectedRows[0].Index;
+
+            if (selectedIndex == 0)
+                return;
+
+            var rule = _classificationRules[selectedIndex];
+            _classificationRules.RemoveAt(selectedIndex);
+            _classificationRules.Insert(selectedIndex - 1, rule);
+
+            dataGridView1.ClearSelection();
+            dataGridView1.Rows[selectedIndex - 1].Selected = true;
+            UpdateClassificationRulesGrid();
+            dataGridView1.Rows[selectedIndex - 1].Selected = true;
+        }
+
+        private void MoveRuleDown(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int selectedIndex = dataGridView1.SelectedRows[0].Index;
+
+            if (selectedIndex >= _classificationRules.Count - 1)
+                return;
+
+            var rule = _classificationRules[selectedIndex];
+            _classificationRules.RemoveAt(selectedIndex);
+            _classificationRules.Insert(selectedIndex + 1, rule);
+
+            dataGridView1.ClearSelection();
+            dataGridView1.Rows[selectedIndex + 1].Selected = true;
+            UpdateClassificationRulesGrid();
+            dataGridView1.Rows[selectedIndex + 1].Selected = true;
+        }
+
         private void UpdateClassificationRulesGrid()
         {
             dataGridView1.Rows.Clear();
@@ -899,25 +945,66 @@ namespace modified_structure_analysis
             if (worker == null || rules == null || _bands.Count == 0)
                 return;
 
+            int totalPixels = _width * _height;
+            int lastReportedProgress = -1;
+            int reportInterval = Math.Max(1, totalPixels / 100);
+
+            worker.ReportProgress(0, "Starting classification...");
+
             var engine = new ClassificationEngine(_bands, rules);
-            var result = engine.Run();
+
+            var classificationResult = new ClassificationResult(_width, _height, rules);
+            int currentPixel = 0;
+
+            for (int y = 0; y < _height; y++)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    int pixelIndex = y * _width + x;
+                    int? classIndex = engine.EvaluatePixel(pixelIndex);
+
+                    if (classIndex.HasValue)
+                        classificationResult.SetClass(pixelIndex, classIndex.Value);
+
+                    currentPixel++;
+
+                    if (worker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    if (currentPixel % reportInterval == 0 || currentPixel == totalPixels)
+                    {
+                        int progress = (currentPixel * 50) / totalPixels;
+                        if (progress != lastReportedProgress)
+                        {
+                            lastReportedProgress = progress;
+                            worker.ReportProgress(progress, $"Classifying: {currentPixel}/{totalPixels} pixels ({progress}%)");
+                        }
+                    }
+                }
+            }
 
             worker.ReportProgress(50, "Generating bitmap...");
 
-            Bitmap bitmap = new Bitmap(result.Width, result.Height);
-            Rectangle rect = new Rectangle(0, 0, result.Width, result.Height);
+            Bitmap bitmap = new Bitmap(_width, _height);
+            Rectangle rect = new Rectangle(0, 0, _width, _height);
             System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
             IntPtr ptr = bmpData.Scan0;
-            int bytes = Math.Abs(bmpData.Stride) * result.Height;
+            int bytes = Math.Abs(bmpData.Stride) * _height;
             byte[] rgbValues = new byte[bytes];
 
-            for (int y = 0; y < result.Height; y++)
+            int lastRenderProgress = 49;
+            int renderReportInterval = Math.Max(1, _height / 55);
+
+            for (int y = 0; y < _height; y++)
             {
-                for (int x = 0; x < result.Width; x++)
+                for (int x = 0; x < _width; x++)
                 {
-                    int i = y * result.Width + x;
-                    Color color = result.GetPixelColor(i);
+                    int i = y * _width + x;
+                    Color color = classificationResult.GetPixelColor(i);
 
                     int idx = (y * bmpData.Stride) + (x * 4);
                     rgbValues[idx] = color.B;
@@ -926,20 +1013,23 @@ namespace modified_structure_analysis
                     rgbValues[idx + 3] = color.A;
                 }
 
-                if (worker.CancellationPending)
+                if (y % renderReportInterval == 0 || y == _height - 1)
                 {
-                    e.Cancel = true;
-                    bitmap.UnlockBits(bmpData);
-                    return;
+                    int progress = 50 + (y * 50 / _height);
+                    if (progress != lastRenderProgress)
+                    {
+                        lastRenderProgress = progress;
+                        worker.ReportProgress(progress, $"Rendering: {y}/{_height} rows ({progress}%)");
+                    }
                 }
-
-                worker.ReportProgress(50 + (y * 50 / result.Height), $"Rendering: {y}/{result.Height}");
             }
 
             Marshal.Copy(rgbValues, 0, ptr, bytes);
             bitmap.UnlockBits(bmpData);
 
-            e.Result = (bitmap, result);
+            worker.ReportProgress(100, "Complete");
+
+            e.Result = (bitmap, classificationResult);
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
