@@ -85,6 +85,10 @@
             ColorColumn = new DataGridViewImageColumn();
             NameColumn = new DataGridViewTextBoxColumn();
             EditColumn = new DataGridViewButtonColumn();
+            toolStrip3 = new ToolStrip();
+            toolStripButton2 = new ToolStripButton();
+            toolStripButton3 = new ToolStripButton();
+            toolStripButton4 = new ToolStripButton();
             tabControl1 = new TabControl();
             tabPage4 = new TabPage();
             toolStripContainer2 = new ToolStripContainer();
@@ -93,9 +97,6 @@
             toolStripLabel1 = new ToolStripLabel();
             tabPage5 = new TabPage();
             backgroundWorker = new System.ComponentModel.BackgroundWorker();
-            toolStrip3 = new ToolStrip();
-            toolStripButton2 = new ToolStripButton();
-            toolStripButton3 = new ToolStripButton();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -143,13 +144,13 @@
             splitContainer4.Panel2.SuspendLayout();
             splitContainer4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            toolStrip3.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
             toolStripContainer2.ContentPanel.SuspendLayout();
             toolStripContainer2.TopToolStripPanel.SuspendLayout();
             toolStripContainer2.SuspendLayout();
             toolStrip2.SuspendLayout();
-            toolStrip3.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -778,6 +779,48 @@
             EditColumn.Name = "EditColumn";
             EditColumn.Width = 48;
             // 
+            // toolStrip3
+            // 
+            toolStrip3.GripStyle = ToolStripGripStyle.Hidden;
+            toolStrip3.ImageScalingSize = new Size(24, 24);
+            toolStrip3.Items.AddRange(new ToolStripItem[] { toolStripButton2, toolStripButton3, toolStripButton4 });
+            toolStrip3.Location = new Point(0, 0);
+            toolStrip3.Name = "toolStrip3";
+            toolStrip3.Size = new Size(300, 34);
+            toolStrip3.TabIndex = 9;
+            toolStrip3.Text = "toolStrip3";
+            // 
+            // toolStripButton2
+            // 
+            toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton2.Image = (Image)resources.GetObject("toolStripButton2.Image");
+            toolStripButton2.ImageTransparentColor = Color.Magenta;
+            toolStripButton2.Name = "toolStripButton2";
+            toolStripButton2.Size = new Size(50, 29);
+            toolStripButton2.Text = "Add";
+            toolStripButton2.Click += AddClassificationRule;
+            // 
+            // toolStripButton3
+            // 
+            toolStripButton3.Alignment = ToolStripItemAlignment.Right;
+            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton3.Image = (Image)resources.GetObject("toolStripButton3.Image");
+            toolStripButton3.ImageTransparentColor = Color.Magenta;
+            toolStripButton3.Name = "toolStripButton3";
+            toolStripButton3.Size = new Size(48, 29);
+            toolStripButton3.Text = "Calc";
+            toolStripButton3.Click += button1_Click;
+            // 
+            // toolStripButton4
+            // 
+            toolStripButton4.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton4.Image = (Image)resources.GetObject("toolStripButton4.Image");
+            toolStripButton4.ImageTransparentColor = Color.Magenta;
+            toolStripButton4.Name = "toolStripButton4";
+            toolStripButton4.Size = new Size(80, 29);
+            toolStripButton4.Text = "Remove";
+            toolStripButton4.Click += DeleteClassificationRule;
+            // 
             // tabControl1
             // 
             tabControl1.Alignment = TabAlignment.Bottom;
@@ -865,38 +908,6 @@
             backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             // 
-            // toolStrip3
-            // 
-            toolStrip3.GripStyle = ToolStripGripStyle.Hidden;
-            toolStrip3.ImageScalingSize = new Size(24, 24);
-            toolStrip3.Items.AddRange(new ToolStripItem[] { toolStripButton2, toolStripButton3 });
-            toolStrip3.Location = new Point(0, 0);
-            toolStrip3.Name = "toolStrip3";
-            toolStrip3.Size = new Size(300, 34);
-            toolStrip3.TabIndex = 9;
-            toolStrip3.Text = "toolStrip3";
-            // 
-            // toolStripButton2
-            // 
-            toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton2.Image = (Image)resources.GetObject("toolStripButton2.Image");
-            toolStripButton2.ImageTransparentColor = Color.Magenta;
-            toolStripButton2.Name = "toolStripButton2";
-            toolStripButton2.Size = new Size(50, 29);
-            toolStripButton2.Text = "Add";
-            toolStripButton2.Click += AddClassificationRule;
-            // 
-            // toolStripButton3
-            // 
-            toolStripButton3.Alignment = ToolStripItemAlignment.Right;
-            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton3.Image = (Image)resources.GetObject("toolStripButton3.Image");
-            toolStripButton3.ImageTransparentColor = Color.Magenta;
-            toolStripButton3.Name = "toolStripButton3";
-            toolStripButton3.Size = new Size(48, 29);
-            toolStripButton3.Text = "Calc";
-            toolStripButton3.Click += button1_Click;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -963,6 +974,8 @@
             ((System.ComponentModel.ISupportInitialize)splitContainer4).EndInit();
             splitContainer4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            toolStrip3.ResumeLayout(false);
+            toolStrip3.PerformLayout();
             tabControl1.ResumeLayout(false);
             tabPage4.ResumeLayout(false);
             toolStripContainer2.ContentPanel.ResumeLayout(false);
@@ -972,8 +985,6 @@
             toolStripContainer2.PerformLayout();
             toolStrip2.ResumeLayout(false);
             toolStrip2.PerformLayout();
-            toolStrip3.ResumeLayout(false);
-            toolStrip3.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1047,5 +1058,6 @@
         private ToolStrip toolStrip3;
         private ToolStripButton toolStripButton2;
         private ToolStripButton toolStripButton3;
+        private ToolStripButton toolStripButton4;
     }
 }

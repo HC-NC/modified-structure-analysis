@@ -75,6 +75,29 @@ namespace modified_structure_analysis
             }
         }
 
+        private void DeleteClassificationRule(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a rule to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int selectedIndex = dataGridView1.SelectedRows[0].Index;
+
+            var result = MessageBox.Show(
+                $"Are you sure you want to delete rule #{selectedIndex + 1}?",
+                "Confirm Delete",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                _classificationRules.RemoveAt(selectedIndex);
+                UpdateClassificationRulesGrid();
+            }
+        }
+
         private void UpdateClassificationRulesGrid()
         {
             dataGridView1.Rows.Clear();

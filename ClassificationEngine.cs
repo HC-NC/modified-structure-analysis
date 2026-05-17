@@ -4,8 +4,11 @@ public class ClassificationEngine
 {
     private List<Band> _bands;
     private List<ClassificationRule> _rules;
+    private int _width;
+    private int _height;
 
-    private Dictionary<(int bandIndex, int pixelIndex), float> _singleDensityCache = new();
+    private const int SingleValueCacheSteps = 1000;
+    private Dictionary<(int bandIndex, int valueIndex), float> _singleDensityCache = new();
     private Dictionary<(List<int> bandIndices, int pixelIndex), float> _productDensityCache = new();
     private Dictionary<(List<int> bandIndices, int pixelIndex), float> _multivariateDensityCache = new();
 
@@ -13,29 +16,30 @@ public class ClassificationEngine
     {
         _bands = bands;
         _rules = rules;
+
+        if (_bands.Count > 0 && _bands[0].OriginalWidth > 0 && _bands[0].OriginalHeight > 0)
+        {
+            _width = _bands[0].OriginalWidth;
+            _height = _bands[0].OriginalHeight;
+        }
     }
 
     public ClassificationResult Run()
     {
-        int width = _bands[0].OriginalWidth;
-        int height = _bands[0].OriginalHeight;
+        var classificationResult = new ClassificationResult(_width, _height, _rules);
 
-        var result = new ClassificationResult(width, height, _rules);
-
-        for (int y = 0; y < height; y++)
+        for (int y = 0; y < _height; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < _width; x++)
             {
-                int pixelIndex = y * width + x;
-
+                int pixelIndex = y * _width + x;
                 int? classIndex = EvaluatePixel(pixelIndex);
-
                 if (classIndex.HasValue)
-                    result.SetClass(pixelIndex, classIndex.Value);
+                    classificationResult.SetClass(pixelIndex, classIndex.Value);
             }
         }
 
-        return result;
+        return classificationResult;
     }
 
     private int? EvaluatePixel(int pixelIndex)
@@ -109,11 +113,14 @@ public class ClassificationEngine
         if (bandIndex < 0 || bandIndex >= _bands.Count)
             return 0;
 
-        var key = (bandIndex, pixelIndex);
+        float normalizedValue = _bands[bandIndex].GetNormalizedValue(pixelIndex);
+        int valueIndex = (int)(normalizedValue * SingleValueCacheSteps);
+
+        var key = (bandIndex, valueIndex);
         if (_singleDensityCache.TryGetValue(key, out float cached))
             return cached;
 
-        float density = _bands[bandIndex].GetNormalizedValue(pixelIndex);
+        float density = (float)_bands[bandIndex].GetKernelDensityEstimate(normalizedValue);
         _singleDensityCache[key] = density;
         return density;
     }
@@ -131,12 +138,16 @@ public class ClassificationEngine
         foreach (int idx in bandIndices)
         {
             if (idx >= 0 && idx < _bands.Count)
-                product *= _bands[idx].GetNormalizedValue(pixelIndex);
+            {
+                float normalizedValue = _bands[idx].GetNormalizedValue(pixelIndex);
+                double density = _bands[idx].GetKernelDensityEstimate(normalizedValue);
+                product *= density;
+            }
         }
 
-        float result = (float)product;
-        _productDensityCache[key] = result;
-        return result;
+        float prodResult = (float)product;
+        _productDensityCache[key] = prodResult;
+        return prodResult;
     }
 
     private float GetMultivariateDensity(List<int> bandIndices, int pixelIndex)
@@ -150,46 +161,44 @@ public class ClassificationEngine
 
         if (bandIndices.Count == 1 && bandIndices[0] >= 0 && bandIndices[0] < _bands.Count)
         {
-            float result = _bands[bandIndices[0]].GetNormalizedValue(pixelIndex);
-            _multivariateDensityCache[key] = result;
-            return result;
+            float normalizedValue = _bands[bandIndices[0]].GetNormalizedValue(pixelIndex);
+            float mvResult = (float)_bands[bandIndices[0]].GetKernelDensityEstimate(normalizedValue);
+            _multivariateDensityCache[key] = mvResult;
+            return mvResult;
         }
 
-        double productBandwidths = 1.0;
-        double sum = 0.0;
-        int n = _bands[0].Count;
+        int n = _bands[0].OriginalWidth * _bands[0].OriginalHeight;
 
+        double productBandwidths = 1.0;
         foreach (int idx in bandIndices)
         {
             if (idx >= 0 && idx < _bands.Count)
-            {
                 productBandwidths *= _bands[idx].NormalizeKernelC;
-            }
         }
 
         double normalization = n * productBandwidths;
 
-        foreach (int idx in bandIndices)
-        {
-            if (idx < 0 || idx >= _bands.Count)
-                continue;
+        double sum = 0.0;
 
-            for (int j = 0; j < bandIndices.Count; j++)
+        for (int i = 0; i < n; i++)
+        {
+            double kernelProduct = 1;
+
+            foreach (int idx in bandIndices)
             {
-                if (j == idx || j >= bandIndices.Count)
-                    continue;
+                if (idx < 0 || idx >= _bands.Count) continue;
 
                 float xi = _bands[idx].GetNormalizedValue(pixelIndex);
-                float xj = _bands[j].GetNormalizedValue(pixelIndex);
-
-                float kernelValue = (float)KernelFunctions.GetEpanechnikov((xi - xj) / _bands[j].NormalizeKernelC);
-                sum += kernelValue;
+                float xj = _bands[idx].GetNormalizedValue(i);
+                kernelProduct *= KernelFunctions.GetKernel(_bands[idx].KernelType, (xi - xj) / _bands[idx].NormalizeKernelC);
             }
+
+            sum += kernelProduct;
         }
 
-        float resultValue = (float)(sum / normalization);
-        _multivariateDensityCache[key] = resultValue;
-        return resultValue;
+        float mvSumResult = (float)(sum / normalization);
+        _multivariateDensityCache[key] = mvSumResult;
+        return mvSumResult;
     }
 
     public void ClearCache()
