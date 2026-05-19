@@ -57,6 +57,7 @@
             Name = "Viewport";
             Size = new Size(256, 256);
             Load += Viewport_Load;
+            Resize += Viewport_Resize;
             ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
             ResumeLayout(false);
         }

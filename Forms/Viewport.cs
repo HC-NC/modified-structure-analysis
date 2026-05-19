@@ -20,9 +20,14 @@ namespace modified_structure_analysis.Forms
         private int _imgx = 0; // current offset of image
         private int _imgy = 0;
 
+        private int _oldWidth;
+        private int _oldHeight;
+
         private bool _mousepressed = false; // true as long as left mousebutton is pressed
         private bool _mouseOnPicture = false;
         private float _zoom = 1;
+
+        public Image Image => _img;
 
         public Viewport()
         {
@@ -32,6 +37,9 @@ namespace modified_structure_analysis.Forms
         private void Viewport_Load(object sender, EventArgs e)
         {
             _graphics = CreateGraphics();
+
+            _oldWidth = pictureBox.Width;
+            _oldHeight = pictureBox.Height;
         }
 
         public void UpdateImage(Image img)
@@ -215,6 +223,25 @@ namespace modified_structure_analysis.Forms
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void Viewport_Resize(object sender, EventArgs e)
+        {
+            if (_img == null)
+                return;
+
+            int widthVec = pictureBox.Width - _oldWidth;
+            int heightVec = pictureBox.Height - _oldHeight;
+
+            if (Math.Abs(heightVec) <= Math.Abs(widthVec))
+                _zoom += (float)(heightVec) / (float)_img.Height * (_img.VerticalResolution / _graphics.DpiY);
+            else 
+                _zoom += (float)(widthVec) / (float)_img.Width * (_img.HorizontalResolution / _graphics.DpiX);
+
+            _oldWidth = pictureBox.Width;
+            _oldHeight = pictureBox.Height;
+
+            pictureBox.Refresh();
         }
     }
 }

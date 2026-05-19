@@ -1,4 +1,5 @@
 using modified_structure_analysis;
+using modified_structure_analysis.Forms;
 using modified_structure_analysis.Properties;
 using OSGeo.GDAL;
 using OxyPlot;
@@ -1064,6 +1065,13 @@ namespace modified_structure_analysis
 
             var parts = rule.Conditions.Select(c => new ConditionDisplayItem(c, _bands).Display);
             return string.Join('\n', parts);
+        }
+
+        private void compareToolStripButton_Click(object sender, EventArgs e)
+        {
+            TwoImageViewForm twoImageView = new TwoImageViewForm(viewport1.Image, viewport2.Image);
+
+            twoImageView.ShowDialog(this);
         }
 
         //public void ApplyPlotSettings(PlotModel model)
