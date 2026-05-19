@@ -39,15 +39,6 @@
             }
         }
 
-        private string GetRulePreview()
-        {
-            if (_rule.Conditions.Count == 0)
-                return "No conditions";
-
-            var parts = _rule.Conditions.Select(c => new ConditionDisplayItem(c, _bands).Display);
-            return string.Join(" AND ", parts);
-        }
-
         private void AddCondition_Click(object? sender, EventArgs e)
         {
             var condForm = new ConditionEditorForm(_bands, null);

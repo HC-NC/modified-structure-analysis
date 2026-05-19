@@ -81,10 +81,12 @@
             scatterPlotView = new OxyPlot.WindowsForms.PlotView();
             classificationTabPage = new TabPage();
             splitContainer4 = new SplitContainer();
+            splitContainer7 = new SplitContainer();
             dataGridView1 = new DataGridView();
             ColorColumn = new DataGridViewImageColumn();
             NameColumn = new DataGridViewTextBoxColumn();
             EditColumn = new DataGridViewButtonColumn();
+            conditionsRichTextBox = new RichTextBox();
             toolStrip3 = new ToolStrip();
             toolStripButton2 = new ToolStripButton();
             toolStripButton3 = new ToolStripButton();
@@ -146,6 +148,10 @@
             splitContainer4.Panel1.SuspendLayout();
             splitContainer4.Panel2.SuspendLayout();
             splitContainer4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer7).BeginInit();
+            splitContainer7.Panel1.SuspendLayout();
+            splitContainer7.Panel2.SuspendLayout();
+            splitContainer7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             toolStrip3.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -513,6 +519,7 @@
             // splitContainer3
             // 
             splitContainer3.Dock = DockStyle.Fill;
+            splitContainer3.FixedPanel = FixedPanel.Panel1;
             splitContainer3.Location = new Point(3, 3);
             splitContainer3.Name = "splitContainer3";
             // 
@@ -528,7 +535,7 @@
             // 
             splitContainer3.Panel2.Controls.Add(kdePlotView);
             splitContainer3.Size = new Size(1150, 591);
-            splitContainer3.SplitterDistance = 383;
+            splitContainer3.SplitterDistance = 300;
             splitContainer3.TabIndex = 0;
             // 
             // kdeBandsListBox
@@ -538,7 +545,7 @@
             kdeBandsListBox.Location = new Point(0, 0);
             kdeBandsListBox.Name = "kdeBandsListBox";
             kdeBandsListBox.SelectionMode = SelectionMode.MultiExtended;
-            kdeBandsListBox.Size = new Size(383, 454);
+            kdeBandsListBox.Size = new Size(300, 454);
             kdeBandsListBox.TabIndex = 0;
             // 
             // kdeSingleButton
@@ -547,7 +554,7 @@
             kdeSingleButton.Dock = DockStyle.Bottom;
             kdeSingleButton.Location = new Point(0, 454);
             kdeSingleButton.Name = "kdeSingleButton";
-            kdeSingleButton.Size = new Size(383, 35);
+            kdeSingleButton.Size = new Size(300, 35);
             kdeSingleButton.TabIndex = 1;
             kdeSingleButton.Text = "Single";
             kdeSingleButton.UseVisualStyleBackColor = true;
@@ -558,7 +565,7 @@
             kdeProductButton.Dock = DockStyle.Bottom;
             kdeProductButton.Location = new Point(0, 489);
             kdeProductButton.Name = "kdeProductButton";
-            kdeProductButton.Size = new Size(383, 34);
+            kdeProductButton.Size = new Size(300, 34);
             kdeProductButton.TabIndex = 2;
             kdeProductButton.Text = "Product";
             kdeProductButton.UseVisualStyleBackColor = true;
@@ -569,7 +576,7 @@
             kdeMultivariateButton.Dock = DockStyle.Bottom;
             kdeMultivariateButton.Location = new Point(0, 523);
             kdeMultivariateButton.Name = "kdeMultivariateButton";
-            kdeMultivariateButton.Size = new Size(383, 34);
+            kdeMultivariateButton.Size = new Size(300, 34);
             kdeMultivariateButton.TabIndex = 8;
             kdeMultivariateButton.Text = "Multivar";
             kdeMultivariateButton.UseVisualStyleBackColor = true;
@@ -580,7 +587,7 @@
             kdeClearButton.Dock = DockStyle.Bottom;
             kdeClearButton.Location = new Point(0, 557);
             kdeClearButton.Name = "kdeClearButton";
-            kdeClearButton.Size = new Size(383, 34);
+            kdeClearButton.Size = new Size(300, 34);
             kdeClearButton.TabIndex = 9;
             kdeClearButton.Text = "Clear";
             kdeClearButton.UseVisualStyleBackColor = true;
@@ -592,7 +599,7 @@
             kdePlotView.Location = new Point(0, 0);
             kdePlotView.Name = "kdePlotView";
             kdePlotView.PanCursor = Cursors.Hand;
-            kdePlotView.Size = new Size(763, 591);
+            kdePlotView.Size = new Size(846, 591);
             kdePlotView.TabIndex = 1;
             kdePlotView.Text = "plotView1";
             kdePlotView.ZoomHorizontalCursor = Cursors.SizeWE;
@@ -614,6 +621,7 @@
             // splitContainer5
             // 
             splitContainer5.Dock = DockStyle.Fill;
+            splitContainer5.FixedPanel = FixedPanel.Panel1;
             splitContainer5.Location = new Point(3, 3);
             splitContainer5.Name = "splitContainer5";
             // 
@@ -626,7 +634,7 @@
             // 
             splitContainer5.Panel2.Controls.Add(scatterPlotView);
             splitContainer5.Size = new Size(1150, 591);
-            splitContainer5.SplitterDistance = 383;
+            splitContainer5.SplitterDistance = 300;
             splitContainer5.TabIndex = 0;
             // 
             // splitContainer6
@@ -643,7 +651,7 @@
             // splitContainer6.Panel2
             // 
             splitContainer6.Panel2.Controls.Add(groupBox4);
-            splitContainer6.Size = new Size(383, 557);
+            splitContainer6.Size = new Size(300, 557);
             splitContainer6.SplitterDistance = 278;
             splitContainer6.TabIndex = 3;
             // 
@@ -653,7 +661,7 @@
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Location = new Point(0, 0);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(383, 278);
+            groupBox3.Size = new Size(300, 278);
             groupBox3.TabIndex = 0;
             groupBox3.TabStop = false;
             groupBox3.Text = "X axis";
@@ -664,7 +672,7 @@
             scatterXListBox.FormattingEnabled = true;
             scatterXListBox.Location = new Point(3, 27);
             scatterXListBox.Name = "scatterXListBox";
-            scatterXListBox.Size = new Size(377, 248);
+            scatterXListBox.Size = new Size(294, 248);
             scatterXListBox.TabIndex = 0;
             // 
             // groupBox4
@@ -673,7 +681,7 @@
             groupBox4.Dock = DockStyle.Fill;
             groupBox4.Location = new Point(0, 0);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(383, 275);
+            groupBox4.Size = new Size(300, 275);
             groupBox4.TabIndex = 1;
             groupBox4.TabStop = false;
             groupBox4.Text = "Y axis";
@@ -684,7 +692,7 @@
             scatterYListBox.FormattingEnabled = true;
             scatterYListBox.Location = new Point(3, 27);
             scatterYListBox.Name = "scatterYListBox";
-            scatterYListBox.Size = new Size(377, 245);
+            scatterYListBox.Size = new Size(294, 245);
             scatterYListBox.TabIndex = 0;
             // 
             // buildScatterButton
@@ -692,7 +700,7 @@
             buildScatterButton.Dock = DockStyle.Bottom;
             buildScatterButton.Location = new Point(0, 557);
             buildScatterButton.Name = "buildScatterButton";
-            buildScatterButton.Size = new Size(383, 34);
+            buildScatterButton.Size = new Size(300, 34);
             buildScatterButton.TabIndex = 2;
             buildScatterButton.Text = "Build";
             buildScatterButton.UseVisualStyleBackColor = true;
@@ -704,7 +712,7 @@
             scatterPlotView.Location = new Point(0, 0);
             scatterPlotView.Name = "scatterPlotView";
             scatterPlotView.PanCursor = Cursors.Hand;
-            scatterPlotView.Size = new Size(763, 591);
+            scatterPlotView.Size = new Size(846, 591);
             scatterPlotView.TabIndex = 2;
             scatterPlotView.Text = "plotView1";
             scatterPlotView.ZoomHorizontalCursor = Cursors.SizeWE;
@@ -726,12 +734,13 @@
             // splitContainer4
             // 
             splitContainer4.Dock = DockStyle.Fill;
+            splitContainer4.FixedPanel = FixedPanel.Panel1;
             splitContainer4.Location = new Point(3, 3);
             splitContainer4.Name = "splitContainer4";
             // 
             // splitContainer4.Panel1
             // 
-            splitContainer4.Panel1.Controls.Add(dataGridView1);
+            splitContainer4.Panel1.Controls.Add(splitContainer7);
             splitContainer4.Panel1.Controls.Add(toolStrip3);
             // 
             // splitContainer4.Panel2
@@ -741,6 +750,25 @@
             splitContainer4.SplitterDistance = 300;
             splitContainer4.TabIndex = 0;
             // 
+            // splitContainer7
+            // 
+            splitContainer7.Dock = DockStyle.Fill;
+            splitContainer7.FixedPanel = FixedPanel.Panel2;
+            splitContainer7.Location = new Point(0, 34);
+            splitContainer7.Name = "splitContainer7";
+            splitContainer7.Orientation = Orientation.Horizontal;
+            // 
+            // splitContainer7.Panel1
+            // 
+            splitContainer7.Panel1.Controls.Add(dataGridView1);
+            // 
+            // splitContainer7.Panel2
+            // 
+            splitContainer7.Panel2.Controls.Add(conditionsRichTextBox);
+            splitContainer7.Size = new Size(300, 601);
+            splitContainer7.SplitterDistance = 400;
+            splitContainer7.TabIndex = 10;
+            // 
             // dataGridView1
             // 
             dataGridView1.AllowUserToAddRows = false;
@@ -748,24 +776,26 @@
             dataGridView1.AllowUserToResizeColumns = false;
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.ColumnHeadersVisible = false;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { ColorColumn, NameColumn, EditColumn });
             dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 34);
+            dataGridView1.Location = new Point(0, 0);
             dataGridView1.MultiSelect = false;
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.RowHeadersWidth = 62;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(300, 601);
+            dataGridView1.Size = new Size(300, 400);
             dataGridView1.TabIndex = 8;
+            dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
             // 
             // ColorColumn
             // 
-            ColorColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+            ColorColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             ColorColumn.HeaderText = "Color";
             ColorColumn.MinimumWidth = 8;
             ColorColumn.Name = "ColorColumn";
-            ColorColumn.Width = 61;
+            ColorColumn.Width = 32;
             // 
             // NameColumn
             // 
@@ -773,14 +803,26 @@
             NameColumn.HeaderText = "Name";
             NameColumn.MinimumWidth = 8;
             NameColumn.Name = "NameColumn";
+            NameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
             // 
             // EditColumn
             // 
-            EditColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+            EditColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             EditColumn.HeaderText = "Edit";
             EditColumn.MinimumWidth = 8;
             EditColumn.Name = "EditColumn";
-            EditColumn.Width = 48;
+            EditColumn.Width = 32;
+            // 
+            // conditionsRichTextBox
+            // 
+            conditionsRichTextBox.BorderStyle = BorderStyle.FixedSingle;
+            conditionsRichTextBox.Dock = DockStyle.Fill;
+            conditionsRichTextBox.Location = new Point(0, 0);
+            conditionsRichTextBox.Name = "conditionsRichTextBox";
+            conditionsRichTextBox.ReadOnly = true;
+            conditionsRichTextBox.Size = new Size(300, 197);
+            conditionsRichTextBox.TabIndex = 0;
+            conditionsRichTextBox.Text = "No rule select";
             // 
             // toolStrip3
             // 
@@ -1001,6 +1043,10 @@
             splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer4).EndInit();
             splitContainer4.ResumeLayout(false);
+            splitContainer7.Panel1.ResumeLayout(false);
+            splitContainer7.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer7).EndInit();
+            splitContainer7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             toolStrip3.ResumeLayout(false);
             toolStrip3.PerformLayout();
@@ -1080,9 +1126,6 @@
         private ToolStrip toolStrip2;
         private ToolStripLabel toolStripLabel1;
         private DataGridView dataGridView1;
-        private DataGridViewImageColumn ColorColumn;
-        private DataGridViewTextBoxColumn NameColumn;
-        private DataGridViewButtonColumn EditColumn;
         private ToolStrip toolStrip3;
         private ToolStripButton toolStripButton2;
         private ToolStripButton toolStripButton3;
@@ -1090,5 +1133,10 @@
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripButton toolStripButton5;
         private ToolStripButton toolStripButton6;
+        private SplitContainer splitContainer7;
+        private RichTextBox conditionsRichTextBox;
+        private DataGridViewImageColumn ColorColumn;
+        private DataGridViewTextBoxColumn NameColumn;
+        private DataGridViewButtonColumn EditColumn;
     }
 }

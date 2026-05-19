@@ -1,14 +1,15 @@
 using modified_structure_analysis;
 using modified_structure_analysis.Properties;
+using OSGeo.GDAL;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
 using OxyPlot.WindowsForms;
-using OSGeo.GDAL;
-using GdalBand = OSGeo.GDAL.Band;
 using System.ComponentModel;
+using System.Data;
 using System.Runtime.InteropServices;
+using GdalBand = OSGeo.GDAL.Band;
 
 namespace modified_structure_analysis
 {
@@ -500,8 +501,6 @@ namespace modified_structure_analysis
         {
             try
             {
-                Gdal.AllRegister();
-
                 using (Dataset ds = Gdal.Open(fileName, Access.GA_ReadOnly))
                 {
                     if (ds == null)
@@ -1048,6 +1047,23 @@ namespace modified_structure_analysis
         {
             mainStatusLabel.Text = e.UserState?.ToString();
             mainProgressBar.Value = e.ProgressPercentage;
+        }
+
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+                conditionsRichTextBox.Text = "No rule select";
+            else
+                conditionsRichTextBox.Text = GetRulePreview(_classificationRules[dataGridView1.Rows.IndexOf(dataGridView1.SelectedRows[0])]);
+        }
+
+        private string GetRulePreview(ClassificationRule rule)
+        {
+            if (rule.Conditions.Count == 0)
+                return "No conditions";
+
+            var parts = rule.Conditions.Select(c => new ConditionDisplayItem(c, _bands).Display);
+            return string.Join('\n', parts);
         }
 
         //public void ApplyPlotSettings(PlotModel model)
