@@ -49,8 +49,16 @@ namespace modified_structure_analysis
             _kdeModel.Axes.Add(new LinearAxis { Key = "Y", Position = AxisPosition.Left, Title = "Density", Minimum = 0d });
             _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
             kdePlotView.Model = _kdeModel;
+        }
 
-            dataGridView1.CellClick += DataGridView1_CellClick;
+        private void ruleDataGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ruleDataGridView.Rows[e.RowIndex].Selected = true;
+
+                ruleContextMenuStrip.Show(ruleDataGridView, e.X, e.Y);
+            }
         }
 
         private void DataGridView1_CellClick(object? sender, DataGridViewCellEventArgs e)
@@ -60,11 +68,8 @@ namespace modified_structure_analysis
             if (e.ColumnIndex == 2)
             {
                 var rule = _classificationRules[e.RowIndex];
-                var editor = new RuleEditorForm(_bands, rule);
-                if (editor.ShowDialog(this) == DialogResult.OK)
-                {
-                    UpdateClassificationRulesGrid();
-                }
+
+                EditClassificationRule(rule);
             }
         }
 
@@ -78,15 +83,43 @@ namespace modified_structure_analysis
             }
         }
 
+        private void EditClassificationRule(ClassificationRule rule)
+        {
+            var editor = new RuleEditorForm(_bands, rule);
+
+            if (editor.ShowDialog(this) == DialogResult.OK)
+            {
+                UpdateClassificationRulesGrid();
+            }
+        }
+
+        private void EditClassificationRule(object sender, EventArgs e)
+        {
+            if (ruleDataGridView.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
+
+            if (selectedIndex >= _classificationRules.Count - 1)
+                return;
+
+            var rule = _classificationRules[selectedIndex];
+
+            EditClassificationRule(rule);
+        }
+
         private void DeleteClassificationRule(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count == 0)
+            if (ruleDataGridView.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Please select a rule to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            int selectedIndex = dataGridView1.SelectedRows[0].Index;
+            int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
 
             var result = MessageBox.Show(
                 $"Are you sure you want to delete rule #{selectedIndex + 1}?",
@@ -101,15 +134,32 @@ namespace modified_structure_analysis
             }
         }
 
-        private void MoveRuleUp(object sender, EventArgs e)
+        private void CloneClassificationRule(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count == 0)
+            if (ruleDataGridView.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            int selectedIndex = dataGridView1.SelectedRows[0].Index;
+            int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
+
+            var rule = _classificationRules[selectedIndex];
+
+            _classificationRules.Add((ClassificationRule)rule.Clone());
+
+            UpdateClassificationRulesGrid();
+        }
+
+        private void MoveRuleUp(object sender, EventArgs e)
+        {
+            if (ruleDataGridView.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
 
             if (selectedIndex == 0)
                 return;
@@ -118,21 +168,20 @@ namespace modified_structure_analysis
             _classificationRules.RemoveAt(selectedIndex);
             _classificationRules.Insert(selectedIndex - 1, rule);
 
-            dataGridView1.ClearSelection();
-            dataGridView1.Rows[selectedIndex - 1].Selected = true;
             UpdateClassificationRulesGrid();
-            dataGridView1.Rows[selectedIndex - 1].Selected = true;
+
+            ruleDataGridView.Rows[selectedIndex - 1].Selected = true;
         }
 
         private void MoveRuleDown(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count == 0)
+            if (ruleDataGridView.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            int selectedIndex = dataGridView1.SelectedRows[0].Index;
+            int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
 
             if (selectedIndex >= _classificationRules.Count - 1)
                 return;
@@ -141,19 +190,42 @@ namespace modified_structure_analysis
             _classificationRules.RemoveAt(selectedIndex);
             _classificationRules.Insert(selectedIndex + 1, rule);
 
-            dataGridView1.ClearSelection();
-            dataGridView1.Rows[selectedIndex + 1].Selected = true;
             UpdateClassificationRulesGrid();
-            dataGridView1.Rows[selectedIndex + 1].Selected = true;
+
+            ruleDataGridView.Rows[selectedIndex + 1].Selected = true;
+        }
+
+        private void ChangeRuleColor(object sender, EventArgs e)
+        {
+            if (ruleDataGridView.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
+
+            var rule = _classificationRules[selectedIndex];
+
+            using (var colorDialog = new ColorDialog())
+            {
+                colorDialog.Color = rule.Color;
+                if (colorDialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    rule.Color = colorDialog.Color;
+                }
+            }
+
+            UpdateClassificationRulesGrid();
         }
 
         private void UpdateClassificationRulesGrid()
         {
-            dataGridView1.Rows.Clear();
+            ruleDataGridView.Rows.Clear();
             foreach (var rule in _classificationRules)
             {
-                int rowIndex = dataGridView1.Rows.Add();
-                var row = dataGridView1.Rows[rowIndex];
+                int rowIndex = ruleDataGridView.Rows.Add();
+                var row = ruleDataGridView.Rows[rowIndex];
 
                 row.Cells[0].Value = CreateColorBitmap(rule.Color);
                 row.Cells[1].Value = rule.GenerateName();
@@ -1089,10 +1161,10 @@ namespace modified_structure_analysis
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count == 0)
+            if (ruleDataGridView.SelectedRows.Count == 0)
                 conditionsRichTextBox.Text = "No rule select";
             else
-                conditionsRichTextBox.Text = GetRulePreview(_classificationRules[dataGridView1.Rows.IndexOf(dataGridView1.SelectedRows[0])]);
+                conditionsRichTextBox.Text = GetRulePreview(_classificationRules[ruleDataGridView.Rows.IndexOf(ruleDataGridView.SelectedRows[0])]);
         }
 
         private string GetRulePreview(ClassificationRule rule)

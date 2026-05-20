@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
@@ -81,7 +82,7 @@
             classificationTabPage = new TabPage();
             splitContainer4 = new SplitContainer();
             splitContainer7 = new SplitContainer();
-            dataGridView1 = new DataGridView();
+            ruleDataGridView = new DataGridView();
             ColorColumn = new DataGridViewImageColumn();
             NameColumn = new DataGridViewTextBoxColumn();
             EditColumn = new DataGridViewButtonColumn();
@@ -99,6 +100,15 @@
             toolStrip2 = new ToolStrip();
             compareToolStripButton = new ToolStripButton();
             tabPage5 = new TabPage();
+            ruleContextMenuStrip = new ContextMenuStrip(components);
+            cloneToolStripMenuItem = new ToolStripMenuItem();
+            editToolStripMenuItem = new ToolStripMenuItem();
+            removeToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator4 = new ToolStripSeparator();
+            moveUpToolStripMenuItem = new ToolStripMenuItem();
+            moveDownToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator5 = new ToolStripSeparator();
+            changeColorToolStripMenuItem = new ToolStripMenuItem();
             backgroundWorker = new System.ComponentModel.BackgroundWorker();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
@@ -147,11 +157,12 @@
             splitContainer7.Panel1.SuspendLayout();
             splitContainer7.Panel2.SuspendLayout();
             splitContainer7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ruleDataGridView).BeginInit();
             toolStrip3.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
             toolStrip2.SuspendLayout();
+            ruleContextMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -737,7 +748,7 @@
             // 
             // splitContainer7.Panel1
             // 
-            splitContainer7.Panel1.Controls.Add(dataGridView1);
+            splitContainer7.Panel1.Controls.Add(ruleDataGridView);
             // 
             // splitContainer7.Panel2
             // 
@@ -746,25 +757,28 @@
             splitContainer7.SplitterDistance = 400;
             splitContainer7.TabIndex = 10;
             // 
-            // dataGridView1
+            // ruleDataGridView
             // 
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.AllowUserToResizeColumns = false;
-            dataGridView1.AllowUserToResizeRows = false;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.ColumnHeadersVisible = false;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { ColorColumn, NameColumn, EditColumn });
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 0);
-            dataGridView1.MultiSelect = false;
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersVisible = false;
-            dataGridView1.RowHeadersWidth = 62;
-            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(300, 400);
-            dataGridView1.TabIndex = 8;
-            dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
+            ruleDataGridView.AllowUserToAddRows = false;
+            ruleDataGridView.AllowUserToDeleteRows = false;
+            ruleDataGridView.AllowUserToResizeColumns = false;
+            ruleDataGridView.AllowUserToResizeRows = false;
+            ruleDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            ruleDataGridView.ColumnHeadersVisible = false;
+            ruleDataGridView.Columns.AddRange(new DataGridViewColumn[] { ColorColumn, NameColumn, EditColumn });
+            ruleDataGridView.Dock = DockStyle.Fill;
+            ruleDataGridView.Location = new Point(0, 0);
+            ruleDataGridView.MultiSelect = false;
+            ruleDataGridView.Name = "ruleDataGridView";
+            ruleDataGridView.ReadOnly = true;
+            ruleDataGridView.RowHeadersVisible = false;
+            ruleDataGridView.RowHeadersWidth = 62;
+            ruleDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            ruleDataGridView.Size = new Size(300, 400);
+            ruleDataGridView.TabIndex = 8;
+            ruleDataGridView.CellClick += DataGridView1_CellClick;
+            ruleDataGridView.CellMouseClick += ruleDataGridView_CellMouseClick;
+            ruleDataGridView.SelectionChanged += dataGridView1_SelectionChanged;
             // 
             // ColorColumn
             // 
@@ -772,6 +786,7 @@
             ColorColumn.HeaderText = "Color";
             ColorColumn.MinimumWidth = 8;
             ColorColumn.Name = "ColorColumn";
+            ColorColumn.ReadOnly = true;
             ColorColumn.Width = 32;
             // 
             // NameColumn
@@ -780,6 +795,7 @@
             NameColumn.HeaderText = "Name";
             NameColumn.MinimumWidth = 8;
             NameColumn.Name = "NameColumn";
+            NameColumn.ReadOnly = true;
             NameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
             // 
             // EditColumn
@@ -788,6 +804,7 @@
             EditColumn.HeaderText = "Edit";
             EditColumn.MinimumWidth = 8;
             EditColumn.Name = "EditColumn";
+            EditColumn.ReadOnly = true;
             EditColumn.Width = 32;
             // 
             // conditionsRichTextBox
@@ -933,6 +950,65 @@
             tabPage5.Text = "Analysis";
             tabPage5.UseVisualStyleBackColor = true;
             // 
+            // ruleContextMenuStrip
+            // 
+            ruleContextMenuStrip.ImageScalingSize = new Size(24, 24);
+            ruleContextMenuStrip.Items.AddRange(new ToolStripItem[] { changeColorToolStripMenuItem, editToolStripMenuItem, cloneToolStripMenuItem, toolStripSeparator4, moveUpToolStripMenuItem, moveDownToolStripMenuItem, toolStripSeparator5, removeToolStripMenuItem });
+            ruleContextMenuStrip.Name = "ruleContextMenuStrip";
+            ruleContextMenuStrip.Size = new Size(241, 241);
+            // 
+            // cloneToolStripMenuItem
+            // 
+            cloneToolStripMenuItem.Name = "cloneToolStripMenuItem";
+            cloneToolStripMenuItem.Size = new Size(240, 32);
+            cloneToolStripMenuItem.Text = "Clone";
+            cloneToolStripMenuItem.Click += CloneClassificationRule;
+            // 
+            // editToolStripMenuItem
+            // 
+            editToolStripMenuItem.Name = "editToolStripMenuItem";
+            editToolStripMenuItem.Size = new Size(240, 32);
+            editToolStripMenuItem.Text = "Edit";
+            editToolStripMenuItem.Click += EditClassificationRule;
+            // 
+            // removeToolStripMenuItem
+            // 
+            removeToolStripMenuItem.Name = "removeToolStripMenuItem";
+            removeToolStripMenuItem.Size = new Size(240, 32);
+            removeToolStripMenuItem.Text = "Remove";
+            removeToolStripMenuItem.Click += DeleteClassificationRule;
+            // 
+            // toolStripSeparator4
+            // 
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new Size(237, 6);
+            // 
+            // moveUpToolStripMenuItem
+            // 
+            moveUpToolStripMenuItem.Name = "moveUpToolStripMenuItem";
+            moveUpToolStripMenuItem.Size = new Size(240, 32);
+            moveUpToolStripMenuItem.Text = "Move up";
+            moveUpToolStripMenuItem.Click += MoveRuleUp;
+            // 
+            // moveDownToolStripMenuItem
+            // 
+            moveDownToolStripMenuItem.Name = "moveDownToolStripMenuItem";
+            moveDownToolStripMenuItem.Size = new Size(240, 32);
+            moveDownToolStripMenuItem.Text = "Move down";
+            moveDownToolStripMenuItem.Click += MoveRuleDown;
+            // 
+            // toolStripSeparator5
+            // 
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new Size(237, 6);
+            // 
+            // changeColorToolStripMenuItem
+            // 
+            changeColorToolStripMenuItem.Name = "changeColorToolStripMenuItem";
+            changeColorToolStripMenuItem.Size = new Size(240, 32);
+            changeColorToolStripMenuItem.Text = "Change Color";
+            changeColorToolStripMenuItem.Click += ChangeRuleColor;
+            // 
             // backgroundWorker
             // 
             backgroundWorker.WorkerReportsProgress = true;
@@ -1006,7 +1082,7 @@
             splitContainer7.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer7).EndInit();
             splitContainer7.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ruleDataGridView).EndInit();
             toolStrip3.ResumeLayout(false);
             toolStrip3.PerformLayout();
             tabControl1.ResumeLayout(false);
@@ -1014,6 +1090,7 @@
             tabPage4.PerformLayout();
             toolStrip2.ResumeLayout(false);
             toolStrip2.PerformLayout();
+            ruleContextMenuStrip.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1077,7 +1154,7 @@
         private TabPage tabPage4;
         private TabPage tabPage5;
         private ToolStrip toolStrip2;
-        private DataGridView dataGridView1;
+        private DataGridView ruleDataGridView;
         private ToolStrip toolStrip3;
         private ToolStripButton toolStripButton2;
         private ToolStripButton toolStripButton3;
@@ -1091,5 +1168,14 @@
         private DataGridViewTextBoxColumn NameColumn;
         private DataGridViewButtonColumn EditColumn;
         private ToolStripButton compareToolStripButton;
+        private ContextMenuStrip ruleContextMenuStrip;
+        private ToolStripMenuItem editToolStripMenuItem;
+        private ToolStripMenuItem removeToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator4;
+        private ToolStripMenuItem moveUpToolStripMenuItem;
+        private ToolStripMenuItem moveDownToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator5;
+        private ToolStripMenuItem changeColorToolStripMenuItem;
+        private ToolStripMenuItem cloneToolStripMenuItem;
     }
 }

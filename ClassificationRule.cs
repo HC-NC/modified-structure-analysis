@@ -18,7 +18,7 @@ public enum DensityType
     Multivariate
 }
 
-public class ClassificationRule
+public class ClassificationRule : ICloneable
 {
     public Color Color { get; set; } = Color.Red;
     public string Name { get; set; } = "";
@@ -31,5 +31,23 @@ public class ClassificationRule
             return "Empty Rule";
 
         return $"Rule with {Conditions.Count} condition(s)";
+    }
+
+    public object Clone()
+    {
+        ClassificationRule classificationRule = new ClassificationRule();
+
+        classificationRule.Color = Color;
+        classificationRule.Name = Name;
+
+        List<Condition> conditions = new();
+        
+        foreach (Condition condition in Conditions)
+            conditions.Add((Condition)condition.Clone());
+
+        classificationRule.Conditions = conditions;
+        classificationRule.IsEnabled = IsEnabled;
+
+        return classificationRule;
     }
 }

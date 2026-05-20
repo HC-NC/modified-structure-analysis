@@ -91,5 +91,10 @@ namespace modified_structure_analysis
 
             return base.Equals(obj);
         }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

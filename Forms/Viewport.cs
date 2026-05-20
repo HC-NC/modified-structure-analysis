@@ -90,16 +90,14 @@ namespace modified_structure_analysis.Forms
             pictureBox.Focus();
         }
 
-        private void pictureBox_MouseDown(object sender, EventArgs e)
+        private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            MouseEventArgs mouse = e as MouseEventArgs;
-
-            if (mouse.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)
             {
                 if (!_mousepressed)
                 {
                     _mousepressed = true;
-                    _mouseDown = mouse.Location;
+                    _mouseDown = e.Location;
                     _startx = _imgx;
                     _starty = _imgy;
 
@@ -108,7 +106,7 @@ namespace modified_structure_analysis.Forms
             }
         }
 
-        private void pictureBox_MouseUp(object sender, EventArgs e)
+        private void pictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             _mousepressed = false;
 
@@ -125,13 +123,11 @@ namespace modified_structure_analysis.Forms
             _mouseOnPicture = false;
         }
 
-        private void pictureBox_MouseMove(object sender, EventArgs e)
+        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
-            MouseEventArgs mouse = e as MouseEventArgs;
-
-            if (mouse.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)
             {
-                Point mousePosNow = mouse.Location;
+                Point mousePosNow = e.Location;
 
                 // the distance the mouse has been moved since mouse was pressed
                 int deltaX = mousePosNow.X - _mouseDown.X;

@@ -1,11 +1,12 @@
 namespace modified_structure_analysis;
 
-public class CompareTarget
+public class CompareTarget : ICloneable
 {
     public DensityType DensityType { get; set; } = DensityType.Single;
     public int SingleBandIndex { get; set; }
     public List<int> BandIndices { get; set; } = new();
     public double? ConstantValue { get; set; }
+
     public bool IsConstant => ConstantValue.HasValue;
 
     public string ToDisplayString(List<Band> bands)
@@ -26,5 +27,17 @@ public class CompareTarget
             DensityType.Multivariate => $"p({bandName})",
             _ => bandName
         };
+    }
+
+    public object Clone()
+    {
+        CompareTarget compareTarget = new CompareTarget();
+
+        compareTarget.DensityType = DensityType;
+        compareTarget.SingleBandIndex = SingleBandIndex;
+        compareTarget.BandIndices = [.. BandIndices];
+        compareTarget.ConstantValue = ConstantValue;
+        
+        return compareTarget;
     }
 }
