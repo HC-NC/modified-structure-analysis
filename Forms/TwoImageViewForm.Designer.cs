@@ -31,6 +31,7 @@
             splitContainer1 = new SplitContainer();
             viewport1 = new Viewport();
             viewport2 = new Viewport();
+            statusStrip1 = new StatusStrip();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -51,7 +52,7 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(viewport2);
-            splitContainer1.Size = new Size(1258, 584);
+            splitContainer1.Size = new Size(1258, 562);
             splitContainer1.SplitterDistance = 629;
             splitContainer1.TabIndex = 0;
             // 
@@ -61,7 +62,7 @@
             viewport1.Dock = DockStyle.Fill;
             viewport1.Location = new Point(0, 0);
             viewport1.Name = "viewport1";
-            viewport1.Size = new Size(629, 584);
+            viewport1.Size = new Size(629, 562);
             viewport1.TabIndex = 0;
             // 
             // viewport2
@@ -70,8 +71,17 @@
             viewport2.Dock = DockStyle.Fill;
             viewport2.Location = new Point(0, 0);
             viewport2.Name = "viewport2";
-            viewport2.Size = new Size(625, 584);
+            viewport2.Size = new Size(625, 562);
             viewport2.TabIndex = 0;
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.ImageScalingSize = new Size(24, 24);
+            statusStrip1.Location = new Point(0, 562);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(1258, 22);
+            statusStrip1.TabIndex = 1;
+            statusStrip1.Text = "statusStrip1";
             // 
             // TwoImageViewForm
             // 
@@ -79,17 +89,20 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1258, 584);
             Controls.Add(splitContainer1);
+            Controls.Add(statusStrip1);
             MinimizeBox = false;
             Name = "TwoImageViewForm";
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "TwoImageViewForm";
+            FormClosing += TwoImageViewForm_FormClosing;
             Load += TwoImageViewForm_Load;
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -97,5 +110,6 @@
         private SplitContainer splitContainer1;
         private Viewport viewport1;
         private Viewport viewport2;
+        private StatusStrip statusStrip1;
     }
 }

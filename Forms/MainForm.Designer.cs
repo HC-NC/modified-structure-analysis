@@ -97,9 +97,9 @@
             tabPage4 = new TabPage();
             viewport2 = new modified_structure_analysis.Forms.Viewport();
             toolStrip2 = new ToolStrip();
+            compareToolStripButton = new ToolStripButton();
             tabPage5 = new TabPage();
             backgroundWorker = new System.ComponentModel.BackgroundWorker();
-            compareToolStripButton = new ToolStripButton();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -368,6 +368,7 @@
             redToolStripDropDownButton.Image = Properties.Resources.red_sqaure;
             redToolStripDropDownButton.ImageTransparentColor = Color.Magenta;
             redToolStripDropDownButton.Name = "redToolStripDropDownButton";
+            redToolStripDropDownButton.Overflow = ToolStripItemOverflow.Never;
             redToolStripDropDownButton.Size = new Size(84, 29);
             redToolStripDropDownButton.Text = "Red";
             // 
@@ -376,6 +377,7 @@
             greenToolStripDropDownButton.Image = Properties.Resources.green_sqaure;
             greenToolStripDropDownButton.ImageTransparentColor = Color.Magenta;
             greenToolStripDropDownButton.Name = "greenToolStripDropDownButton";
+            greenToolStripDropDownButton.Overflow = ToolStripItemOverflow.Never;
             greenToolStripDropDownButton.Size = new Size(100, 29);
             greenToolStripDropDownButton.Text = "Green";
             // 
@@ -384,6 +386,7 @@
             blueToolStripDropDownButton.Image = Properties.Resources.blue_sqaure;
             blueToolStripDropDownButton.ImageTransparentColor = Color.Magenta;
             blueToolStripDropDownButton.Name = "blueToolStripDropDownButton";
+            blueToolStripDropDownButton.Overflow = ToolStripItemOverflow.Never;
             blueToolStripDropDownButton.Size = new Size(87, 29);
             blueToolStripDropDownButton.Text = "Blue";
             // 
@@ -613,6 +616,7 @@
             // splitContainer6
             // 
             splitContainer6.Dock = DockStyle.Fill;
+            splitContainer6.IsSplitterFixed = true;
             splitContainer6.Location = new Point(0, 0);
             splitContainer6.Name = "splitContainer6";
             splitContainer6.Orientation = Orientation.Horizontal;
@@ -908,6 +912,17 @@
             toolStrip2.Size = new Size(846, 34);
             toolStrip2.TabIndex = 0;
             // 
+            // compareToolStripButton
+            // 
+            compareToolStripButton.Alignment = ToolStripItemAlignment.Right;
+            compareToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            compareToolStripButton.Image = (Image)resources.GetObject("compareToolStripButton.Image");
+            compareToolStripButton.ImageTransparentColor = Color.Magenta;
+            compareToolStripButton.Name = "compareToolStripButton";
+            compareToolStripButton.Size = new Size(89, 29);
+            compareToolStripButton.Text = "Compare";
+            compareToolStripButton.Click += compareToolStripButton_Click;
+            // 
             // tabPage5
             // 
             tabPage5.Location = new Point(4, 4);
@@ -926,17 +941,6 @@
             backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             // 
-            // compareToolStripButton
-            // 
-            compareToolStripButton.Alignment = ToolStripItemAlignment.Right;
-            compareToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            compareToolStripButton.Image = (Image)resources.GetObject("compareToolStripButton.Image");
-            compareToolStripButton.ImageTransparentColor = Color.Magenta;
-            compareToolStripButton.Name = "compareToolStripButton";
-            compareToolStripButton.Size = new Size(89, 29);
-            compareToolStripButton.Text = "Compare";
-            compareToolStripButton.Click += compareToolStripButton_Click;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -947,7 +951,7 @@
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
             Name = "MainForm";
-            Text = "Form1";
+            Text = "Main";
             Load += MainForm_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();

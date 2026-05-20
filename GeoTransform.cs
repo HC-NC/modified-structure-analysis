@@ -75,7 +75,21 @@ namespace modified_structure_analysis
 
         public override string ToString()
         {
-            return $"Origin: ({OriginX}, {OriginY}), PixelSize: ({PixelSizeX}, {PixelSizeY}), Projection: {ProjectionName ?? "None"}";
+            return $"Origin: ({OriginX}, {OriginY}),\nPixelSize: ({PixelSizeX}, {PixelSizeY}),\nProjection: {string.Join(",\n• ", (ProjectionName ?? "None").Split(','))}";
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is  GeoTransform geoTransform)
+            {
+                const double eps = 1e-6;
+                return Math.Abs(OriginX - geoTransform.OriginX) < eps &&
+                       Math.Abs(OriginY - geoTransform.OriginY) < eps &&
+                       Math.Abs(PixelSizeX - geoTransform.PixelSizeX) < eps &&
+                       Math.Abs(PixelSizeY - geoTransform.PixelSizeY) < eps;
+            }
+
+            return base.Equals(obj);
         }
     }
 }

@@ -29,6 +29,9 @@ namespace modified_structure_analysis.Forms
 
         public Image Image => _img;
 
+        public event Action<float> Zooming;
+        public event Action<int, int> Moving;
+
         public Viewport()
         {
             InitializeComponent();
@@ -65,6 +68,9 @@ namespace modified_structure_analysis.Forms
 
             _imgx = (int)(pictureBox.Width * 0.5f / _zoom - _img.Width * 0.5f);
             _imgy = (int)(pictureBox.Height * 0.5f / _zoom - _img.Height * 0.5f);
+
+            Zooming?.Invoke(_zoom);
+            Moving?.Invoke(_imgx, _imgy);
 
             pictureBox.Refresh();
         }
@@ -135,6 +141,8 @@ namespace modified_structure_analysis.Forms
                 _imgx = (int)(_startx + (deltaX / _zoom));
                 _imgy = (int)(_starty + (deltaY / _zoom));
 
+                Moving?.Invoke(_imgx, _imgy);
+
                 pictureBox.Refresh();
             }
         }
@@ -174,6 +182,9 @@ namespace modified_structure_analysis.Forms
                 // Where to move image to keep focus on one point
                 _imgx = newimagex - oldimagex + _imgx;
                 _imgy = newimagey - oldimagey + _imgy;
+
+                Zooming?.Invoke(_zoom);
+                Moving?.Invoke(_imgx, _imgy);
 
                 pictureBox.Refresh();  // calls imageBox_Paint
             }
@@ -220,6 +231,8 @@ namespace modified_structure_analysis.Forms
                         pictureBox.Refresh();
                         break;
                 }
+
+                Moving?.Invoke(_imgx, _imgy);
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
@@ -230,16 +243,46 @@ namespace modified_structure_analysis.Forms
             if (_img == null)
                 return;
 
-            int widthVec = pictureBox.Width - _oldWidth;
-            int heightVec = pictureBox.Height - _oldHeight;
+            float oldZoom = _zoom;
 
-            if (Math.Abs(heightVec) <= Math.Abs(widthVec))
-                _zoom += (float)(heightVec) / (float)_img.Height * (_img.VerticalResolution / _graphics.DpiY);
-            else 
-                _zoom += (float)(widthVec) / (float)_img.Width * (_img.HorizontalResolution / _graphics.DpiX);
+            float oldFullZoom = Math.Min(
+             ((float)_oldHeight / (float)_img.Height) * (_img.VerticalResolution / _graphics.DpiY),
+             ((float)_oldWidth / (float)_img.Width) * (_img.HorizontalResolution / _graphics.DpiX)
+            );
+
+            float fullZoom = Math.Min(
+             ((float)pictureBox.Height / (float)_img.Height) * (_img.VerticalResolution / _graphics.DpiY),
+             ((float)pictureBox.Width / (float)_img.Width) * (_img.HorizontalResolution / _graphics.DpiX)
+            );
+
+            _zoom += fullZoom - oldFullZoom;
+
+            _imgx += (int)(0.5f * (pictureBox.Width / _zoom - _oldWidth / oldZoom));
+            _imgy += (int)(0.5f * (pictureBox.Height / _zoom - _oldHeight / oldZoom));
 
             _oldWidth = pictureBox.Width;
             _oldHeight = pictureBox.Height;
+
+            pictureBox.Refresh();
+        }
+
+        public void OnLinkZoom(float zoom)
+        {
+            if (_img == null)
+                return;
+
+            _zoom = zoom;
+
+            pictureBox.Refresh();
+        }
+
+        public void OnLinkMove(int x, int y)
+        {
+            if (_img == null)
+                return;
+
+            _imgx = x;
+            _imgy = y;
 
             pictureBox.Refresh();
         }

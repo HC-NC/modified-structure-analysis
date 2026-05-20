@@ -52,7 +52,7 @@
             _conditionsListBox.Dock = DockStyle.Fill;
             _conditionsListBox.Location = new Point(0, 33);
             _conditionsListBox.Name = "_conditionsListBox";
-            _conditionsListBox.Size = new Size(478, 257);
+            _conditionsListBox.Size = new Size(778, 451);
             _conditionsListBox.TabIndex = 1;
             // 
             // lblColor
@@ -69,26 +69,26 @@
             _colorBtn.Location = new Point(79, 7);
             _colorBtn.Margin = new Padding(4);
             _colorBtn.Name = "_colorBtn";
-            _colorBtn.Size = new Size(80, 34);
+            _colorBtn.Size = new Size(100, 40);
             _colorBtn.TabIndex = 6;
             _colorBtn.Click += ColorBtn_Click;
             // 
             // _okBtn
             // 
             _okBtn.DialogResult = DialogResult.OK;
-            _okBtn.Location = new Point(126, 7);
+            _okBtn.Location = new Point(326, 7);
             _okBtn.Name = "_okBtn";
-            _okBtn.Size = new Size(80, 34);
+            _okBtn.Size = new Size(120, 40);
             _okBtn.TabIndex = 8;
-            _okBtn.Text = "Ok";
+            _okBtn.Text = "OK";
             _okBtn.Click += Close_Click;
             // 
             // _cancelBtn
             // 
             _cancelBtn.DialogResult = DialogResult.Cancel;
-            _cancelBtn.Location = new Point(212, 7);
+            _cancelBtn.Location = new Point(452, 7);
             _cancelBtn.Name = "_cancelBtn";
-            _cancelBtn.Size = new Size(80, 34);
+            _cancelBtn.Size = new Size(120, 40);
             _cancelBtn.TabIndex = 9;
             _cancelBtn.Text = "Cancel";
             _cancelBtn.Click += Close_Click;
@@ -100,10 +100,10 @@
             flowLayoutPanel1.Controls.Add(_okBtn);
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanel1.Location = new Point(172, 3);
+            flowLayoutPanel1.Location = new Point(192, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Padding = new Padding(4);
-            flowLayoutPanel1.Size = new Size(303, 48);
+            flowLayoutPanel1.Size = new Size(583, 54);
             flowLayoutPanel1.TabIndex = 10;
             // 
             // menuStrip1
@@ -112,7 +112,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { addToolStripMenuItem, removeToolStripMenuItem, editToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(478, 33);
+            menuStrip1.Size = new Size(778, 33);
             menuStrip1.TabIndex = 12;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -150,11 +150,11 @@
             tableLayoutPanel1.Controls.Add(flowLayoutPanel1, 1, 0);
             tableLayoutPanel1.Controls.Add(panel1, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Bottom;
-            tableLayoutPanel1.Location = new Point(0, 290);
+            tableLayoutPanel1.Location = new Point(0, 484);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(478, 54);
+            tableLayoutPanel1.Size = new Size(778, 60);
             tableLayoutPanel1.TabIndex = 13;
             // 
             // panel1
@@ -164,22 +164,22 @@
             panel1.Controls.Add(lblColor);
             panel1.Location = new Point(3, 3);
             panel1.Name = "panel1";
-            panel1.Size = new Size(163, 45);
+            panel1.Size = new Size(183, 51);
             panel1.TabIndex = 11;
             // 
             // RuleEditorForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(478, 344);
+            ClientSize = new Size(778, 544);
             Controls.Add(_conditionsListBox);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(menuStrip1);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
             MainMenuStrip = menuStrip1;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "RuleEditorForm";
+            ShowIcon = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "RuleEditorForm";
             Load += RuleEditorForm_Load;

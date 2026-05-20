@@ -10,6 +10,7 @@ using OxyPlot.WindowsForms;
 using System.ComponentModel;
 using System.Data;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using GdalBand = OSGeo.GDAL.Band;
 
 namespace modified_structure_analysis
@@ -60,7 +61,7 @@ namespace modified_structure_analysis
             {
                 var rule = _classificationRules[e.RowIndex];
                 var editor = new RuleEditorForm(_bands, rule);
-                if (editor.ShowDialog() == DialogResult.OK)
+                if (editor.ShowDialog(this) == DialogResult.OK)
                 {
                     UpdateClassificationRulesGrid();
                 }
@@ -70,7 +71,7 @@ namespace modified_structure_analysis
         private void AddClassificationRule(object sender, EventArgs e)
         {
             var editor = new RuleEditorForm(_bands, null);
-            if (editor.ShowDialog() == DialogResult.OK)
+            if (editor.ShowDialog(this) == DialogResult.OK)
             {
                 _classificationRules.Add(editor.ResultRule);
                 UpdateClassificationRulesGrid();
@@ -522,7 +523,7 @@ namespace modified_structure_analysis
 
                     if (_geoTransform != null)
                     {
-                        if (!IsGeoTransformEqual(_geoTransform, newGeoTransform))
+                        if (!_geoTransform.Equals(newGeoTransform))
                         {
                             MessageBox.Show($"Error: GeoTransform mismatch!\n\nFile: {Path.GetFileName(fileName)}\nExpected: Origin=({_geoTransform.OriginX}, {_geoTransform.OriginY}), PixelSize=({_geoTransform.PixelSizeX}, {_geoTransform.PixelSizeY})\nGot: Origin=({newGeoTransform.OriginX}, {newGeoTransform.OriginY}), PixelSize=({newGeoTransform.PixelSizeX}, {newGeoTransform.PixelSizeY})",
                                 "GeoTransform Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -551,13 +552,20 @@ namespace modified_structure_analysis
                     {
                         using (GdalBand gdalBand = ds.GetRasterBand(i))
                         {
-                            string bandName = Path.GetFileNameWithoutExtension(fileName);
-                            if (ds.RasterCount > 1)
-                                bandName += $"_{i}";
+                            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
 
-                            string desc = gdalBand.GetDescription();
+                            string bandName = ExtractShortLandsatName(fileNameWithoutExt);
+                            string desc;
+
+                            if (ds.RasterCount == 1)
+                                desc = ExtractDescription(fileName) ?? gdalBand.GetDescription();
+                            else
+                                desc = gdalBand.GetDescription();
+
                             if (!string.IsNullOrWhiteSpace(desc))
-                                bandName = desc;
+                                bandName += $"_{desc}";
+                            else if (ds.RasterCount > 1)
+                                bandName += $"_{i}";
 
                             double[] minmax = new double[2];
                             gdalBand.ComputeRasterMinMax(minmax, 0);
@@ -584,13 +592,42 @@ namespace modified_structure_analysis
             }
         }
 
-        private bool IsGeoTransformEqual(GeoTransform gt1, GeoTransform gt2)
+        private string ExtractShortLandsatName(string fileName)
         {
-            const double eps = 1e-6;
-            return Math.Abs(gt1.OriginX - gt2.OriginX) < eps &&
-                   Math.Abs(gt1.OriginY - gt2.OriginY) < eps &&
-                   Math.Abs(gt1.PixelSizeX - gt2.PixelSizeX) < eps &&
-                   Math.Abs(gt1.PixelSizeY - gt2.PixelSizeY) < eps;
+            var match = Regex.Match(fileName, @"(LC\d\d)?[_]?(?:\w{4})?[_](\d{6})?[_](\d{8})", RegexOptions.IgnoreCase);
+
+            if (match.Success)
+            {
+                return string.Join('_', (match.Groups[1].Value ?? ""), (match.Groups[2].Value ?? ""), (match.Groups[3].Value ?? ""));
+            }
+
+            return fileName;
+        }
+
+        private string? ExtractDescription(string fileName)
+        {
+            // Попытка определить описание по имени файла (Landsat band naming)
+            var bandNumMatch = Regex.Match(fileName, @"[Bb](?:and)?[_]?(\d+)", RegexOptions.IgnoreCase);
+            if (bandNumMatch.Success)
+            {
+                int bandNum = int.Parse(bandNumMatch.Groups[1].Value);
+                return bandNum switch
+                {
+                    1 => "UltraBlue",
+                    2 => "Blue",
+                    3 => "Green",
+                    4 => "Red",
+                    5 => "NIR",
+                    6 => "SWIR_1",
+                    7 => "SWIR_2",
+                    8 => "Panchromatic",
+                    9 => "Cirrus",
+                    10 => "ThermalInfrared_1",
+                    11 => "ThermalInfrared_2",
+                    _ => bandNum.ToString(),
+                };
+            }
+            return null;
         }
 
         private void ReadTextFile(string fileName, char delimiter = '\t')
@@ -721,7 +758,7 @@ namespace modified_structure_analysis
             foreach (Band band in _bands)
             {
                 band.SetDimensions(_width, _height);
-                band.SetGeoTransform(new GeoTransform(minX, maxY, _cellSize, _cellSize));
+                band.SetGeoTransform(new GeoTransform(minX, maxY, _cellSize, -_cellSize));
             }
 
             foreach (var cell in gridData)
