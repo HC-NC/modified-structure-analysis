@@ -42,8 +42,8 @@ namespace modified_structure_analysis
 
             for (int i = 0; i < _bands.Count; i++)
             {
-                _leftBandsListBox.Items.Add($"{i}: {_bands[i].Name}");
-                _rightBandsListBox.Items.Add($"{i}: {_bands[i].Name}");
+                _leftBandsListBox.Items.Add(_bands[i].Name);
+                _rightBandsListBox.Items.Add(_bands[i].Name);
             }
         }
 

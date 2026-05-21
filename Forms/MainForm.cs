@@ -57,13 +57,25 @@ namespace modified_structure_analysis
             {
                 ruleDataGridView.Rows[e.RowIndex].Selected = true;
 
-                ruleContextMenuStrip.Show(ruleDataGridView, e.X, e.Y);
+                int x = e.X;
+                int y = e.Y;
+
+                for (int i = 0; i < e.ColumnIndex; i++)
+                    x += ruleDataGridView.Columns[i].Width;
+
+                for (int i = 0; i < e.RowIndex; i++)
+                    y += ruleDataGridView.Rows[e.RowIndex].Height;
+
+                ruleContextMenuStrip.Show((Control)sender, x, y);
             }
         }
 
-        private void DataGridView1_CellClick(object? sender, DataGridViewCellEventArgs e)
+        private void DataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
+
+            if (e.ColumnIndex == 0)
+                ChangeRuleColor(sender, e);
 
             if (e.ColumnIndex == 2)
             {
@@ -78,8 +90,9 @@ namespace modified_structure_analysis
             var editor = new RuleEditorForm(_bands, null);
             if (editor.ShowDialog(this) == DialogResult.OK)
             {
-                _classificationRules.Add(editor.ResultRule);
+                _classificationRules.Add(editor.Rule);
                 UpdateClassificationRulesGrid();
+                ruleDataGridView.Rows[ruleDataGridView.Rows.GetLastRow(DataGridViewElementStates.None)].Selected = true;
             }
         }
 
@@ -90,6 +103,7 @@ namespace modified_structure_analysis
             if (editor.ShowDialog(this) == DialogResult.OK)
             {
                 UpdateClassificationRulesGrid();
+                ruleDataGridView.Rows[_classificationRules.IndexOf(rule)].Selected = true;
             }
         }
 
@@ -102,9 +116,6 @@ namespace modified_structure_analysis
             }
 
             int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
-
-            if (selectedIndex >= _classificationRules.Count - 1)
-                return;
 
             var rule = _classificationRules[selectedIndex];
 
@@ -131,6 +142,14 @@ namespace modified_structure_analysis
             {
                 _classificationRules.RemoveAt(selectedIndex);
                 UpdateClassificationRulesGrid();
+
+                if (_classificationRules.Count == 0)
+                    return;
+
+                if (selectedIndex >= ruleDataGridView.Rows.Count)
+                    selectedIndex = ruleDataGridView.Rows.GetLastRow(DataGridViewElementStates.None);
+
+                ruleDataGridView.Rows[selectedIndex].Selected = true;
             }
         }
 
@@ -146,9 +165,11 @@ namespace modified_structure_analysis
 
             var rule = _classificationRules[selectedIndex];
 
-            _classificationRules.Add((ClassificationRule)rule.Clone());
+            _classificationRules.Insert(selectedIndex + 1, (ClassificationRule)rule.Clone());
 
             UpdateClassificationRulesGrid();
+
+            ruleDataGridView.Rows[selectedIndex + 1].Selected = true;
         }
 
         private void MoveRuleUp(object sender, EventArgs e)
@@ -217,6 +238,8 @@ namespace modified_structure_analysis
             }
 
             UpdateClassificationRulesGrid();
+
+            ruleDataGridView.Rows[selectedIndex].Selected = true;
         }
 
         private void UpdateClassificationRulesGrid()

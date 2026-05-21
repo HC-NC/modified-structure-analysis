@@ -101,15 +101,17 @@
             compareToolStripButton = new ToolStripButton();
             tabPage5 = new TabPage();
             ruleContextMenuStrip = new ContextMenuStrip(components);
-            cloneToolStripMenuItem = new ToolStripMenuItem();
+            changeColorToolStripMenuItem = new ToolStripMenuItem();
             editToolStripMenuItem = new ToolStripMenuItem();
-            removeToolStripMenuItem = new ToolStripMenuItem();
+            cloneToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator4 = new ToolStripSeparator();
             moveUpToolStripMenuItem = new ToolStripMenuItem();
             moveDownToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator5 = new ToolStripSeparator();
-            changeColorToolStripMenuItem = new ToolStripMenuItem();
+            removeToolStripMenuItem = new ToolStripMenuItem();
             backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            toolStripButton7 = new ToolStripButton();
+            toolStripSeparator6 = new ToolStripSeparator();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -532,16 +534,16 @@
             kdeBandsListBox.Location = new Point(0, 0);
             kdeBandsListBox.Name = "kdeBandsListBox";
             kdeBandsListBox.SelectionMode = SelectionMode.MultiExtended;
-            kdeBandsListBox.Size = new Size(300, 454);
+            kdeBandsListBox.Size = new Size(300, 431);
             kdeBandsListBox.TabIndex = 0;
             // 
             // kdeSingleButton
             // 
             kdeSingleButton.AutoSize = true;
             kdeSingleButton.Dock = DockStyle.Bottom;
-            kdeSingleButton.Location = new Point(0, 454);
+            kdeSingleButton.Location = new Point(0, 431);
             kdeSingleButton.Name = "kdeSingleButton";
-            kdeSingleButton.Size = new Size(300, 35);
+            kdeSingleButton.Size = new Size(300, 40);
             kdeSingleButton.TabIndex = 1;
             kdeSingleButton.Text = "Single";
             kdeSingleButton.UseVisualStyleBackColor = true;
@@ -550,9 +552,9 @@
             // kdeProductButton
             // 
             kdeProductButton.Dock = DockStyle.Bottom;
-            kdeProductButton.Location = new Point(0, 489);
+            kdeProductButton.Location = new Point(0, 471);
             kdeProductButton.Name = "kdeProductButton";
-            kdeProductButton.Size = new Size(300, 34);
+            kdeProductButton.Size = new Size(300, 40);
             kdeProductButton.TabIndex = 2;
             kdeProductButton.Text = "Product";
             kdeProductButton.UseVisualStyleBackColor = true;
@@ -561,9 +563,9 @@
             // kdeMultivariateButton
             // 
             kdeMultivariateButton.Dock = DockStyle.Bottom;
-            kdeMultivariateButton.Location = new Point(0, 523);
+            kdeMultivariateButton.Location = new Point(0, 511);
             kdeMultivariateButton.Name = "kdeMultivariateButton";
-            kdeMultivariateButton.Size = new Size(300, 34);
+            kdeMultivariateButton.Size = new Size(300, 40);
             kdeMultivariateButton.TabIndex = 8;
             kdeMultivariateButton.Text = "Multivar";
             kdeMultivariateButton.UseVisualStyleBackColor = true;
@@ -572,9 +574,9 @@
             // kdeClearButton
             // 
             kdeClearButton.Dock = DockStyle.Bottom;
-            kdeClearButton.Location = new Point(0, 557);
+            kdeClearButton.Location = new Point(0, 551);
             kdeClearButton.Name = "kdeClearButton";
-            kdeClearButton.Size = new Size(300, 34);
+            kdeClearButton.Size = new Size(300, 40);
             kdeClearButton.TabIndex = 9;
             kdeClearButton.Text = "Clear";
             kdeClearButton.UseVisualStyleBackColor = true;
@@ -627,7 +629,6 @@
             // splitContainer6
             // 
             splitContainer6.Dock = DockStyle.Fill;
-            splitContainer6.IsSplitterFixed = true;
             splitContainer6.Location = new Point(0, 0);
             splitContainer6.Name = "splitContainer6";
             splitContainer6.Orientation = Orientation.Horizontal;
@@ -639,8 +640,8 @@
             // splitContainer6.Panel2
             // 
             splitContainer6.Panel2.Controls.Add(groupBox4);
-            splitContainer6.Size = new Size(300, 557);
-            splitContainer6.SplitterDistance = 278;
+            splitContainer6.Size = new Size(300, 551);
+            splitContainer6.SplitterDistance = 267;
             splitContainer6.TabIndex = 3;
             // 
             // groupBox3
@@ -649,7 +650,7 @@
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Location = new Point(0, 0);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(300, 278);
+            groupBox3.Size = new Size(300, 267);
             groupBox3.TabIndex = 0;
             groupBox3.TabStop = false;
             groupBox3.Text = "X axis";
@@ -660,7 +661,7 @@
             scatterXListBox.FormattingEnabled = true;
             scatterXListBox.Location = new Point(3, 27);
             scatterXListBox.Name = "scatterXListBox";
-            scatterXListBox.Size = new Size(294, 248);
+            scatterXListBox.Size = new Size(294, 237);
             scatterXListBox.TabIndex = 0;
             // 
             // groupBox4
@@ -669,7 +670,7 @@
             groupBox4.Dock = DockStyle.Fill;
             groupBox4.Location = new Point(0, 0);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(300, 275);
+            groupBox4.Size = new Size(300, 280);
             groupBox4.TabIndex = 1;
             groupBox4.TabStop = false;
             groupBox4.Text = "Y axis";
@@ -680,15 +681,15 @@
             scatterYListBox.FormattingEnabled = true;
             scatterYListBox.Location = new Point(3, 27);
             scatterYListBox.Name = "scatterYListBox";
-            scatterYListBox.Size = new Size(294, 245);
+            scatterYListBox.Size = new Size(294, 250);
             scatterYListBox.TabIndex = 0;
             // 
             // buildScatterButton
             // 
             buildScatterButton.Dock = DockStyle.Bottom;
-            buildScatterButton.Location = new Point(0, 557);
+            buildScatterButton.Location = new Point(0, 551);
             buildScatterButton.Name = "buildScatterButton";
-            buildScatterButton.Size = new Size(300, 34);
+            buildScatterButton.Size = new Size(300, 40);
             buildScatterButton.TabIndex = 2;
             buildScatterButton.Text = "Build";
             buildScatterButton.UseVisualStyleBackColor = true;
@@ -822,7 +823,7 @@
             // 
             toolStrip3.GripStyle = ToolStripGripStyle.Hidden;
             toolStrip3.ImageScalingSize = new Size(24, 24);
-            toolStrip3.Items.AddRange(new ToolStripItem[] { toolStripButton2, toolStripButton3, toolStripButton4, toolStripSeparator3, toolStripButton5, toolStripButton6 });
+            toolStrip3.Items.AddRange(new ToolStripItem[] { toolStripButton2, toolStripButton3, toolStripButton4, toolStripSeparator6, toolStripButton7, toolStripSeparator3, toolStripButton5, toolStripButton6 });
             toolStrip3.Location = new Point(0, 0);
             toolStrip3.Name = "toolStrip3";
             toolStrip3.Size = new Size(300, 34);
@@ -955,59 +956,59 @@
             ruleContextMenuStrip.ImageScalingSize = new Size(24, 24);
             ruleContextMenuStrip.Items.AddRange(new ToolStripItem[] { changeColorToolStripMenuItem, editToolStripMenuItem, cloneToolStripMenuItem, toolStripSeparator4, moveUpToolStripMenuItem, moveDownToolStripMenuItem, toolStripSeparator5, removeToolStripMenuItem });
             ruleContextMenuStrip.Name = "ruleContextMenuStrip";
-            ruleContextMenuStrip.Size = new Size(241, 241);
+            ruleContextMenuStrip.Size = new Size(193, 208);
             // 
-            // cloneToolStripMenuItem
+            // changeColorToolStripMenuItem
             // 
-            cloneToolStripMenuItem.Name = "cloneToolStripMenuItem";
-            cloneToolStripMenuItem.Size = new Size(240, 32);
-            cloneToolStripMenuItem.Text = "Clone";
-            cloneToolStripMenuItem.Click += CloneClassificationRule;
+            changeColorToolStripMenuItem.Name = "changeColorToolStripMenuItem";
+            changeColorToolStripMenuItem.Size = new Size(192, 32);
+            changeColorToolStripMenuItem.Text = "Change Color";
+            changeColorToolStripMenuItem.Click += ChangeRuleColor;
             // 
             // editToolStripMenuItem
             // 
             editToolStripMenuItem.Name = "editToolStripMenuItem";
-            editToolStripMenuItem.Size = new Size(240, 32);
+            editToolStripMenuItem.Size = new Size(192, 32);
             editToolStripMenuItem.Text = "Edit";
             editToolStripMenuItem.Click += EditClassificationRule;
             // 
-            // removeToolStripMenuItem
+            // cloneToolStripMenuItem
             // 
-            removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            removeToolStripMenuItem.Size = new Size(240, 32);
-            removeToolStripMenuItem.Text = "Remove";
-            removeToolStripMenuItem.Click += DeleteClassificationRule;
+            cloneToolStripMenuItem.Name = "cloneToolStripMenuItem";
+            cloneToolStripMenuItem.Size = new Size(192, 32);
+            cloneToolStripMenuItem.Text = "Clone";
+            cloneToolStripMenuItem.Click += CloneClassificationRule;
             // 
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(237, 6);
+            toolStripSeparator4.Size = new Size(189, 6);
             // 
             // moveUpToolStripMenuItem
             // 
             moveUpToolStripMenuItem.Name = "moveUpToolStripMenuItem";
-            moveUpToolStripMenuItem.Size = new Size(240, 32);
+            moveUpToolStripMenuItem.Size = new Size(192, 32);
             moveUpToolStripMenuItem.Text = "Move up";
             moveUpToolStripMenuItem.Click += MoveRuleUp;
             // 
             // moveDownToolStripMenuItem
             // 
             moveDownToolStripMenuItem.Name = "moveDownToolStripMenuItem";
-            moveDownToolStripMenuItem.Size = new Size(240, 32);
+            moveDownToolStripMenuItem.Size = new Size(192, 32);
             moveDownToolStripMenuItem.Text = "Move down";
             moveDownToolStripMenuItem.Click += MoveRuleDown;
             // 
             // toolStripSeparator5
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new Size(237, 6);
+            toolStripSeparator5.Size = new Size(189, 6);
             // 
-            // changeColorToolStripMenuItem
+            // removeToolStripMenuItem
             // 
-            changeColorToolStripMenuItem.Name = "changeColorToolStripMenuItem";
-            changeColorToolStripMenuItem.Size = new Size(240, 32);
-            changeColorToolStripMenuItem.Text = "Change Color";
-            changeColorToolStripMenuItem.Click += ChangeRuleColor;
+            removeToolStripMenuItem.Name = "removeToolStripMenuItem";
+            removeToolStripMenuItem.Size = new Size(192, 32);
+            removeToolStripMenuItem.Text = "Remove";
+            removeToolStripMenuItem.Click += DeleteClassificationRule;
             // 
             // backgroundWorker
             // 
@@ -1016,6 +1017,21 @@
             backgroundWorker.DoWork += backgroundWorker_DoWork;
             backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
+            // 
+            // toolStripButton7
+            // 
+            toolStripButton7.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton7.Image = (Image)resources.GetObject("toolStripButton7.Image");
+            toolStripButton7.ImageTransparentColor = Color.Magenta;
+            toolStripButton7.Name = "toolStripButton7";
+            toolStripButton7.Size = new Size(34, 29);
+            toolStripButton7.Text = "C";
+            toolStripButton7.Click += CloneClassificationRule;
+            // 
+            // toolStripSeparator6
+            // 
+            toolStripSeparator6.Name = "toolStripSeparator6";
+            toolStripSeparator6.Size = new Size(6, 34);
             // 
             // MainForm
             // 
@@ -1177,5 +1193,7 @@
         private ToolStripSeparator toolStripSeparator5;
         private ToolStripMenuItem changeColorToolStripMenuItem;
         private ToolStripMenuItem cloneToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator6;
+        private ToolStripButton toolStripButton7;
     }
 }
