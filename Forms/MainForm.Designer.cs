@@ -138,6 +138,7 @@
             ClassificationModeToolStripComboBox = new ToolStripComboBox();
             toolStripSeparator9 = new ToolStripSeparator();
             toolStripButton15 = new ToolStripButton();
+            toolStripButton16 = new ToolStripButton();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -843,6 +844,9 @@
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(400, 482);
             dataGridView1.TabIndex = 8;
+            dataGridView1.CellClick += FirstGrid_CellClick;
+            dataGridView1.CellMouseClick += FirstGrid_CellMouseClick;
+            dataGridView1.SelectionChanged += FirstGrid_SelectionChanged;
             // 
             // dataGridViewImageColumn1
             // 
@@ -886,7 +890,7 @@
             // 
             toolStrip4.GripStyle = ToolStripGripStyle.Hidden;
             toolStrip4.ImageScalingSize = new Size(24, 24);
-            toolStrip4.Items.AddRange(new ToolStripItem[] { toolStripButton8, toolStripButton10, toolStripSeparator7, toolStripButton12, toolStripButton13, ClassificationModeToolStripComboBox, toolStripSeparator9, toolStripButton15 });
+            toolStrip4.Items.AddRange(new ToolStripItem[] { toolStripButton8, toolStripButton10, toolStripSeparator7, toolStripButton12, toolStripButton13, ClassificationModeToolStripComboBox, toolStripButton16, toolStripSeparator9, toolStripButton15 });
             toolStrip4.Location = new Point(0, 0);
             toolStrip4.Name = "toolStrip4";
             toolStrip4.Size = new Size(400, 34);
@@ -901,6 +905,7 @@
             toolStripButton8.Name = "toolStripButton8";
             toolStripButton8.Size = new Size(34, 29);
             toolStripButton8.Text = "+";
+            toolStripButton8.Click += FirstStageAddRule_Click;
             // 
             // toolStripButton10
             // 
@@ -910,6 +915,7 @@
             toolStripButton10.Name = "toolStripButton10";
             toolStripButton10.Size = new Size(34, 29);
             toolStripButton10.Text = "-";
+            toolStripButton10.Click += FirstStageDeleteRule_Click;
             // 
             // toolStripSeparator7
             // 
@@ -924,6 +930,7 @@
             toolStripButton12.Name = "toolStripButton12";
             toolStripButton12.Size = new Size(34, 29);
             toolStripButton12.Text = "↑";
+            toolStripButton12.Click += FirstStageMoveUp_Click;
             // 
             // toolStripButton13
             // 
@@ -933,6 +940,7 @@
             toolStripButton13.Name = "toolStripButton13";
             toolStripButton13.Size = new Size(34, 29);
             toolStripButton13.Text = "↓";
+            toolStripButton13.Click += FirstStageMoveDown_Click;
             // 
             // tabControl3
             // 
@@ -987,6 +995,7 @@
             toolStripButton14.Name = "toolStripButton14";
             toolStripButton14.Size = new Size(89, 29);
             toolStripButton14.Text = "Compare";
+            toolStripButton14.Click += compareToolStripButton_Click;
             // 
             // tabPage9
             // 
@@ -1339,6 +1348,15 @@
             ClassificationModeToolStripComboBox.Size = new Size(121, 34);
             ClassificationModeToolStripComboBox.Text = "RulePerClass";
             // 
+            // toolStripButton16
+            // 
+            toolStripButton16.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton16.ImageTransparentColor = Color.Magenta;
+            toolStripButton16.Name = "toolStripButton16";
+            toolStripButton16.Size = new Size(48, 29);
+            toolStripButton16.Text = "Calc";
+            toolStripButton16.Click += FirstStageClassify_Click;
+            // 
             // toolStripSeparator9
             // 
             toolStripSeparator9.Name = "toolStripSeparator9";
@@ -1562,5 +1580,6 @@
         private ToolStripButton toolStripButton9;
         private ToolStripSeparator toolStripSeparator9;
         private ToolStripButton toolStripButton15;
+        private ToolStripButton toolStripButton16;
     }
 }

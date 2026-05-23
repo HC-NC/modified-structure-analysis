@@ -30,7 +30,8 @@ namespace modified_structure_analysis
 
         private GeoTransform? _geoTransform;
 
-        private List<ClassificationRule> _classificationRules = new();
+        private List<ClassificationRule> _firstStageRules = new();
+        private List<ClassificationRule> _secondStageRules = new();
 
         private PlotModel _kdeModel;
 
@@ -79,7 +80,7 @@ namespace modified_structure_analysis
 
             if (e.ColumnIndex == 2)
             {
-                var rule = _classificationRules[e.RowIndex];
+                var rule = _secondStageRules[e.RowIndex];
 
                 EditClassificationRule(rule);
             }
@@ -90,7 +91,7 @@ namespace modified_structure_analysis
             var editor = new RuleEditorForm(_bands, null);
             if (editor.ShowDialog(this) == DialogResult.OK)
             {
-                _classificationRules.Add(editor.Rule);
+                _secondStageRules.Add(editor.Rule);
                 UpdateClassificationRulesGrid();
                 ruleDataGridView.Rows[ruleDataGridView.Rows.GetLastRow(DataGridViewElementStates.None)].Selected = true;
             }
@@ -103,7 +104,7 @@ namespace modified_structure_analysis
             if (editor.ShowDialog(this) == DialogResult.OK)
             {
                 UpdateClassificationRulesGrid();
-                ruleDataGridView.Rows[_classificationRules.IndexOf(rule)].Selected = true;
+                ruleDataGridView.Rows[_secondStageRules.IndexOf(rule)].Selected = true;
             }
         }
 
@@ -117,7 +118,7 @@ namespace modified_structure_analysis
 
             int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
 
-            var rule = _classificationRules[selectedIndex];
+            var rule = _secondStageRules[selectedIndex];
 
             EditClassificationRule(rule);
         }
@@ -140,10 +141,10 @@ namespace modified_structure_analysis
 
             if (result == DialogResult.Yes)
             {
-                _classificationRules.RemoveAt(selectedIndex);
+                _secondStageRules.RemoveAt(selectedIndex);
                 UpdateClassificationRulesGrid();
 
-                if (_classificationRules.Count == 0)
+                if (_secondStageRules.Count == 0)
                     return;
 
                 if (selectedIndex >= ruleDataGridView.Rows.Count)
@@ -163,9 +164,9 @@ namespace modified_structure_analysis
 
             int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
 
-            var rule = _classificationRules[selectedIndex];
+            var rule = _secondStageRules[selectedIndex];
 
-            _classificationRules.Insert(selectedIndex + 1, (ClassificationRule)rule.Clone());
+            _secondStageRules.Insert(selectedIndex + 1, (ClassificationRule)rule.Clone());
 
             UpdateClassificationRulesGrid();
 
@@ -185,9 +186,9 @@ namespace modified_structure_analysis
             if (selectedIndex == 0)
                 return;
 
-            var rule = _classificationRules[selectedIndex];
-            _classificationRules.RemoveAt(selectedIndex);
-            _classificationRules.Insert(selectedIndex - 1, rule);
+            var rule = _secondStageRules[selectedIndex];
+            _secondStageRules.RemoveAt(selectedIndex);
+            _secondStageRules.Insert(selectedIndex - 1, rule);
 
             UpdateClassificationRulesGrid();
 
@@ -204,12 +205,12 @@ namespace modified_structure_analysis
 
             int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
 
-            if (selectedIndex >= _classificationRules.Count - 1)
+            if (selectedIndex >= _secondStageRules.Count - 1)
                 return;
 
-            var rule = _classificationRules[selectedIndex];
-            _classificationRules.RemoveAt(selectedIndex);
-            _classificationRules.Insert(selectedIndex + 1, rule);
+            var rule = _secondStageRules[selectedIndex];
+            _secondStageRules.RemoveAt(selectedIndex);
+            _secondStageRules.Insert(selectedIndex + 1, rule);
 
             UpdateClassificationRulesGrid();
 
@@ -226,7 +227,7 @@ namespace modified_structure_analysis
 
             int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
 
-            var rule = _classificationRules[selectedIndex];
+            var rule = _secondStageRules[selectedIndex];
 
             using (var colorDialog = new ColorDialog())
             {
@@ -242,10 +243,104 @@ namespace modified_structure_analysis
             ruleDataGridView.Rows[selectedIndex].Selected = true;
         }
 
+        private void FirstStageAddRule_Click(object? sender, EventArgs e)
+        {
+            ClassificationMode mode = ClassificationModeToolStripComboBox.SelectedItem?.ToString() == "DirectCheck"
+                ? ClassificationMode.DirectCheck
+                : ClassificationMode.RulePerClass;
+
+            if (mode == ClassificationMode.DirectCheck)
+            {
+                MessageBox.Show("In DirectCheck mode, use 'Auto' to generate rules from bands.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var editor = new RuleEditorForm(_bands, null);
+            if (editor.ShowDialog(this) == DialogResult.OK)
+            {
+                _firstStageRules.Add(editor.Rule);
+                UpdateFirstStageRulesGrid();
+                dataGridView1.Rows[dataGridView1.Rows.GetLastRow(DataGridViewElementStates.None)].Selected = true;
+            }
+        }
+
+        private void FirstStageDeleteRule_Click(object? sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a rule to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int selectedIndex = dataGridView1.SelectedRows[0].Index;
+
+            var result = MessageBox.Show(
+                $"Are you sure you want to delete rule #{selectedIndex + 1}?",
+                "Confirm Delete",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                _firstStageRules.RemoveAt(selectedIndex);
+                UpdateFirstStageRulesGrid();
+
+                if (_firstStageRules.Count == 0)
+                    return;
+
+                if (selectedIndex >= dataGridView1.Rows.Count)
+                    selectedIndex = dataGridView1.Rows.GetLastRow(DataGridViewElementStates.None);
+
+                dataGridView1.Rows[selectedIndex].Selected = true;
+            }
+        }
+
+        private void FirstStageMoveUp_Click(object? sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int selectedIndex = dataGridView1.SelectedRows[0].Index;
+
+            if (selectedIndex == 0)
+                return;
+
+            var rule = _firstStageRules[selectedIndex];
+            _firstStageRules.RemoveAt(selectedIndex);
+            _firstStageRules.Insert(selectedIndex - 1, rule);
+
+            UpdateFirstStageRulesGrid();
+            dataGridView1.Rows[selectedIndex - 1].Selected = true;
+        }
+
+        private void FirstStageMoveDown_Click(object? sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int selectedIndex = dataGridView1.SelectedRows[0].Index;
+
+            if (selectedIndex >= _firstStageRules.Count - 1)
+                return;
+
+            var rule = _firstStageRules[selectedIndex];
+            _firstStageRules.RemoveAt(selectedIndex);
+            _firstStageRules.Insert(selectedIndex + 1, rule);
+
+            UpdateFirstStageRulesGrid();
+            dataGridView1.Rows[selectedIndex + 1].Selected = true;
+        }
+
         private void UpdateClassificationRulesGrid()
         {
             ruleDataGridView.Rows.Clear();
-            foreach (var rule in _classificationRules)
+            foreach (var rule in _secondStageRules)
             {
                 int rowIndex = ruleDataGridView.Rows.Add();
                 var row = ruleDataGridView.Rows[rowIndex];
@@ -1054,9 +1149,26 @@ namespace modified_structure_analysis
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (_classificationRules.Count == 0)
+            if (_secondStageRules.Count == 0)
             {
-                MessageBox.Show("No classification rules defined. Please add rules first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("No classification rules defined for Second stage. Please add rules first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (_bands.Count == 0)
+            {
+                MessageBox.Show("No bands loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            backgroundWorker.RunWorkerAsync((_secondStageRules, ClassificationMode.RulePerClass, viewport2));
+        }
+
+        private void FirstStageClassify_Click(object? sender, EventArgs e)
+        {
+            if (_firstStageRules.Count == 0)
+            {
+                MessageBox.Show("No classification rules defined for First stage. Please generate rules first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1070,7 +1182,7 @@ namespace modified_structure_analysis
                 ? ClassificationMode.DirectCheck
                 : ClassificationMode.RulePerClass;
 
-            backgroundWorker.RunWorkerAsync((_classificationRules, mode));
+            backgroundWorker.RunWorkerAsync((_firstStageRules, mode, viewport3));
         }
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -1080,7 +1192,7 @@ namespace modified_structure_analysis
             if (worker == null || _bands.Count == 0)
                 return;
 
-            if (e.Argument is not (List<ClassificationRule> rules, ClassificationMode mode))
+            if (e.Argument is not (List<ClassificationRule> rules, ClassificationMode mode, Viewport _))
                 return;
 
             if (rules.Count == 0)
@@ -1165,7 +1277,7 @@ namespace modified_structure_analysis
 
             worker.ReportProgress(100, "Complete");
 
-            e.Result = (bitmap, classificationResult);
+            e.Result = (bitmap, classificationResult, mode);
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1180,26 +1292,29 @@ namespace modified_structure_analysis
             }
             else
             {
-                if (e.Result is ValueTuple<Bitmap, ClassificationResult> result)
+                if (e.Result is (Bitmap bitmap, ClassificationResult classificationResult, ClassificationMode mode))
                 {
-                    viewport2.UpdateImage(result.Item1);
+                    if (mode == ClassificationMode.DirectCheck)
+                        viewport3.UpdateImage(bitmap);
+                    else
+                        viewport2.UpdateImage(bitmap);
 
-                    var stats = result.Item2.GetClassStatistics();
+                    var stats = classificationResult.GetClassStatistics();
                     var statsText = "Classification Statistics:\n";
 
-                    if (result.Item2.Palette != null)
+                    if (classificationResult.Palette != null)
                     {
-                        for (int i = 0; i < result.Item2.Palette.Length; i++)
+                        for (int i = 0; i < classificationResult.Palette.Length; i++)
                         {
-                            string colorHex = ColorTranslator.ToHtml(result.Item2.Palette[i]);
+                            string colorHex = ColorTranslator.ToHtml(classificationResult.Palette[i]);
                             statsText += $"Class {i} (color {colorHex}): {stats.GetValueOrDefault(i, 0)} pixels\n";
                         }
                     }
-                    else if (result.Item2.Rules != null)
+                    else if (classificationResult.Rules != null)
                     {
-                        for (int i = 0; i < result.Item2.Rules.Count; i++)
+                        for (int i = 0; i < classificationResult.Rules.Count; i++)
                         {
-                            string ruleName = result.Item2.Rules[i].GenerateName();
+                            string ruleName = classificationResult.Rules[i].GenerateName();
                             statsText += $"Class {i} ({ruleName}): {stats.GetValueOrDefault(i, 0)} pixels\n";
                         }
                     }
@@ -1221,7 +1336,7 @@ namespace modified_structure_analysis
             if (ruleDataGridView.SelectedRows.Count == 0)
                 conditionsRichTextBox.Text = "No rule select";
             else
-                conditionsRichTextBox.Text = GetRulePreview(_classificationRules[ruleDataGridView.Rows.IndexOf(ruleDataGridView.SelectedRows[0])]);
+                conditionsRichTextBox.Text = GetRulePreview(_secondStageRules[ruleDataGridView.Rows.IndexOf(ruleDataGridView.SelectedRows[0])]);
         }
 
         private string GetRulePreview(ClassificationRule rule)
@@ -1235,9 +1350,70 @@ namespace modified_structure_analysis
 
         private void compareToolStripButton_Click(object sender, EventArgs e)
         {
-            TwoImageViewForm twoImageView = new TwoImageViewForm(viewport1.Image, viewport2.Image);
+            TwoImageViewForm twoImageView = new TwoImageViewForm(viewport1.Image, tabControl2.SelectedIndex == 0 ? viewport3.Image : viewport2.Image);
 
             twoImageView.ShowDialog(this);
+        }
+
+        private void FirstGrid_SelectionChanged(object? sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+                richTextBox1.Text = "No rule select";
+            else
+                richTextBox1.Text = GetRulePreview(_firstStageRules[dataGridView1.Rows.IndexOf(dataGridView1.SelectedRows[0])]);
+        }
+
+        private void FirstGrid_CellClick(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            if (e.ColumnIndex == 0)
+                ChangeFirstRuleColor(e.RowIndex);
+
+            if (e.ColumnIndex == 2)
+            {
+                if (e.RowIndex < _firstStageRules.Count)
+                {
+                    var rule = _firstStageRules[e.RowIndex];
+                    var editor = new RuleEditorForm(_bands, rule);
+                    if (editor.ShowDialog(this) == DialogResult.OK)
+                        UpdateFirstStageRulesGrid();
+                }
+            }
+        }
+
+        private void FirstGrid_CellMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                dataGridView1.Rows[e.RowIndex].Selected = true;
+                int x = e.X;
+                int y = e.Y;
+                for (int i = 0; i < e.ColumnIndex; i++)
+                    x += dataGridView1.Columns[i].Width;
+                for (int i = 0; i < e.RowIndex; i++)
+                    y += dataGridView1.Rows[e.RowIndex].Height;
+                ruleContextMenuStrip.Show(dataGridView1, x, y);
+            }
+        }
+
+        private void ChangeFirstRuleColor(int rowIndex)
+        {
+            if (rowIndex < 0 || rowIndex >= _firstStageRules.Count) return;
+
+            var rule = _firstStageRules[rowIndex];
+            using (var colorDialog = new ColorDialog())
+            {
+                colorDialog.Color = rule.Color;
+                if (colorDialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    rule.Color = colorDialog.Color;
+                }
+            }
+
+            UpdateFirstStageRulesGrid();
+            if (rowIndex < dataGridView1.Rows.Count)
+                dataGridView1.Rows[rowIndex].Selected = true;
         }
 
         private void AutoButton_Click(object sender, EventArgs e)
@@ -1250,7 +1426,7 @@ namespace modified_structure_analysis
                 if (selectedBands.Count == 0)
                     return;
 
-                _classificationRules.Clear();
+                _firstStageRules.Clear();
 
                 foreach (Band band in selectedBands)
                 {
@@ -1273,11 +1449,23 @@ namespace modified_structure_analysis
                     };
 
                     rule.Conditions.Add(condition);
-                    _classificationRules.Add(rule);
+                    _firstStageRules.Add(rule);
                 }
 
                 ClassificationModeToolStripComboBox.SelectedItem = "DirectCheck";
-                UpdateClassificationRulesGrid();
+                UpdateFirstStageRulesGrid();
+            }
+        }
+
+        private void UpdateFirstStageRulesGrid()
+        {
+            dataGridView1.Rows.Clear();
+            foreach (var rule in _firstStageRules)
+            {
+                int rowIndex = dataGridView1.Rows.Add();
+                var row = dataGridView1.Rows[rowIndex];
+                row.Cells[0].Value = CreateColorBitmap(rule.Color);
+                row.Cells[1].Value = rule.GenerateName();
             }
         }
 
