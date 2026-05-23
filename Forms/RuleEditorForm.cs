@@ -7,16 +7,19 @@
         private ClassificationRule _oldRule;
         private bool _isEdit;
         private bool _isSecondStage;
+        private ClassStatistics[]? _classStats;
 
         public ClassificationRule Rule => _rule;
 
-        public RuleEditorForm(List<Band> bands, ClassificationRule? existingRule = null, bool isSecondStage = false)
+        public RuleEditorForm(List<Band> bands, ClassificationRule? existingRule = null,
+            bool isSecondStage = false, ClassStatistics[]? classStats = null)
         {
             InitializeComponent();
 
             _bands = bands;
             _isEdit = existingRule != null;
             _isSecondStage = isSecondStage;
+            _classStats = classStats;
             _rule = existingRule ?? new ClassificationRule();
             _oldRule = (ClassificationRule)_rule.Clone();
 
@@ -44,7 +47,7 @@
 
         private void AddCondition_Click(object? sender, EventArgs e)
         {
-            var condForm = new ConditionEditorForm(_bands, null, _isSecondStage);
+            var condForm = new ConditionEditorForm(_bands, null, _isSecondStage, _classStats);
             if (condForm.ShowDialog() == DialogResult.OK && condForm.ResultCondition != null)
             {
                 _rule.Conditions.Add(condForm.ResultCondition);
@@ -60,7 +63,7 @@
             int index = _conditionsListBox.SelectedIndex;
 
             var selectedCond = _rule.Conditions[index];
-            var condForm = new ConditionEditorForm(_bands, selectedCond, _isSecondStage);
+            var condForm = new ConditionEditorForm(_bands, selectedCond, _isSecondStage, _classStats);
             if (condForm.ShowDialog() == DialogResult.OK && condForm.ResultCondition != null)
             {
                 _rule.Conditions[index] = condForm.ResultCondition;

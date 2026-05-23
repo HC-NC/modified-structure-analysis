@@ -8,23 +8,51 @@ namespace modified_structure_analysis
         private List<Band> _bands;
         private Condition? _condition;
         private bool _isSecondStage;
+        private HashSet<int> _zScoreValidBands = new();
 
         private List<DensityType> _leftDensityTypes = new();
         private List<DensityType> _rightDensityTypes = new();
 
         public Condition? ResultCondition { get; private set; }
 
-        public ConditionEditorForm(List<Band> bands, Condition? existingCondition, bool isSecondStage = false)
+        public ConditionEditorForm(List<Band> bands, Condition? existingCondition,
+            bool isSecondStage = false, ClassStatistics[]? classStats = null)
         {
             _bands = bands;
             _condition = existingCondition;
             _isSecondStage = isSecondStage;
+
+            if (classStats != null)
+            {
+                for (int b = 0; b < bands.Count; b++)
+                {
+                    bool hasStats = false;
+                    foreach (var cs in classStats)
+                    {
+                        var bs = cs.Bands?[b];
+                        if (bs != null && bs.Count > 0 && bs.ZMax > bs.ZMin)
+                        {
+                            hasStats = true;
+                            break;
+                        }
+                    }
+                    if (hasStats)
+                        _zScoreValidBands.Add(b);
+                }
+            }
 
             InitializeComponent();
 
             Text = _condition == null ? "Add Condition" : "Edit Condition";
 
             PopulateDensityTypes();
+        }
+
+        private static bool IsZScoreType(DensityType type)
+        {
+            return type is DensityType.ZScoreSingle
+                or DensityType.ZScoreProduct
+                or DensityType.ZScoreMultivariate;
         }
 
         private void PopulateDensityTypes()
@@ -34,39 +62,38 @@ namespace modified_structure_analysis
             _leftDensityTypeComboBox.Items.Clear();
             _rightDensityTypeComboBox.Items.Clear();
 
-            var commonTypes = new (DensityType type, string label)[]
-            {
-                (DensityType.ChannelValue, "ChannelValue (v)"),
-                (DensityType.ChannelZScore, "ChannelZScore (z)"),
-                (DensityType.Single, "Single (p)"),
-                (DensityType.Product, "Product (Π)"),
-                (DensityType.Multivariate, "Multivariate (p)")
-            };
+            (DensityType type, string label)[] items;
 
-            var secondStageTypes = new (DensityType type, string label)[]
+            if (_isSecondStage)
             {
-                (DensityType.ZScoreSingle, "ZScore Single (zs_p)"),
-                (DensityType.ZScoreProduct, "ZScore Product (zs_Π)"),
-                (DensityType.ZScoreMultivariate, "ZScore Multivariate (zs_p)")
-            };
+                items = [
+                    (DensityType.ChannelValue, "ChannelValue (v)"),
+                    (DensityType.ChannelZScore, "ChannelZScore (z)"),
+                    (DensityType.Single, "Single (p)"),
+                    (DensityType.Product, "Product (Π)"),
+                    (DensityType.Multivariate, "Multivariate (p)"),
+                    (DensityType.ZScoreSingle, "ZScore Single (zs_p)"),
+                    (DensityType.ZScoreProduct, "ZScore Product (zs_Π)"),
+                    (DensityType.ZScoreMultivariate, "ZScore Multivariate (zs_p)")
+                ];
+            }
+            else
+            {
+                items = [
+                    (DensityType.ChannelValue, "ChannelValue (v)"),
+                    (DensityType.ChannelZScore, "ChannelZScore (z)"),
+                    (DensityType.Single, "Single (p)"),
+                    (DensityType.Product, "Product (Π)"),
+                    (DensityType.Multivariate, "Multivariate (p)")
+                ];
+            }
 
-            foreach (var (type, label) in commonTypes)
+            foreach (var (type, label) in items)
             {
                 _leftDensityTypes.Add(type);
                 _leftDensityTypeComboBox.Items.Add(label);
                 _rightDensityTypes.Add(type);
                 _rightDensityTypeComboBox.Items.Add(label);
-            }
-
-            if (_isSecondStage)
-            {
-                foreach (var (type, label) in secondStageTypes)
-                {
-                    _leftDensityTypes.Add(type);
-                    _leftDensityTypeComboBox.Items.Add(label);
-                    _rightDensityTypes.Add(type);
-                    _rightDensityTypeComboBox.Items.Add(label);
-                }
             }
         }
 
@@ -74,12 +101,6 @@ namespace modified_structure_analysis
         {
             return type is DensityType.ChannelValue or DensityType.ChannelZScore
                 or DensityType.Single or DensityType.ZScoreSingle;
-        }
-
-        private static bool IsDensityType(DensityType type)
-        {
-            return type is DensityType.Single or DensityType.Product or DensityType.Multivariate
-                or DensityType.ZScoreSingle or DensityType.ZScoreProduct or DensityType.ZScoreMultivariate;
         }
 
         private void ConditionEditorForm_Load(object sender, EventArgs e)
@@ -105,12 +126,22 @@ namespace modified_structure_analysis
             int idx = _leftDensityTypeComboBox.SelectedIndex;
             if (idx < 0 || idx >= _leftDensityTypes.Count) return;
 
-            bool isSingle = IsSingleBandType(_leftDensityTypes[idx]);
+            DensityType type = _leftDensityTypes[idx];
+            bool isSingle = IsSingleBandType(type);
+            bool isZScore = IsZScoreType(type);
 
-            if (isSingle)
-                _leftBandsListBox.SelectionMode = SelectionMode.One;
-            else
-                _leftBandsListBox.SelectionMode = SelectionMode.MultiExtended;
+            if (isZScore && _leftBandsListBox.Items.Count == _bands.Count)
+            {
+                RebuildBandsList(_leftBandsListBox, isZScore);
+            }
+            else if (!isZScore && _leftBandsListBox.Items.Count != _bands.Count)
+            {
+                RebuildBandsList(_leftBandsListBox, isZScore);
+            }
+
+            _leftBandsListBox.SelectionMode = isSingle
+                ? SelectionMode.One
+                : SelectionMode.MultiExtended;
         }
 
         private void UpdateRightVisibility(object sender, EventArgs e)
@@ -123,12 +154,53 @@ namespace modified_structure_analysis
             int idx = _rightDensityTypeComboBox.SelectedIndex;
             if (idx < 0 || idx >= _rightDensityTypes.Count) return;
 
-            bool isRightSingle = !isConstant && IsSingleBandType(_rightDensityTypes[idx]);
+            DensityType type = _rightDensityTypes[idx];
+            bool isSingle = !isConstant && IsSingleBandType(type);
+            bool isZScore = !isConstant && IsZScoreType(type);
 
-            if (isRightSingle)
-                _rightBandsListBox.SelectionMode = SelectionMode.One;
+            if (isZScore && _rightBandsListBox.Items.Count == _bands.Count)
+            {
+                RebuildBandsList(_rightBandsListBox, isZScore);
+            }
+            else if (!isZScore && _rightBandsListBox.Items.Count != _bands.Count)
+            {
+                RebuildBandsList(_rightBandsListBox, isZScore);
+            }
+
+            _rightBandsListBox.SelectionMode = isSingle
+                ? SelectionMode.One
+                : SelectionMode.MultiExtended;
+        }
+
+        private void RebuildBandsList(ListBox listBox, bool isZScore)
+        {
+            listBox.Items.Clear();
+
+            if (isZScore)
+            {
+                foreach (int bi in _zScoreValidBands.OrderBy(b => b))
+                    listBox.Items.Add(_bands[bi]);
+            }
             else
-                _rightBandsListBox.SelectionMode = SelectionMode.MultiExtended;
+            {
+                foreach (var band in _bands)
+                    listBox.Items.Add(band);
+            }
+        }
+
+        private List<int> GetSelectedBandIndices(ListBox listBox)
+        {
+            return listBox.SelectedItems.Cast<Band>()
+                .Select(b => _bands.IndexOf(b))
+                .Where(i => i >= 0)
+                .ToList();
+        }
+
+        private int GetSingleSelectedBandIndex(ListBox listBox)
+        {
+            if (listBox.SelectedItem is Band band)
+                return _bands.IndexOf(band);
+            return -1;
         }
 
         private void LoadCondition()
@@ -148,15 +220,26 @@ namespace modified_structure_analysis
 
             if (IsSingleBandType(_condition.LeftDensityType))
             {
-                if (_condition.LeftSingleBandIndex >= 0)
-                    _leftBandsListBox.SetSelected(_condition.LeftSingleBandIndex, true);
+                if (_condition.LeftSingleBandIndex >= 0
+                    && _condition.LeftSingleBandIndex < _bands.Count)
+                {
+                    var target = _bands[_condition.LeftSingleBandIndex];
+                    int listIdx = _leftBandsListBox.Items.IndexOf(target);
+                    if (listIdx >= 0)
+                        _leftBandsListBox.SetSelected(listIdx, true);
+                }
             }
             else
             {
-                foreach (var idx in _condition.LeftBandIndices)
+                foreach (var bi in _condition.LeftBandIndices)
                 {
-                    if (idx >= 0 && idx < _leftBandsListBox.Items.Count)
-                        _leftBandsListBox.SetSelected(idx, true);
+                    if (bi >= 0 && bi < _bands.Count)
+                    {
+                        var target = _bands[bi];
+                        int listIdx = _leftBandsListBox.Items.IndexOf(target);
+                        if (listIdx >= 0)
+                            _leftBandsListBox.SetSelected(listIdx, true);
+                    }
                 }
             }
 
@@ -177,15 +260,26 @@ namespace modified_structure_analysis
 
                 if (IsSingleBandType(_condition.RightSide.DensityType))
                 {
-                    if (_condition.RightSide.SingleBandIndex >= 0)
-                        _rightBandsListBox.SetSelected(_condition.RightSide.SingleBandIndex, true);
+                    if (_condition.RightSide.SingleBandIndex >= 0
+                        && _condition.RightSide.SingleBandIndex < _bands.Count)
+                    {
+                        var target = _bands[_condition.RightSide.SingleBandIndex];
+                        int listIdx = _rightBandsListBox.Items.IndexOf(target);
+                        if (listIdx >= 0)
+                            _rightBandsListBox.SetSelected(listIdx, true);
+                    }
                 }
                 else
                 {
-                    foreach (var idx in _condition.RightSide.BandIndices)
+                    foreach (var bi in _condition.RightSide.BandIndices)
                     {
-                        if (idx >= 0 && idx < _rightBandsListBox.Items.Count)
-                            _rightBandsListBox.SetSelected(idx, true);
+                        if (bi >= 0 && bi < _bands.Count)
+                        {
+                            var target = _bands[bi];
+                            int listIdx = _rightBandsListBox.Items.IndexOf(target);
+                            if (listIdx >= 0)
+                                _rightBandsListBox.SetSelected(listIdx, true);
+                        }
                     }
                 }
             }
@@ -208,12 +302,13 @@ namespace modified_structure_analysis
 
             if (IsSingleBandType(ResultCondition.LeftDensityType))
             {
-                if (_leftBandsListBox.SelectedIndex >= 0)
-                    ResultCondition.LeftSingleBandIndex = _leftBandsListBox.SelectedIndex;
+                int bandIdx = GetSingleSelectedBandIndex(_leftBandsListBox);
+                if (bandIdx >= 0)
+                    ResultCondition.LeftSingleBandIndex = bandIdx;
             }
             else
             {
-                ResultCondition.LeftBandIndices.AddRange(_leftBandsListBox.SelectedIndices.Cast<int>());
+                ResultCondition.LeftBandIndices.AddRange(GetSelectedBandIndices(_leftBandsListBox));
             }
 
             ResultCondition.RightSide = new CompareTarget();
@@ -233,12 +328,14 @@ namespace modified_structure_analysis
 
                     if (IsSingleBandType(ResultCondition.RightSide.DensityType))
                     {
-                        if (_rightBandsListBox.SelectedIndex >= 0)
-                            ResultCondition.RightSide.SingleBandIndex = _rightBandsListBox.SelectedIndex;
+                        int bandIdx = GetSingleSelectedBandIndex(_rightBandsListBox);
+                        if (bandIdx >= 0)
+                            ResultCondition.RightSide.SingleBandIndex = bandIdx;
                     }
                     else
                     {
-                        ResultCondition.RightSide.BandIndices.AddRange(_rightBandsListBox.SelectedIndices.Cast<int>());
+                        ResultCondition.RightSide.BandIndices.AddRange(
+                            GetSelectedBandIndices(_rightBandsListBox));
                     }
                 }
             }

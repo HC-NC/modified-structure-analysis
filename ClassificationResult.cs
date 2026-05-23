@@ -30,6 +30,7 @@ public class ClassificationResult
         Rules = null;
         Palette = palette;
         ClassIndices = new int[width * height];
+        Array.Fill(ClassIndices, UndefinedClassIndex);
     }
 
     public void SetClass(int pixelIndex, int classIndex)

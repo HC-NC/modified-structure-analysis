@@ -92,7 +92,7 @@ namespace modified_structure_analysis
 
         private void AddClassificationRule(object sender, EventArgs e)
         {
-            var editor = new RuleEditorForm(_bands, null, isSecondStage: true);
+            var editor = new RuleEditorForm(_bands, null, isSecondStage: true, classStats: _firstStageClassStats);
             if (editor.ShowDialog(this) == DialogResult.OK)
             {
                 _secondStageRules.Add(editor.Rule);
@@ -103,7 +103,7 @@ namespace modified_structure_analysis
 
         private void EditClassificationRule(ClassificationRule rule)
         {
-            var editor = new RuleEditorForm(_bands, rule, isSecondStage: true);
+            var editor = new RuleEditorForm(_bands, rule, isSecondStage: true, classStats: _firstStageClassStats);
 
             if (editor.ShowDialog(this) == DialogResult.OK)
             {
@@ -1326,8 +1326,9 @@ namespace modified_structure_analysis
                 ?? 0;
 
             int[] firstStageClassIndices = _firstStageResult!.ClassIndices;
+            Color[]? firstStagePalette = _firstStageResult.Palette;
 
-            ClassificationResult classificationResult = engine.RunSecondStage(firstStageClassIndices, firstStageClassCount);
+            ClassificationResult classificationResult = engine.RunSecondStage(firstStageClassIndices, firstStageClassCount, firstStagePalette);
 
             worker.ReportProgress(99, "Rendering bitmap...");
 

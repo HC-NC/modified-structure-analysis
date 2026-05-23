@@ -131,13 +131,15 @@ public class ClassificationEngine
         return result;
     }
 
-    public ClassificationResult RunSecondStage(int[] firstStageClassIndices, int firstStageClassCount)
+    public ClassificationResult RunSecondStage(int[] firstStageClassIndices, int firstStageClassCount, Color[]? firstStagePalette = null)
     {
         _firstStageClassIndexes = firstStageClassIndices;
 
         int ruleCount = _rules.Count;
         int totalClassCount = firstStageClassCount * ruleCount;
-        Color[] palette = PaletteGenerator.GenerateHSV(totalClassCount);
+        Color[] palette = firstStagePalette != null
+            ? PaletteGenerator.GenerateSecondStage(firstStagePalette, ruleCount)
+            : PaletteGenerator.GenerateHSV(totalClassCount);
         var result = new ClassificationResult(_width, _height, palette);
 
         for (int y = 0; y < _height; y++)
