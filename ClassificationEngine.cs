@@ -23,6 +23,13 @@ public class ClassificationEngine
     private int _cachedBandCount;
     private int _cachedPixelCount;
 
+    private int[]? _firstStageClassIndexes;
+    private ClassStatistics[]? _classStats;
+
+    private ConcurrentDictionary<(int bandIndex, int classIndex, int valueIndex), float> _zScoreSingleDensityCache = new();
+    private ConcurrentDictionary<(List<int> bandIndices, int pixelIndex), float> _zScoreProductDensityCache = new();
+    private ConcurrentDictionary<(List<int> bandIndices, int pixelIndex), float> _zScoreMultivariateDensityCache = new();
+
     public ClassificationMode Mode { get; set; } = ClassificationMode.RulePerClass;
 
     public float[]? ZScoreCache => _zScoreCache;
@@ -124,6 +131,37 @@ public class ClassificationEngine
         return result;
     }
 
+    public ClassificationResult RunSecondStage(int[] firstStageClassIndices, int firstStageClassCount)
+    {
+        _firstStageClassIndexes = firstStageClassIndices;
+
+        int ruleCount = _rules.Count;
+        int totalClassCount = firstStageClassCount * ruleCount;
+        Color[] palette = PaletteGenerator.GenerateHSV(totalClassCount);
+        var result = new ClassificationResult(_width, _height, palette);
+
+        for (int y = 0; y < _height; y++)
+        {
+            for (int x = 0; x < _width; x++)
+            {
+                int pixelIndex = y * _width + x;
+                int firstClass = firstStageClassIndices[pixelIndex];
+
+                if (firstClass < 0 || firstClass >= firstStageClassCount)
+                    continue;
+
+                int? secondClass = EvaluatePixel(pixelIndex);
+                if (!secondClass.HasValue)
+                    continue;
+
+                int finalClass = firstClass * ruleCount + secondClass.Value;
+                result.SetClass(pixelIndex, finalClass);
+            }
+        }
+
+        return result;
+    }
+
     public int? EvaluatePixel(int pixelIndex)
     {
         if (Mode == ClassificationMode.DirectCheck)
@@ -199,6 +237,9 @@ public class ClassificationEngine
             DensityType.Multivariate => GetMultivariateDensity(condition.LeftBandIndices, pixelIndex),
             DensityType.ChannelValue => GetChannelValue(condition.LeftSingleBandIndex, pixelIndex),
             DensityType.ChannelZScore => GetChannelZScore(condition.LeftSingleBandIndex, pixelIndex),
+            DensityType.ZScoreSingle => GetZScoreSingleDensity(condition.LeftSingleBandIndex, pixelIndex),
+            DensityType.ZScoreProduct => GetZScoreProductDensity(condition.LeftBandIndices, pixelIndex),
+            DensityType.ZScoreMultivariate => GetZScoreMultivariateDensity(condition.LeftBandIndices, pixelIndex),
             _ => 0
         };
     }
@@ -215,6 +256,9 @@ public class ClassificationEngine
             DensityType.Multivariate => GetMultivariateDensity(rightSide.BandIndices, pixelIndex),
             DensityType.ChannelValue => GetChannelValue(rightSide.SingleBandIndex, pixelIndex),
             DensityType.ChannelZScore => GetChannelZScore(rightSide.SingleBandIndex, pixelIndex),
+            DensityType.ZScoreSingle => GetZScoreSingleDensity(rightSide.SingleBandIndex, pixelIndex),
+            DensityType.ZScoreProduct => GetZScoreProductDensity(rightSide.BandIndices, pixelIndex),
+            DensityType.ZScoreMultivariate => GetZScoreMultivariateDensity(rightSide.BandIndices, pixelIndex),
             _ => 0
         };
     }
@@ -348,6 +392,148 @@ public class ClassificationEngine
         return mvSumResult;
     }
 
+    private float GetZScoreSingleDensity(int bandIndex, int pixelIndex)
+    {
+        if (bandIndex < 0 || bandIndex >= _bands.Count)
+            return 0;
+        if (_firstStageClassIndexes == null || _classStats == null)
+            return 0;
+
+        int cls = _firstStageClassIndexes[pixelIndex];
+        if (cls < 0 || cls >= _classStats.Length)
+            return 0;
+
+        var bandStats = _classStats[cls].Bands?[bandIndex];
+        if (bandStats == null || bandStats.Count == 0 || bandStats.ZMax <= bandStats.ZMin)
+            return 0;
+
+        float z = GetChannelZScore(bandIndex, pixelIndex);
+        float normalizedZ = (z - bandStats.ZMin) / (bandStats.ZMax - bandStats.ZMin);
+        normalizedZ = Math.Clamp(normalizedZ, 0, 1);
+
+        int valueIndex = (int)(normalizedZ * _singleCacheSteps);
+        var key = (bandIndex, cls, valueIndex);
+
+        if (_zScoreSingleDensityCache.TryGetValue(key, out float cached))
+            return cached;
+
+        double density = 0.0;
+        float zNormKernelC = bandStats.ZNormalizeKernelC;
+        KernelType kernelType = _bands[bandIndex].KernelType;
+        int[] classPixels = _classStats[cls].PixelIndices!;
+
+        foreach (int px in classPixels)
+        {
+            float pxZ = GetChannelZScore(bandIndex, px);
+            float pxNormZ = (pxZ - bandStats.ZMin) / (bandStats.ZMax - bandStats.ZMin);
+            pxNormZ = Math.Clamp(pxNormZ, 0, 1);
+
+            density += KernelFunctions.GetKernel(kernelType, (normalizedZ - pxNormZ) / zNormKernelC);
+        }
+
+        density /= (bandStats.Count * zNormKernelC);
+        float result = (float)density;
+        _zScoreSingleDensityCache[key] = result;
+        return result;
+    }
+
+    private float GetZScoreProductDensity(List<int> bandIndices, int pixelIndex)
+    {
+        if (bandIndices.Count == 0)
+            return 0;
+        if (_firstStageClassIndexes == null || _classStats == null)
+            return 0;
+
+        var key = (bandIndices, pixelIndex);
+        if (_zScoreProductDensityCache.TryGetValue(key, out float cached))
+            return cached;
+
+        double product = 1.0;
+        foreach (int idx in bandIndices)
+        {
+            if (idx >= 0 && idx < _bands.Count)
+            {
+                float singleDensity = GetZScoreSingleDensity(idx, pixelIndex);
+                product *= singleDensity;
+            }
+        }
+
+        float result = (float)product;
+        _zScoreProductDensityCache[key] = result;
+        return result;
+    }
+
+    private float GetZScoreMultivariateDensity(List<int> bandIndices, int pixelIndex)
+    {
+        if (bandIndices.Count == 0)
+            return 0;
+        if (_firstStageClassIndexes == null || _classStats == null)
+            return 0;
+
+        var key = (bandIndices, pixelIndex);
+        if (_zScoreMultivariateDensityCache.TryGetValue(key, out float cached))
+            return cached;
+
+        if (bandIndices.Count == 1 && bandIndices[0] >= 0 && bandIndices[0] < _bands.Count)
+        {
+            float singleResult = GetZScoreSingleDensity(bandIndices[0], pixelIndex);
+            _zScoreMultivariateDensityCache[key] = singleResult;
+            return singleResult;
+        }
+
+        int cls = _firstStageClassIndexes[pixelIndex];
+        if (cls < 0 || cls >= _classStats!.Length)
+            return 0;
+
+        int[] classPixels = _classStats[cls].PixelIndices!;
+        int classCount = classPixels.Length;
+
+        double productBandwidths = 1.0;
+        foreach (int idx in bandIndices)
+        {
+            if (idx >= 0 && idx < _bands.Count && _classStats[cls].Bands != null)
+            {
+                var bs = _classStats[cls].Bands[idx];
+                productBandwidths *= bs.ZNormalizeKernelC;
+            }
+        }
+
+        double sum = 0.0;
+        foreach (int samplePx in classPixels)
+        {
+            double kernelProduct = 1.0;
+
+            foreach (int idx in bandIndices)
+            {
+                if (idx < 0 || idx >= _bands.Count) continue;
+
+                var bandStats = _classStats[cls].Bands?[idx];
+                if (bandStats == null || bandStats.ZMax <= bandStats.ZMin)
+                {
+                    kernelProduct = 0;
+                    break;
+                }
+
+                float xi = GetChannelZScore(idx, pixelIndex);
+                float xj = GetChannelZScore(idx, samplePx);
+
+                float xiNorm = (xi - bandStats.ZMin) / (bandStats.ZMax - bandStats.ZMin);
+                float xjNorm = (xj - bandStats.ZMin) / (bandStats.ZMax - bandStats.ZMin);
+
+                kernelProduct *= KernelFunctions.GetKernel(
+                    _bands[idx].KernelType,
+                    (xiNorm - xjNorm) / bandStats.ZNormalizeKernelC);
+            }
+
+            sum += kernelProduct;
+        }
+
+        double normalization = classCount * productBandwidths;
+        float mvResult = normalization > 0 ? (float)(sum / normalization) : 0;
+        _zScoreMultivariateDensityCache[key] = mvResult;
+        return mvResult;
+    }
+
     private void InitializeSampleIndices(int totalPixels)
     {
         _sampleIndices = new int[_sampleSize];
@@ -371,6 +557,30 @@ public class ClassificationEngine
         _sampleInitialized = true;
     }
 
+    public void UseZScoreCache(float[] cache, int bandCount, int pixelCount)
+    {
+        _zScoreCache = cache;
+        _cachedBandCount = bandCount;
+        _cachedPixelCount = pixelCount;
+    }
+
+    public void SetFirstStageContext(int[] classIndices, ClassStatistics[] classStats)
+    {
+        _firstStageClassIndexes = classIndices;
+        _classStats = classStats;
+    }
+
+    public void EnsureZScoreCache(int bandCount, int pixelCount)
+    {
+        if (_zScoreCache == null || _cachedBandCount != bandCount || _cachedPixelCount != pixelCount)
+        {
+            _zScoreCache = new float[bandCount * pixelCount];
+            Array.Fill(_zScoreCache, float.NaN);
+            _cachedBandCount = bandCount;
+            _cachedPixelCount = pixelCount;
+        }
+    }
+
     public void ReshuffleSamples()
     {
         int totalPixels = _width * _height;
@@ -389,6 +599,9 @@ public class ClassificationEngine
         _singleDensityCache.Clear();
         _productDensityCache.Clear();
         _multivariateDensityCache.Clear();
+        _zScoreSingleDensityCache.Clear();
+        _zScoreProductDensityCache.Clear();
+        _zScoreMultivariateDensityCache.Clear();
         _sampleInitialized = false;
         _zScoreCache = null;
     }

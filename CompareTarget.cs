@@ -15,7 +15,8 @@ public class CompareTarget : ICloneable
             return ConstantValue.Value.ToString("F4");
 
         string bandName = "";
-        if ((DensityType == DensityType.Single || DensityType == DensityType.ChannelValue || DensityType == DensityType.ChannelZScore)
+        if ((DensityType == DensityType.Single || DensityType == DensityType.ChannelValue
+            || DensityType == DensityType.ChannelZScore || DensityType == DensityType.ZScoreSingle)
             && SingleBandIndex >= 0 && SingleBandIndex < bands.Count)
             bandName = bands[SingleBandIndex].Name;
         else if (BandIndices.Count > 0)
@@ -28,6 +29,9 @@ public class CompareTarget : ICloneable
             DensityType.Multivariate => $"p({bandName})",
             DensityType.ChannelValue => $"v({bandName})",
             DensityType.ChannelZScore => $"z({bandName})",
+            DensityType.ZScoreSingle => $"zs_p({bandName})",
+            DensityType.ZScoreProduct => $"zs_Π({bandName})",
+            DensityType.ZScoreMultivariate => $"zs_p({bandName})",
             _ => bandName
         };
     }

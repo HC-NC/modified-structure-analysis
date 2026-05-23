@@ -33,6 +33,9 @@ public class ConditionDisplayItem
         if (type == DensityType.ChannelZScore && singleIdx >= 0 && singleIdx < bands.Count)
             return $"z({bands[singleIdx].Name})";
 
+        if (type == DensityType.ZScoreSingle && singleIdx >= 0 && singleIdx < bands.Count)
+            return $"zs_p({bands[singleIdx].Name})";
+
         var names = indices.Where(i => i >= 0 && i < bands.Count).Select(i => $"{i}: {bands[i].Name}");
         string nameStr = string.Join(", ", names);
 
@@ -40,6 +43,8 @@ public class ConditionDisplayItem
         {
             DensityType.Product => $"Π({nameStr})",
             DensityType.Multivariate => $"p({nameStr})",
+            DensityType.ZScoreProduct => $"zs_Π({nameStr})",
+            DensityType.ZScoreMultivariate => $"zs_p({nameStr})",
             _ => nameStr
         };
     }

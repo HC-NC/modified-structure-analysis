@@ -73,7 +73,6 @@
             // _leftDensityTypeComboBox
             // 
             _leftDensityTypeComboBox.Dock = DockStyle.Top;
-            _leftDensityTypeComboBox.Items.AddRange(new object[] { "ChannelValue", "ChannelZScore", "Single", "Product", "Multivariate" });
             _leftDensityTypeComboBox.Location = new Point(3, 27);
             _leftDensityTypeComboBox.Name = "_leftDensityTypeComboBox";
             _leftDensityTypeComboBox.Size = new Size(283, 33);
@@ -142,7 +141,6 @@
             // _rightDensityTypeComboBox
             // 
             _rightDensityTypeComboBox.Dock = DockStyle.Top;
-            _rightDensityTypeComboBox.Items.AddRange(new object[] { "ChannelValue", "ChannelZScore", "Single", "Product", "Multivariate" });
             _rightDensityTypeComboBox.Location = new Point(0, 0);
             _rightDensityTypeComboBox.Name = "_rightDensityTypeComboBox";
             _rightDensityTypeComboBox.Size = new Size(279, 33);

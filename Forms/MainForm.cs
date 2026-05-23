@@ -33,6 +33,10 @@ namespace modified_structure_analysis
         private List<ClassificationRule> _firstStageRules = new();
         private List<ClassificationRule> _secondStageRules = new();
 
+        private ClassificationEngine? _firstStageEngine;
+        private ClassificationResult? _firstStageResult;
+        private ClassStatistics[]? _firstStageClassStats;
+
         private PlotModel _kdeModel;
 
         public MainForm()
@@ -88,7 +92,7 @@ namespace modified_structure_analysis
 
         private void AddClassificationRule(object sender, EventArgs e)
         {
-            var editor = new RuleEditorForm(_bands, null);
+            var editor = new RuleEditorForm(_bands, null, isSecondStage: true);
             if (editor.ShowDialog(this) == DialogResult.OK)
             {
                 _secondStageRules.Add(editor.Rule);
@@ -99,7 +103,7 @@ namespace modified_structure_analysis
 
         private void EditClassificationRule(ClassificationRule rule)
         {
-            var editor = new RuleEditorForm(_bands, rule);
+            var editor = new RuleEditorForm(_bands, rule, isSecondStage: true);
 
             if (editor.ShowDialog(this) == DialogResult.OK)
             {
@@ -620,10 +624,19 @@ namespace modified_structure_analysis
             }
         }
 
+        private void ClearFirstStageCache()
+        {
+            _firstStageEngine?.ClearCache();
+            _firstStageEngine = null;
+            _firstStageResult = null;
+            _firstStageClassStats = null;
+        }
+
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                ClearFirstStageCache();
                 _bands.Clear();
                 _geoTransform = null;
                 correlationDataGridView.Columns.Clear();
@@ -1161,7 +1174,13 @@ namespace modified_structure_analysis
                 return;
             }
 
-            backgroundWorker.RunWorkerAsync((_secondStageRules, ClassificationMode.RulePerClass, viewport2));
+            if (_firstStageResult == null || _firstStageEngine == null || _firstStageClassStats == null)
+            {
+                MessageBox.Show("Please run First stage classification (DirectCheck) first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            backgroundWorker.RunWorkerAsync((_secondStageRules, ClassificationMode.RulePerClass, viewport2, true));
         }
 
         private void FirstStageClassify_Click(object? sender, EventArgs e)
@@ -1182,7 +1201,7 @@ namespace modified_structure_analysis
                 ? ClassificationMode.DirectCheck
                 : ClassificationMode.RulePerClass;
 
-            backgroundWorker.RunWorkerAsync((_firstStageRules, mode, viewport3));
+            backgroundWorker.RunWorkerAsync((_firstStageRules, mode, viewport3, false));
         }
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -1192,12 +1211,23 @@ namespace modified_structure_analysis
             if (worker == null || _bands.Count == 0)
                 return;
 
-            if (e.Argument is not (List<ClassificationRule> rules, ClassificationMode mode, Viewport _))
+            if (e.Argument is not (List<ClassificationRule> rules, ClassificationMode mode, Viewport _, bool isSecondStage))
                 return;
 
             if (rules.Count == 0)
                 return;
 
+            if (isSecondStage)
+            {
+                RunSecondStageWork(worker, rules, e);
+                return;
+            }
+
+            RunFirstStageWork(worker, rules, mode, e);
+        }
+
+        private void RunFirstStageWork(BackgroundWorker worker, List<ClassificationRule> rules, ClassificationMode mode, DoWorkEventArgs e)
+        {
             int totalPixels = _width * _height;
 
             DateTime startTime = DateTime.Now;
@@ -1213,6 +1243,8 @@ namespace modified_structure_analysis
                 int classCount = 1 << rules.Count;
                 Color[] palette = PaletteGenerator.GenerateHSV(classCount);
                 classificationResult = new ClassificationResult(_width, _height, palette);
+
+                engine.EnsureZScoreCache(_bands.Count, _width * _height);
             }
             else
             {
@@ -1249,6 +1281,65 @@ namespace modified_structure_analysis
 
             worker.ReportProgress(99, "Rendering bitmap...");
 
+            Bitmap bitmap = RenderClassificationBitmap(classificationResult);
+
+            worker.ReportProgress(100, "Complete");
+
+            _firstStageEngine = engine;
+            _firstStageResult = classificationResult;
+
+            if (engine.ZScoreCache != null)
+            {
+                _firstStageClassStats = ClassStatistics.ComputeFromResult(
+                    classificationResult, _bands, engine.ZScoreCache,
+                    engine.CachedPixelCount, _width, _height);
+            }
+
+            e.Result = (bitmap, classificationResult, mode);
+        }
+
+        private void RunSecondStageWork(BackgroundWorker worker, List<ClassificationRule> rules, DoWorkEventArgs e)
+        {
+            int totalPixels = _width * _height;
+
+            DateTime startTime = DateTime.Now;
+            worker.ReportProgress(0, "Starting second stage classification...");
+
+            var engine = new ClassificationEngine(_bands, rules);
+            engine.Mode = ClassificationMode.RulePerClass;
+
+            if (_firstStageEngine?.ZScoreCache != null)
+            {
+                engine.UseZScoreCache(
+                    _firstStageEngine.ZScoreCache,
+                    _firstStageEngine.CachedBandCount,
+                    _firstStageEngine.CachedPixelCount);
+            }
+
+            if (_firstStageResult != null && _firstStageClassStats != null)
+            {
+                engine.SetFirstStageContext(_firstStageResult.ClassIndices, _firstStageClassStats);
+            }
+
+            int firstStageClassCount = _firstStageResult?.Palette?.Length
+                ?? _firstStageResult?.Rules?.Count
+                ?? 0;
+
+            int[] firstStageClassIndices = _firstStageResult!.ClassIndices;
+
+            ClassificationResult classificationResult = engine.RunSecondStage(firstStageClassIndices, firstStageClassCount);
+
+            worker.ReportProgress(99, "Rendering bitmap...");
+
+            Bitmap bitmap = RenderClassificationBitmap(classificationResult);
+
+            worker.ReportProgress(100, "Complete");
+
+            e.Result = (bitmap, classificationResult, ClassificationMode.RulePerClass);
+        }
+
+        private Bitmap RenderClassificationBitmap(ClassificationResult classificationResult)
+        {
             Bitmap bitmap = new Bitmap(_width, _height);
             Rectangle rect = new Rectangle(0, 0, _width, _height);
             System.Drawing.Imaging.BitmapData bmpData = bitmap.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
@@ -1275,9 +1366,7 @@ namespace modified_structure_analysis
             Marshal.Copy(rgbValues, 0, ptr, bytes);
             bitmap.UnlockBits(bmpData);
 
-            worker.ReportProgress(100, "Complete");
-
-            e.Result = (bitmap, classificationResult, mode);
+            return bitmap;
         }
 
         private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

@@ -23,7 +23,10 @@ public enum DensityType
     ChannelZScore,
     Single,
     Product,
-    Multivariate
+    Multivariate,
+    ZScoreSingle,
+    ZScoreProduct,
+    ZScoreMultivariate
 }
 
 public class ClassificationRule : ICloneable
