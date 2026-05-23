@@ -90,19 +90,40 @@
 - [ ] 9.5.3 Выбор оптимального k соседей — отложено
 
 ### Этап 9.6: Первичная классификация (First tab) — режим прямой проверки
-- [ ] 9.6.0 Расширение системы операндов (ChannelValue, ChannelZScore)
-- [ ] 9.6.1 Автоматическая генерация правил: N каналов → N правил (component >= 0)
-- [ ] 9.6.2 Двоичный режим оценки: N правил = N бит → класс = 0..2^N-1
-- [ ] 9.6.3 HSV-палитра для 2^N классов (авто-генерация, пользователь меняет цвета после)
-- [ ] 9.6.4 Кэширование z-score для каждого пикселя (нужно для второго этапа и статистики)
-- [ ] 9.6.5 Переключатель режимов: «Правила по классам» / «Прямая проверка» (UI — пользователь)
+- [x] 9.6.0 Расширение системы операндов (ChannelValue, ChannelZScore)
+- [x] 9.6.1 Автоматическая генерация правил: N каналов → N правил (z >= 0)
+- [x] 9.6.2 Двоичный режим оценки: N правил = N бит → класс = 0..2^N-1
+- [x] 9.6.3 HSV-палитра для 2^N классов
+- [x] 9.6.4 Кэширование z-score для каждого пикселя
+- [x] 9.6.5 Переключатель режимов: «Правила по классам» / «Прямая проверка»
+- [x] 9.6.6 Раздельные наборы правил для First/Second (две вкладки)
+- [x] 9.6.7 Перенос событий dataGridView1, тулбаров, Compare, Classify в Designer.cs
+- [x] 9.6.8 Исправление: `ClassificationResult(int, int, Color[])` — забыт `Array.Fill(ClassIndices, UndefinedClassIndex)`
 
 ### Этап 9.7: Вторичная классификация (Second tab) — KDE внутри классов первого этапа
-- [ ] 9.7.0 Добавление операндов KDE z-score (ZScoreSingle, ZScoreProduct, ZScoreMultivariate)
-- [ ] 9.7.1 Вычисление KDE значений компонент (z-score) внутри каждого класса первого этапа
-- [ ] 9.7.2 Отнесение пикселя к классу по максимуму плотности вероятности
-- [ ] 9.7.3 Интеграция с текущим движком классификации (переиспользование кэшей)
-- [ ] 9.7.4 Возможность ручного редактирования правил поверх результатов первого этапа
+- [x] 9.7.0 Добавление операндов KDE z-score (ZScoreSingle, ZScoreProduct, ZScoreMultivariate)
+- [x] 9.7.1 `ClassStatistics` — per-class статистика для каждого канала:
+  - [x] Count, Sum, Min, Max, Mean, Sigma, Variance, Skewness, Kurtosis
+  - [x] То же для z-оценок + KernelC / NormalizeKernelC
+  - [x] `PixelIndices[]` для перебора пикселей класса
+- [x] 9.7.2 `RunSecondStage()` — итоговый класс = firstClass * ruleCount + secondClass
+- [x] 9.7.3 Передача zScoreCache из First stage во Second
+- [x] 9.7.4 Палитра Second stage на основе оригинальных цветов (с одним правилом — точная копия)
+- [x] 9.7.5 ConditionEditor: фильтрация band-листа для ZScore* типов (скрыть каналы без статистики)
+- [ ] 9.7.6 **Regular density (Single/Product/Multivariate) для Second stage** — сейчас считают KDE по всем пикселям, а надо внутри классов First stage (как ZScore*)
+
+### Этап 9.8: Рефакторинг дублирования кода
+- [ ] 9.8.1 Устранить дублирование между `RunFirstStageWork` / `RunSecondStageWork` / исходным `backgroundWorker_DoWork`
+- [ ] 9.8.2 Устранить дублирование между `GetSingleDensity` / `GetZScoreSingleDensity`, `GetProductDensity`/`GetZScoreProductDensity`, `GetMultivariateDensity`/`GetZScoreMultivariateDensity`
+- [ ] 9.8.3 Устранить дублирование кэшей (single/product/multivariate + zScore варианты)
+- [ ] 9.8.4 Объединить `RunDirectCheck` / `RunRulePerClass` / `RunSecondStage` в единый метод с параметрами
+
+### Этап 9.9: Переход от нормализованных значений к абсолютным для KDE
+- [ ] 9.9.1 Изменить `GetSingleDensity` / `GetKernelDensityEstimate` на работу с raw-значениями вместо normalized [0,1]
+- [ ] 9.9.2 Пересмотреть `_singleCacheSteps`: дискретизация по диапазону raw-значений
+- [ ] 9.9.3 Пересмотреть `Band.NormalizeKernelC` → прямое использование `Band.KernelC`
+- [ ] 9.9.4 Multivariate KDE: пересчитать нормализацию под raw-значения
+- [ ] 9.9.5 После перехода: проверить корректность плотностей, сравнить с текущими
 
 ---
 
@@ -174,5 +195,9 @@
 
 ## Известные проблемы текущей версии
 
+- `ClassificationResult(int, int, Color[])` не заполняет `ClassIndices` индексом неопределённого класса (-1) — **FIXED**
+- Regular density (Single/Product/Multivariate) для Second stage не учитывает per-class статистику — считает KDE по всем пикселям
+- Массовое дублирование кода классификации и плотностей (regular vs zScore варианты)
+- KDE считается на нормализованных [0,1] значениях — переход на raw-значения отложен
 - Окно "About" / "Help" отсутствует
 - Локализация отсутствует
