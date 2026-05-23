@@ -11,8 +11,16 @@ public enum ComparisonOperator
     Equal
 }
 
+public enum ClassificationMode
+{
+    RulePerClass,
+    DirectCheck
+}
+
 public enum DensityType
 {
+    ChannelValue,
+    ChannelZScore,
     Single,
     Product,
     Multivariate

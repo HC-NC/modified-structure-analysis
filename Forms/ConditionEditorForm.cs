@@ -40,11 +40,8 @@ namespace modified_structure_analysis
             _leftBandsListBox.Items.Clear();
             _rightBandsListBox.Items.Clear();
 
-            for (int i = 0; i < _bands.Count; i++)
-            {
-                _leftBandsListBox.Items.Add(_bands[i].Name);
-                _rightBandsListBox.Items.Add(_bands[i].Name);
-            }
+            _leftBandsListBox.Items.AddRange(_bands.ToArray());
+            _rightBandsListBox.Items.AddRange(_bands.ToArray());
         }
 
         private void UpdateLeftVisibility(object sender, EventArgs e)

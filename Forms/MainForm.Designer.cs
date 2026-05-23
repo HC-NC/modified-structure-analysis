@@ -80,6 +80,28 @@
             buildScatterButton = new Button();
             scatterPlotView = new OxyPlot.WindowsForms.PlotView();
             classificationTabPage = new TabPage();
+            tabControl2 = new TabControl();
+            tabPage6 = new TabPage();
+            splitContainer8 = new SplitContainer();
+            splitContainer9 = new SplitContainer();
+            dataGridView1 = new DataGridView();
+            dataGridViewImageColumn1 = new DataGridViewImageColumn();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
+            richTextBox1 = new RichTextBox();
+            toolStrip4 = new ToolStrip();
+            toolStripButton8 = new ToolStripButton();
+            toolStripButton10 = new ToolStripButton();
+            toolStripSeparator7 = new ToolStripSeparator();
+            toolStripButton12 = new ToolStripButton();
+            toolStripButton13 = new ToolStripButton();
+            tabControl3 = new TabControl();
+            tabPage8 = new TabPage();
+            viewport3 = new modified_structure_analysis.Forms.Viewport();
+            toolStrip5 = new ToolStrip();
+            toolStripButton14 = new ToolStripButton();
+            tabPage9 = new TabPage();
+            tabPage7 = new TabPage();
             splitContainer4 = new SplitContainer();
             splitContainer7 = new SplitContainer();
             ruleDataGridView = new DataGridView();
@@ -91,6 +113,8 @@
             toolStripButton2 = new ToolStripButton();
             toolStripButton3 = new ToolStripButton();
             toolStripButton4 = new ToolStripButton();
+            toolStripSeparator6 = new ToolStripSeparator();
+            toolStripButton7 = new ToolStripButton();
             toolStripSeparator3 = new ToolStripSeparator();
             toolStripButton5 = new ToolStripButton();
             toolStripButton6 = new ToolStripButton();
@@ -110,8 +134,10 @@
             toolStripSeparator5 = new ToolStripSeparator();
             removeToolStripMenuItem = new ToolStripMenuItem();
             backgroundWorker = new System.ComponentModel.BackgroundWorker();
-            toolStripButton7 = new ToolStripButton();
-            toolStripSeparator6 = new ToolStripSeparator();
+            toolStripButton9 = new ToolStripButton();
+            ClassificationModeToolStripComboBox = new ToolStripComboBox();
+            toolStripSeparator9 = new ToolStripSeparator();
+            toolStripButton15 = new ToolStripButton();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -151,6 +177,22 @@
             groupBox3.SuspendLayout();
             groupBox4.SuspendLayout();
             classificationTabPage.SuspendLayout();
+            tabControl2.SuspendLayout();
+            tabPage6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer8).BeginInit();
+            splitContainer8.Panel1.SuspendLayout();
+            splitContainer8.Panel2.SuspendLayout();
+            splitContainer8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer9).BeginInit();
+            splitContainer9.Panel1.SuspendLayout();
+            splitContainer9.Panel2.SuspendLayout();
+            splitContainer9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            toolStrip4.SuspendLayout();
+            tabControl3.SuspendLayout();
+            tabPage8.SuspendLayout();
+            toolStrip5.SuspendLayout();
+            tabPage7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer4).BeginInit();
             splitContainer4.Panel1.SuspendLayout();
             splitContainer4.Panel2.SuspendLayout();
@@ -711,7 +753,7 @@
             // 
             // classificationTabPage
             // 
-            classificationTabPage.Controls.Add(splitContainer4);
+            classificationTabPage.Controls.Add(tabControl2);
             classificationTabPage.Location = new Point(4, 34);
             classificationTabPage.Name = "classificationTabPage";
             classificationTabPage.Padding = new Padding(3);
@@ -719,6 +761,253 @@
             classificationTabPage.TabIndex = 2;
             classificationTabPage.Text = "Classification";
             classificationTabPage.UseVisualStyleBackColor = true;
+            // 
+            // tabControl2
+            // 
+            tabControl2.Controls.Add(tabPage6);
+            tabControl2.Controls.Add(tabPage7);
+            tabControl2.Dock = DockStyle.Fill;
+            tabControl2.ItemSize = new Size(125, 30);
+            tabControl2.Location = new Point(3, 3);
+            tabControl2.Name = "tabControl2";
+            tabControl2.SelectedIndex = 0;
+            tabControl2.Size = new Size(1164, 635);
+            tabControl2.SizeMode = TabSizeMode.Fixed;
+            tabControl2.TabIndex = 1;
+            // 
+            // tabPage6
+            // 
+            tabPage6.Controls.Add(splitContainer8);
+            tabPage6.Location = new Point(4, 34);
+            tabPage6.Name = "tabPage6";
+            tabPage6.Padding = new Padding(3);
+            tabPage6.Size = new Size(1156, 597);
+            tabPage6.TabIndex = 0;
+            tabPage6.Text = "First";
+            tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer8
+            // 
+            splitContainer8.Dock = DockStyle.Fill;
+            splitContainer8.FixedPanel = FixedPanel.Panel1;
+            splitContainer8.Location = new Point(3, 3);
+            splitContainer8.Name = "splitContainer8";
+            // 
+            // splitContainer8.Panel1
+            // 
+            splitContainer8.Panel1.Controls.Add(splitContainer9);
+            splitContainer8.Panel1.Controls.Add(toolStrip4);
+            // 
+            // splitContainer8.Panel2
+            // 
+            splitContainer8.Panel2.Controls.Add(tabControl3);
+            splitContainer8.Size = new Size(1150, 591);
+            splitContainer8.SplitterDistance = 400;
+            splitContainer8.TabIndex = 1;
+            // 
+            // splitContainer9
+            // 
+            splitContainer9.Dock = DockStyle.Fill;
+            splitContainer9.FixedPanel = FixedPanel.Panel2;
+            splitContainer9.Location = new Point(0, 34);
+            splitContainer9.Name = "splitContainer9";
+            splitContainer9.Orientation = Orientation.Horizontal;
+            // 
+            // splitContainer9.Panel1
+            // 
+            splitContainer9.Panel1.Controls.Add(dataGridView1);
+            // 
+            // splitContainer9.Panel2
+            // 
+            splitContainer9.Panel2.Controls.Add(richTextBox1);
+            splitContainer9.Size = new Size(400, 557);
+            splitContainer9.SplitterDistance = 482;
+            splitContainer9.TabIndex = 10;
+            // 
+            // dataGridView1
+            // 
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.AllowUserToResizeColumns = false;
+            dataGridView1.AllowUserToResizeRows = false;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.ColumnHeadersVisible = false;
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { dataGridViewImageColumn1, dataGridViewTextBoxColumn1, dataGridViewButtonColumn1 });
+            dataGridView1.Dock = DockStyle.Fill;
+            dataGridView1.Location = new Point(0, 0);
+            dataGridView1.MultiSelect = false;
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.RowHeadersVisible = false;
+            dataGridView1.RowHeadersWidth = 62;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.Size = new Size(400, 482);
+            dataGridView1.TabIndex = 8;
+            // 
+            // dataGridViewImageColumn1
+            // 
+            dataGridViewImageColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridViewImageColumn1.HeaderText = "Color";
+            dataGridViewImageColumn1.MinimumWidth = 8;
+            dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
+            dataGridViewImageColumn1.ReadOnly = true;
+            dataGridViewImageColumn1.Width = 32;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            dataGridViewTextBoxColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewTextBoxColumn1.HeaderText = "Name";
+            dataGridViewTextBoxColumn1.MinimumWidth = 8;
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            dataGridViewTextBoxColumn1.ReadOnly = true;
+            dataGridViewTextBoxColumn1.SortMode = DataGridViewColumnSortMode.NotSortable;
+            // 
+            // dataGridViewButtonColumn1
+            // 
+            dataGridViewButtonColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridViewButtonColumn1.HeaderText = "Edit";
+            dataGridViewButtonColumn1.MinimumWidth = 8;
+            dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
+            dataGridViewButtonColumn1.ReadOnly = true;
+            dataGridViewButtonColumn1.Width = 32;
+            // 
+            // richTextBox1
+            // 
+            richTextBox1.BorderStyle = BorderStyle.FixedSingle;
+            richTextBox1.Dock = DockStyle.Fill;
+            richTextBox1.Location = new Point(0, 0);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.ReadOnly = true;
+            richTextBox1.Size = new Size(400, 71);
+            richTextBox1.TabIndex = 0;
+            richTextBox1.Text = "No rule select";
+            // 
+            // toolStrip4
+            // 
+            toolStrip4.GripStyle = ToolStripGripStyle.Hidden;
+            toolStrip4.ImageScalingSize = new Size(24, 24);
+            toolStrip4.Items.AddRange(new ToolStripItem[] { toolStripButton8, toolStripButton10, toolStripSeparator7, toolStripButton12, toolStripButton13, ClassificationModeToolStripComboBox, toolStripSeparator9, toolStripButton15 });
+            toolStrip4.Location = new Point(0, 0);
+            toolStrip4.Name = "toolStrip4";
+            toolStrip4.Size = new Size(400, 34);
+            toolStrip4.TabIndex = 9;
+            toolStrip4.Text = "toolStrip4";
+            // 
+            // toolStripButton8
+            // 
+            toolStripButton8.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton8.Image = (Image)resources.GetObject("toolStripButton8.Image");
+            toolStripButton8.ImageTransparentColor = Color.Magenta;
+            toolStripButton8.Name = "toolStripButton8";
+            toolStripButton8.Size = new Size(34, 29);
+            toolStripButton8.Text = "+";
+            // 
+            // toolStripButton10
+            // 
+            toolStripButton10.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton10.Image = (Image)resources.GetObject("toolStripButton10.Image");
+            toolStripButton10.ImageTransparentColor = Color.Magenta;
+            toolStripButton10.Name = "toolStripButton10";
+            toolStripButton10.Size = new Size(34, 29);
+            toolStripButton10.Text = "-";
+            // 
+            // toolStripSeparator7
+            // 
+            toolStripSeparator7.Name = "toolStripSeparator7";
+            toolStripSeparator7.Size = new Size(6, 34);
+            // 
+            // toolStripButton12
+            // 
+            toolStripButton12.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton12.Image = (Image)resources.GetObject("toolStripButton12.Image");
+            toolStripButton12.ImageTransparentColor = Color.Magenta;
+            toolStripButton12.Name = "toolStripButton12";
+            toolStripButton12.Size = new Size(34, 29);
+            toolStripButton12.Text = "↑";
+            // 
+            // toolStripButton13
+            // 
+            toolStripButton13.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton13.Image = (Image)resources.GetObject("toolStripButton13.Image");
+            toolStripButton13.ImageTransparentColor = Color.Magenta;
+            toolStripButton13.Name = "toolStripButton13";
+            toolStripButton13.Size = new Size(34, 29);
+            toolStripButton13.Text = "↓";
+            // 
+            // tabControl3
+            // 
+            tabControl3.Alignment = TabAlignment.Bottom;
+            tabControl3.Controls.Add(tabPage8);
+            tabControl3.Controls.Add(tabPage9);
+            tabControl3.Dock = DockStyle.Fill;
+            tabControl3.ItemSize = new Size(150, 30);
+            tabControl3.Location = new Point(0, 0);
+            tabControl3.Name = "tabControl3";
+            tabControl3.SelectedIndex = 0;
+            tabControl3.Size = new Size(746, 591);
+            tabControl3.SizeMode = TabSizeMode.Fixed;
+            tabControl3.TabIndex = 1;
+            // 
+            // tabPage8
+            // 
+            tabPage8.Controls.Add(viewport3);
+            tabPage8.Controls.Add(toolStrip5);
+            tabPage8.Location = new Point(4, 4);
+            tabPage8.Name = "tabPage8";
+            tabPage8.Padding = new Padding(3);
+            tabPage8.Size = new Size(738, 553);
+            tabPage8.TabIndex = 0;
+            tabPage8.Text = "Viewport";
+            tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // viewport3
+            // 
+            viewport3.Dock = DockStyle.Fill;
+            viewport3.Location = new Point(3, 37);
+            viewport3.Name = "viewport3";
+            viewport3.Size = new Size(732, 513);
+            viewport3.TabIndex = 0;
+            // 
+            // toolStrip5
+            // 
+            toolStrip5.GripStyle = ToolStripGripStyle.Hidden;
+            toolStrip5.ImageScalingSize = new Size(24, 24);
+            toolStrip5.Items.AddRange(new ToolStripItem[] { toolStripButton14, toolStripButton9 });
+            toolStrip5.Location = new Point(3, 3);
+            toolStrip5.Name = "toolStrip5";
+            toolStrip5.Size = new Size(732, 34);
+            toolStrip5.TabIndex = 0;
+            // 
+            // toolStripButton14
+            // 
+            toolStripButton14.Alignment = ToolStripItemAlignment.Right;
+            toolStripButton14.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton14.Image = (Image)resources.GetObject("toolStripButton14.Image");
+            toolStripButton14.ImageTransparentColor = Color.Magenta;
+            toolStripButton14.Name = "toolStripButton14";
+            toolStripButton14.Size = new Size(89, 29);
+            toolStripButton14.Text = "Compare";
+            // 
+            // tabPage9
+            // 
+            tabPage9.Location = new Point(4, 4);
+            tabPage9.Name = "tabPage9";
+            tabPage9.Padding = new Padding(3);
+            tabPage9.Size = new Size(838, 553);
+            tabPage9.TabIndex = 1;
+            tabPage9.Text = "Analysis";
+            tabPage9.UseVisualStyleBackColor = true;
+            // 
+            // tabPage7
+            // 
+            tabPage7.Controls.Add(splitContainer4);
+            tabPage7.Location = new Point(4, 34);
+            tabPage7.Name = "tabPage7";
+            tabPage7.Padding = new Padding(3);
+            tabPage7.Size = new Size(1156, 597);
+            tabPage7.TabIndex = 1;
+            tabPage7.Text = "Second";
+            tabPage7.UseVisualStyleBackColor = true;
             // 
             // splitContainer4
             // 
@@ -735,7 +1024,7 @@
             // splitContainer4.Panel2
             // 
             splitContainer4.Panel2.Controls.Add(tabControl1);
-            splitContainer4.Size = new Size(1164, 635);
+            splitContainer4.Size = new Size(1150, 591);
             splitContainer4.SplitterDistance = 300;
             splitContainer4.TabIndex = 0;
             // 
@@ -754,8 +1043,8 @@
             // splitContainer7.Panel2
             // 
             splitContainer7.Panel2.Controls.Add(conditionsRichTextBox);
-            splitContainer7.Size = new Size(300, 601);
-            splitContainer7.SplitterDistance = 400;
+            splitContainer7.Size = new Size(300, 557);
+            splitContainer7.SplitterDistance = 356;
             splitContainer7.TabIndex = 10;
             // 
             // ruleDataGridView
@@ -775,7 +1064,7 @@
             ruleDataGridView.RowHeadersVisible = false;
             ruleDataGridView.RowHeadersWidth = 62;
             ruleDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            ruleDataGridView.Size = new Size(300, 400);
+            ruleDataGridView.Size = new Size(300, 356);
             ruleDataGridView.TabIndex = 8;
             ruleDataGridView.CellClick += DataGridView1_CellClick;
             ruleDataGridView.CellMouseClick += ruleDataGridView_CellMouseClick;
@@ -861,6 +1150,21 @@
             toolStripButton4.Text = "-";
             toolStripButton4.Click += DeleteClassificationRule;
             // 
+            // toolStripSeparator6
+            // 
+            toolStripSeparator6.Name = "toolStripSeparator6";
+            toolStripSeparator6.Size = new Size(6, 34);
+            // 
+            // toolStripButton7
+            // 
+            toolStripButton7.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton7.Image = (Image)resources.GetObject("toolStripButton7.Image");
+            toolStripButton7.ImageTransparentColor = Color.Magenta;
+            toolStripButton7.Name = "toolStripButton7";
+            toolStripButton7.Size = new Size(34, 29);
+            toolStripButton7.Text = "C";
+            toolStripButton7.Click += CloneClassificationRule;
+            // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
@@ -896,7 +1200,7 @@
             tabControl1.Location = new Point(0, 0);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(860, 635);
+            tabControl1.Size = new Size(846, 591);
             tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 1;
             // 
@@ -907,7 +1211,7 @@
             tabPage4.Location = new Point(4, 4);
             tabPage4.Name = "tabPage4";
             tabPage4.Padding = new Padding(3);
-            tabPage4.Size = new Size(852, 597);
+            tabPage4.Size = new Size(838, 553);
             tabPage4.TabIndex = 0;
             tabPage4.Text = "Viewport";
             tabPage4.UseVisualStyleBackColor = true;
@@ -917,7 +1221,7 @@
             viewport2.Dock = DockStyle.Fill;
             viewport2.Location = new Point(3, 37);
             viewport2.Name = "viewport2";
-            viewport2.Size = new Size(846, 557);
+            viewport2.Size = new Size(832, 513);
             viewport2.TabIndex = 0;
             // 
             // toolStrip2
@@ -927,7 +1231,7 @@
             toolStrip2.Items.AddRange(new ToolStripItem[] { compareToolStripButton });
             toolStrip2.Location = new Point(3, 3);
             toolStrip2.Name = "toolStrip2";
-            toolStrip2.Size = new Size(846, 34);
+            toolStrip2.Size = new Size(832, 34);
             toolStrip2.TabIndex = 0;
             // 
             // compareToolStripButton
@@ -946,7 +1250,7 @@
             tabPage5.Location = new Point(4, 4);
             tabPage5.Name = "tabPage5";
             tabPage5.Padding = new Padding(3);
-            tabPage5.Size = new Size(852, 597);
+            tabPage5.Size = new Size(838, 553);
             tabPage5.TabIndex = 1;
             tabPage5.Text = "Analysis";
             tabPage5.UseVisualStyleBackColor = true;
@@ -1018,20 +1322,37 @@
             backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             // 
-            // toolStripButton7
+            // toolStripButton9
             // 
-            toolStripButton7.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton7.Image = (Image)resources.GetObject("toolStripButton7.Image");
-            toolStripButton7.ImageTransparentColor = Color.Magenta;
-            toolStripButton7.Name = "toolStripButton7";
-            toolStripButton7.Size = new Size(34, 29);
-            toolStripButton7.Text = "C";
-            toolStripButton7.Click += CloneClassificationRule;
+            toolStripButton9.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton9.Image = (Image)resources.GetObject("toolStripButton9.Image");
+            toolStripButton9.ImageTransparentColor = Color.Magenta;
+            toolStripButton9.Name = "toolStripButton9";
+            toolStripButton9.Size = new Size(42, 29);
+            toolStripButton9.Text = "GO";
             // 
-            // toolStripSeparator6
+            // ClassificationModeToolStripComboBox
             // 
-            toolStripSeparator6.Name = "toolStripSeparator6";
-            toolStripSeparator6.Size = new Size(6, 34);
+            ClassificationModeToolStripComboBox.Alignment = ToolStripItemAlignment.Right;
+            ClassificationModeToolStripComboBox.Items.AddRange(new object[] { "RulePerClass", "DirectCheck" });
+            ClassificationModeToolStripComboBox.Name = "ClassificationModeToolStripComboBox";
+            ClassificationModeToolStripComboBox.Size = new Size(121, 34);
+            ClassificationModeToolStripComboBox.Text = "RulePerClass";
+            // 
+            // toolStripSeparator9
+            // 
+            toolStripSeparator9.Name = "toolStripSeparator9";
+            toolStripSeparator9.Size = new Size(6, 34);
+            // 
+            // toolStripButton15
+            // 
+            toolStripButton15.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton15.Image = (Image)resources.GetObject("toolStripButton15.Image");
+            toolStripButton15.ImageTransparentColor = Color.Magenta;
+            toolStripButton15.Name = "toolStripButton15";
+            toolStripButton15.Size = new Size(55, 29);
+            toolStripButton15.Text = "Auto";
+            toolStripButton15.Click += AutoButton_Click;
             // 
             // MainForm
             // 
@@ -1089,6 +1410,26 @@
             groupBox3.ResumeLayout(false);
             groupBox4.ResumeLayout(false);
             classificationTabPage.ResumeLayout(false);
+            tabControl2.ResumeLayout(false);
+            tabPage6.ResumeLayout(false);
+            splitContainer8.Panel1.ResumeLayout(false);
+            splitContainer8.Panel1.PerformLayout();
+            splitContainer8.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer8).EndInit();
+            splitContainer8.ResumeLayout(false);
+            splitContainer9.Panel1.ResumeLayout(false);
+            splitContainer9.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer9).EndInit();
+            splitContainer9.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            toolStrip4.ResumeLayout(false);
+            toolStrip4.PerformLayout();
+            tabControl3.ResumeLayout(false);
+            tabPage8.ResumeLayout(false);
+            tabPage8.PerformLayout();
+            toolStrip5.ResumeLayout(false);
+            toolStrip5.PerformLayout();
+            tabPage7.ResumeLayout(false);
             splitContainer4.Panel1.ResumeLayout(false);
             splitContainer4.Panel1.PerformLayout();
             splitContainer4.Panel2.ResumeLayout(false);
@@ -1195,5 +1536,31 @@
         private ToolStripMenuItem cloneToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator6;
         private ToolStripButton toolStripButton7;
+        private TabControl tabControl2;
+        private TabPage tabPage6;
+        private SplitContainer splitContainer8;
+        private SplitContainer splitContainer9;
+        private DataGridView dataGridView1;
+        private DataGridViewImageColumn dataGridViewImageColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewButtonColumn dataGridViewButtonColumn1;
+        private RichTextBox richTextBox1;
+        private ToolStrip toolStrip4;
+        private ToolStripButton toolStripButton8;
+        private ToolStripButton toolStripButton10;
+        private ToolStripSeparator toolStripSeparator7;
+        private ToolStripButton toolStripButton12;
+        private ToolStripButton toolStripButton13;
+        private TabControl tabControl3;
+        private TabPage tabPage8;
+        private Forms.Viewport viewport3;
+        private ToolStrip toolStrip5;
+        private ToolStripButton toolStripButton14;
+        private TabPage tabPage9;
+        private TabPage tabPage7;
+        private ToolStripComboBox ClassificationModeToolStripComboBox;
+        private ToolStripButton toolStripButton9;
+        private ToolStripSeparator toolStripSeparator9;
+        private ToolStripButton toolStripButton15;
     }
 }

@@ -302,5 +302,15 @@ namespace modified_structure_analysis
         {
             return GetNormalizedPixelValue(i);
         }
+
+        public float GetZScore(int pixelIndex)
+        {
+            float val = GetPixelValue(pixelIndex);
+            if (float.IsNaN(val))
+                return 0;
+            if (_sigma == 0)
+                return 0;
+            return (val - _mean) / _sigma;
+        }
     }
 }

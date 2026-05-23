@@ -7,7 +7,8 @@ public class ClassificationResult
     public int Width { get; }
     public int Height { get; }
     public int[] ClassIndices { get; }
-    public List<ClassificationRule> Rules { get; }
+    public List<ClassificationRule>? Rules { get; }
+    public Color[]? Palette { get; }
     public Color UndefinedColor { get; } = Color.Transparent;
 
     public int UndefinedClassIndex => -1;
@@ -17,8 +18,18 @@ public class ClassificationResult
         Width = width;
         Height = height;
         Rules = rules;
+        Palette = null;
         ClassIndices = new int[width * height];
         Array.Fill(ClassIndices, UndefinedClassIndex);
+    }
+
+    public ClassificationResult(int width, int height, Color[] palette)
+    {
+        Width = width;
+        Height = height;
+        Rules = null;
+        Palette = palette;
+        ClassIndices = new int[width * height];
     }
 
     public void SetClass(int pixelIndex, int classIndex)
@@ -37,7 +48,13 @@ public class ClassificationResult
     public Color GetPixelColor(int pixelIndex)
     {
         int classIdx = GetClass(pixelIndex);
-        if (classIdx < 0 || classIdx >= Rules.Count)
+        if (Palette != null)
+        {
+            if (classIdx >= 0 && classIdx < Palette.Length)
+                return Palette[classIdx];
+            return UndefinedColor;
+        }
+        if (classIdx < 0 || Rules == null || classIdx >= Rules.Count)
             return UndefinedColor;
         return Rules[classIdx].Color;
     }
@@ -59,8 +76,17 @@ public class ClassificationResult
     public Dictionary<int, int> GetClassStatistics()
     {
         var stats = new Dictionary<int, int>();
-        for (int i = 0; i < Rules.Count; i++)
-            stats[i] = 0;
+
+        if (Palette != null)
+        {
+            for (int i = 0; i < Palette.Length; i++)
+                stats[i] = 0;
+        }
+        else if (Rules != null)
+        {
+            for (int i = 0; i < Rules.Count; i++)
+                stats[i] = 0;
+        }
         stats[UndefinedClassIndex] = 0;
 
         foreach (int classIdx in ClassIndices)

@@ -27,6 +27,12 @@ public class ConditionDisplayItem
         if (type == DensityType.Single && singleIdx >= 0 && singleIdx < bands.Count)
             return $"p({bands[singleIdx].Name})";
 
+        if (type == DensityType.ChannelValue && singleIdx >= 0 && singleIdx < bands.Count)
+            return $"v({bands[singleIdx].Name})";
+
+        if (type == DensityType.ChannelZScore && singleIdx >= 0 && singleIdx < bands.Count)
+            return $"z({bands[singleIdx].Name})";
+
         var names = indices.Where(i => i >= 0 && i < bands.Count).Select(i => $"{i}: {bands[i].Name}");
         string nameStr = string.Join(", ", names);
 

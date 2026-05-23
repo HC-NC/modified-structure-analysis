@@ -1066,26 +1066,47 @@ namespace modified_structure_analysis
                 return;
             }
 
-            backgroundWorker.RunWorkerAsync(_classificationRules);
+            ClassificationMode mode = ClassificationModeToolStripComboBox.SelectedItem?.ToString() == "DirectCheck"
+                ? ClassificationMode.DirectCheck
+                : ClassificationMode.RulePerClass;
+
+            backgroundWorker.RunWorkerAsync((_classificationRules, mode));
         }
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker? worker = sender as BackgroundWorker;
-            List<ClassificationRule>? rules = e.Argument as List<ClassificationRule>;
 
-            if (worker == null || rules == null || _bands.Count == 0)
+            if (worker == null || _bands.Count == 0)
+                return;
+
+            if (e.Argument is not (List<ClassificationRule> rules, ClassificationMode mode))
+                return;
+
+            if (rules.Count == 0)
                 return;
 
             int totalPixels = _width * _height;
-            int reportInterval = Math.Max(1, totalPixels / 100);
 
             DateTime startTime = DateTime.Now;
             worker.ReportProgress(0, "Starting classification...");
 
             var engine = new ClassificationEngine(_bands, rules);
+            engine.Mode = mode;
 
-            var classificationResult = new ClassificationResult(_width, _height, rules);
+            ClassificationResult classificationResult;
+
+            if (mode == ClassificationMode.DirectCheck)
+            {
+                int classCount = 1 << rules.Count;
+                Color[] palette = PaletteGenerator.GenerateHSV(classCount);
+                classificationResult = new ClassificationResult(_width, _height, palette);
+            }
+            else
+            {
+                classificationResult = new ClassificationResult(_width, _height, rules);
+            }
+
             int processedPixels = 0;
 
             Parallel.For(0, totalPixels, () => 0, (pixelIndex, loopState, localCount) =>
@@ -1165,11 +1186,24 @@ namespace modified_structure_analysis
 
                     var stats = result.Item2.GetClassStatistics();
                     var statsText = "Classification Statistics:\n";
-                    for (int i = 0; i < result.Item2.Rules.Count; i++)
+
+                    if (result.Item2.Palette != null)
                     {
-                        string ruleName = result.Item2.Rules[i].GenerateName();
-                        statsText += $"Class {i} ({ruleName}): {stats.GetValueOrDefault(i, 0)} pixels\n";
+                        for (int i = 0; i < result.Item2.Palette.Length; i++)
+                        {
+                            string colorHex = ColorTranslator.ToHtml(result.Item2.Palette[i]);
+                            statsText += $"Class {i} (color {colorHex}): {stats.GetValueOrDefault(i, 0)} pixels\n";
+                        }
                     }
+                    else if (result.Item2.Rules != null)
+                    {
+                        for (int i = 0; i < result.Item2.Rules.Count; i++)
+                        {
+                            string ruleName = result.Item2.Rules[i].GenerateName();
+                            statsText += $"Class {i} ({ruleName}): {stats.GetValueOrDefault(i, 0)} pixels\n";
+                        }
+                    }
+
                     statsText += $"Undefined: {stats.GetValueOrDefault(-1, 0)} pixels";
                     MessageBox.Show(statsText, "Classification Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -1204,6 +1238,47 @@ namespace modified_structure_analysis
             TwoImageViewForm twoImageView = new TwoImageViewForm(viewport1.Image, viewport2.Image);
 
             twoImageView.ShowDialog(this);
+        }
+
+        private void AutoButton_Click(object sender, EventArgs e)
+        {
+            BandSelectionForm selectionForm = new BandSelectionForm(_bands);
+
+            if (selectionForm.ShowDialog(this) == DialogResult.OK)
+            {
+                List<Band> selectedBands = selectionForm.Result;
+                if (selectedBands.Count == 0)
+                    return;
+
+                _classificationRules.Clear();
+
+                foreach (Band band in selectedBands)
+                {
+                    int bandIndex = _bands.IndexOf(band);
+                    if (bandIndex < 0) continue;
+
+                    var rule = new ClassificationRule
+                    {
+                        Name = $"z({band.Name}) >= 0",
+                        Color = Color.Gray,
+                        IsEnabled = true
+                    };
+
+                    var condition = new Condition
+                    {
+                        LeftDensityType = DensityType.ChannelZScore,
+                        LeftSingleBandIndex = bandIndex,
+                        Operator = ComparisonOperator.GreaterOrEqual,
+                        RightSide = new CompareTarget { ConstantValue = 0 }
+                    };
+
+                    rule.Conditions.Add(condition);
+                    _classificationRules.Add(rule);
+                }
+
+                ClassificationModeToolStripComboBox.SelectedItem = "DirectCheck";
+                UpdateClassificationRulesGrid();
+            }
         }
 
         //public void ApplyPlotSettings(PlotModel model)
