@@ -246,7 +246,7 @@
             exportGraphToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.G;
             exportGraphToolStripMenuItem.Size = new Size(223, 34);
             exportGraphToolStripMenuItem.Text = "Export Graph…";
-            exportGraphToolStripMenuItem.Click += ExportKdePlot;
+            exportGraphToolStripMenuItem.Click += ExportActivePlot;
             // 
             // exportClassificationToolStripMenuItem
             // 

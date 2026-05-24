@@ -29,6 +29,8 @@ public class GraphExportOptions
     public int Height { get; set; } = 600;
     public int Dpi { get; set; } = 150;
     public int JpegQuality { get; set; } = 90;
+    public string? Title { get; set; }
+    public bool Grayscale { get; set; }
 }
 
 public class ClassificationExportOptions

@@ -51,6 +51,48 @@ public static class ClassificationExporter
         byte[] rasterData = BuildRasterData(result, width, height);
         band.WriteRaster(0, 0, width, height, rasterData, width, height, 0, 0);
         band.FlushCache();
+
+        WriteRasterAttributeTable(band, result);
+    }
+
+    private static void WriteRasterAttributeTable(OSGeo.GDAL.Band band, ClassificationResult result)
+    {
+        if (result.Palette == null || result.Palette.Length == 0)
+            return;
+
+        int classCount = result.Palette.Length;
+
+        var rat = new RasterAttributeTable();
+        rat.SetTableType(RATTableType.GRTT_THEMATIC);
+
+        int col = 0;
+        rat.CreateColumn("Value", RATFieldType.GFT_Integer, RATFieldUsage.GFU_MinMax);
+        int valueCol = col++;
+
+        rat.CreateColumn("Red", RATFieldType.GFT_Integer, RATFieldUsage.GFU_Red);
+        int redCol = col++;
+
+        rat.CreateColumn("Green", RATFieldType.GFT_Integer, RATFieldUsage.GFU_Green);
+        int greenCol = col++;
+
+        rat.CreateColumn("Blue", RATFieldType.GFT_Integer, RATFieldUsage.GFU_Blue);
+        int blueCol = col++;
+
+        rat.CreateColumn("Class", RATFieldType.GFT_String, RATFieldUsage.GFU_Name);
+        int nameCol = col++;
+
+        rat.SetRowCount(classCount);
+
+        for (int i = 0; i < classCount; i++)
+        {
+            rat.SetValueAsInt(i, valueCol, i);
+            rat.SetValueAsInt(i, redCol, result.Palette[i].R);
+            rat.SetValueAsInt(i, greenCol, result.Palette[i].G);
+            rat.SetValueAsInt(i, blueCol, result.Palette[i].B);
+            rat.SetValueAsString(i, nameCol, $"Class {i}");
+        }
+
+        band.SetDefaultRAT(rat);
     }
 
     public static void ExportToPng(ClassificationResult result, string path)
@@ -115,16 +157,20 @@ public static class ClassificationExporter
             geo = new GeoTransform(0, 0, 1, -1);
         }
 
+        // World file stores the CENTER of the top-left pixel, GDAL GeoTransform stores the CORNER.
+        // Need to add half-pixel offset.
+        double centerX = geo.OriginX + geo.PixelSizeX / 2.0;
+        double centerY = geo.OriginY + geo.PixelSizeY / 2.0;
         double pixelSizeX = Math.Abs(geo.PixelSizeX);
         double pixelSizeY = -Math.Abs(geo.PixelSizeY);
 
         using var writer = new StreamWriter(path);
-        writer.WriteLine(pixelSizeX.ToString("G"));
+        writer.WriteLine(pixelSizeX.ToString("G", System.Globalization.CultureInfo.InvariantCulture));
         writer.WriteLine("0");
         writer.WriteLine("0");
-        writer.WriteLine(pixelSizeY.ToString("G"));
-        writer.WriteLine(geo.OriginX.ToString("G"));
-        writer.WriteLine(geo.OriginY.ToString("G"));
+        writer.WriteLine(pixelSizeY.ToString("G", System.Globalization.CultureInfo.InvariantCulture));
+        writer.WriteLine(centerX.ToString("G", System.Globalization.CultureInfo.InvariantCulture));
+        writer.WriteLine(centerY.ToString("G", System.Globalization.CultureInfo.InvariantCulture));
     }
 
     private static void ExportStatsToCsv(Dictionary<int, int> stats, int totalPixels, string path)
@@ -135,7 +181,7 @@ public static class ClassificationExporter
         {
             double pct = totalPixels > 0 ? (double)kv.Value / totalPixels * 100 : 0;
             string label = kv.Key >= 0 ? kv.Key.ToString() : "Undefined";
-            writer.WriteLine($"{label},{kv.Value},{pct:F2}");
+            writer.WriteLine($"{label},{kv.Value},{pct.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)}");
         }
     }
 
@@ -151,7 +197,7 @@ public static class ClassificationExporter
         {
             double pct = totalPixels > 0 ? (double)kv.Value / totalPixels * 100 : 0;
             string label = kv.Key >= 0 ? kv.Key.ToString() : "Undefined";
-            writer.WriteLine($"{label}\t\t{kv.Value}\t\t{pct:F2}%");
+            writer.WriteLine($"{label}\t\t{kv.Value}\t\t{pct.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)}%");
         }
     }
 

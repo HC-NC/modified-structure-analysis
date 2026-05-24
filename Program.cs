@@ -1,5 +1,6 @@
 using modified_structure_analysis.Forms;
 using OSGeo.GDAL;
+using MaxRev.Gdal.Core;
 
 namespace modified_structure_analysis
 {
@@ -11,6 +12,7 @@ namespace modified_structure_analysis
         [STAThread]
         static void Main()
         {
+            GdalBase.ConfigureAll();
             Gdal.AllRegister();
 
             // To customize application configuration such as set high DPI settings or default font,

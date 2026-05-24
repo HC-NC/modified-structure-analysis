@@ -39,6 +39,7 @@ namespace modified_structure_analysis.Forms
         private ClassificationResult? _firstStageResult;
         private ClassStatistics[]? _firstStageClassStats;
         private ClassificationResult? _lastClassificationResult;
+        private DataGridView? _paletteGridView;
 
         private PlotModel _kdeModel;
 
@@ -366,6 +367,185 @@ namespace modified_structure_analysis.Forms
                 g.DrawRectangle(Pens.Black, 0, 0, 19, 19);
             }
             return bmp;
+        }
+
+        private void PopulatePaletteTab()
+        {
+            tabPage9.Controls.Clear();
+
+            var result = _lastClassificationResult;
+            if (result?.Palette == null) return;
+
+            _paletteGridView?.Dispose();
+            _paletteGridView = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                AllowUserToResizeRows = false,
+                ColumnHeadersVisible = true,
+                ReadOnly = false,
+                RowHeadersVisible = false,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            };
+
+            var colorCol = new DataGridViewImageColumn
+            {
+                HeaderText = "Color",
+                Width = 40,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                ReadOnly = true
+            };
+            var nameCol = new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Class",
+                ReadOnly = true,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+            };
+            var countCol = new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Pixels",
+                ReadOnly = true,
+                Width = 80,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+            };
+            var editCol = new DataGridViewButtonColumn
+            {
+                HeaderText = "",
+                Text = "Change",
+                UseColumnTextForButtonValue = true,
+                Width = 80,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+            };
+
+            _paletteGridView.Columns.Add(colorCol);
+            _paletteGridView.Columns.Add(nameCol);
+            _paletteGridView.Columns.Add(countCol);
+            _paletteGridView.Columns.Add(editCol);
+
+            var stats = result.GetClassStatistics();
+            int totalPixels = result.Width * result.Height;
+
+            for (int i = 0; i < result.Palette.Length; i++)
+            {
+                int rowIdx = _paletteGridView.Rows.Add();
+                var row = _paletteGridView.Rows[rowIdx];
+                row.Cells[0].Value = CreateColorBitmap(result.Palette[i]);
+                row.Cells[1].Value = $"Class {i}";
+                row.Cells[2].Value = stats.GetValueOrDefault(i, 0);
+            }
+
+            int undefCount = stats.GetValueOrDefault(-1, 0);
+            if (undefCount > 0)
+            {
+                int rowIdx = _paletteGridView.Rows.Add();
+                var row = _paletteGridView.Rows[rowIdx];
+                row.Cells[0].Value = CreateColorBitmap(Color.Transparent);
+                row.Cells[1].Value = "Undefined";
+                row.Cells[2].Value = undefCount;
+            }
+
+            _paletteGridView.CellClick += PaletteGrid_CellClick;
+
+            tabPage9.Controls.Add(_paletteGridView);
+        }
+
+        private void PopulateSecondAnalysisTab()
+        {
+            tabPage5.Controls.Clear();
+
+            var result = _lastClassificationResult;
+            if (result?.Palette == null) return;
+
+            var grid = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false,
+                AllowUserToResizeRows = false,
+                ColumnHeadersVisible = true,
+                ReadOnly = false,
+                RowHeadersVisible = false,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            };
+
+            grid.Columns.Add(new DataGridViewImageColumn
+            {
+                HeaderText = "Color", Width = 40, AutoSizeMode = DataGridViewAutoSizeColumnMode.None, ReadOnly = true
+            });
+            grid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Class", ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+            });
+            grid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Pixels", ReadOnly = true, Width = 80, AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+            });
+            grid.Columns.Add(new DataGridViewButtonColumn
+            {
+                HeaderText = "", Text = "Change", UseColumnTextForButtonValue = true,
+                Width = 80, AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+            });
+
+            var stats = result.GetClassStatistics();
+            for (int i = 0; i < result.Palette.Length; i++)
+            {
+                int rowIdx = grid.Rows.Add();
+                var row = grid.Rows[rowIdx];
+                row.Cells[0].Value = CreateColorBitmap(result.Palette[i]);
+                row.Cells[1].Value = $"Class {i}";
+                row.Cells[2].Value = stats.GetValueOrDefault(i, 0);
+            }
+
+            int undefCount = stats.GetValueOrDefault(-1, 0);
+            if (undefCount > 0)
+            {
+                int rowIdx = grid.Rows.Add();
+                var row = grid.Rows[rowIdx];
+                row.Cells[0].Value = CreateColorBitmap(Color.Transparent);
+                row.Cells[1].Value = "Undefined";
+                row.Cells[2].Value = undefCount;
+            }
+
+            grid.CellClick += (s, args) =>
+            {
+                if (args.RowIndex < 0 || args.ColumnIndex != 3) return;
+                if (_lastClassificationResult?.Palette == null) return;
+                int rowIdx = args.RowIndex;
+                if (rowIdx >= _lastClassificationResult.Palette.Length) return; // Undefined row
+
+                using var dialog = new ColorDialog();
+                dialog.Color = _lastClassificationResult.Palette[rowIdx];
+                dialog.FullOpen = true;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    _lastClassificationResult.Palette[rowIdx] = dialog.Color;
+                    grid.Rows[rowIdx].Cells[0].Value = CreateColorBitmap(dialog.Color);
+                    var bitmap = ResultRenderer.ToBitmap(_lastClassificationResult);
+                    viewport2.UpdateImage(bitmap);
+                }
+            };
+
+            tabPage5.Controls.Add(grid);
+        }
+
+        private void PaletteGrid_CellClick(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != 3) return;
+            if (_firstStageResult?.Palette == null) return;
+            if (e.RowIndex >= _firstStageResult.Palette.Length) return;
+
+            using var dialog = new ColorDialog();
+            dialog.Color = _firstStageResult.Palette[e.RowIndex];
+            dialog.FullOpen = true;
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                _firstStageResult.Palette[e.RowIndex] = dialog.Color;
+                if (_paletteGridView != null && e.RowIndex < _paletteGridView.Rows.Count)
+                    _paletteGridView.Rows[e.RowIndex].Cells[0].Value = CreateColorBitmap(dialog.Color);
+                var bitmap = ResultRenderer.ToBitmap(_firstStageResult);
+                viewport3.UpdateImage(bitmap);
+            }
         }
 
         private void BuildScatterPlot(object? sender, EventArgs e)
@@ -1326,7 +1506,7 @@ namespace modified_structure_analysis.Forms
 
             if (isSecondStage)
             {
-                e.Result = (bitmap, classificationResult, ClassificationMode.RulePerClass);
+                e.Result = (bitmap, classificationResult, ClassificationMode.RulePerClass, true);
             }
             else
             {
@@ -1340,7 +1520,7 @@ namespace modified_structure_analysis.Forms
                         engine.CachedPixelCount, _width, _height);
                 }
 
-                e.Result = (bitmap, classificationResult, mode);
+                e.Result = (bitmap, classificationResult, mode, false);
             }
         }
 
@@ -1387,37 +1567,27 @@ namespace modified_structure_analysis.Forms
             }
             else
             {
-                if (e.Result is (Bitmap bitmap, ClassificationResult classificationResult, ClassificationMode mode))
+                if (e.Result is (Bitmap bitmap, ClassificationResult classificationResult, ClassificationMode mode, bool isSecondStage))
                 {
                     _lastClassificationResult = classificationResult;
 
                     if (mode == ClassificationMode.DirectCheck)
+                    {
                         viewport3.UpdateImage(bitmap);
+                    }
                     else
+                    {
                         viewport2.UpdateImage(bitmap);
+                    }
+
+                    if (isSecondStage)
+                        PopulateSecondAnalysisTab();
+                    else
+                        PopulatePaletteTab();
 
                     var stats = classificationResult.GetClassStatistics();
-                    var statsText = "Classification Statistics:\n";
-
-                    if (classificationResult.Palette != null)
-                    {
-                        for (int i = 0; i < classificationResult.Palette.Length; i++)
-                        {
-                            string colorHex = ColorTranslator.ToHtml(classificationResult.Palette[i]);
-                            statsText += $"Class {i} (color {colorHex}): {stats.GetValueOrDefault(i, 0)} pixels\n";
-                        }
-                    }
-                    else if (classificationResult.Rules != null)
-                    {
-                        for (int i = 0; i < classificationResult.Rules.Count; i++)
-                        {
-                            string ruleName = classificationResult.Rules[i].GenerateName();
-                            statsText += $"Class {i} ({ruleName}): {stats.GetValueOrDefault(i, 0)} pixels\n";
-                        }
-                    }
-
-                    statsText += $"Undefined: {stats.GetValueOrDefault(-1, 0)} pixels";
-                    MessageBox.Show(statsText, "Classification Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    string summary = $"Classification complete — {stats.GetValueOrDefault(-1, 0)} undefined pixels";
+                    mainStatusLabel.Text = summary;
                 }
             }
         }
@@ -1692,6 +1862,36 @@ namespace modified_structure_analysis.Forms
         //    form.ShowDialog();
         //}
 
+        public void ExportActivePlot(object? sender, EventArgs e)
+        {
+            PlotView? target = null;
+
+            if (mainTabControl.SelectedTab == dataTabPage)
+            {
+                if (dataTabControl.SelectedTab == histogramTabPage)
+                    target = histogramPlotView;
+            }
+            else if (mainTabControl.SelectedTab == explorationTabPage)
+            {
+                if (explorationTabControl.SelectedTab == tabPage2)
+                    target = kdePlotView;
+                else if (explorationTabControl.SelectedTab == tabPage3)
+                    target = scatterPlotView;
+            }
+
+            if (target == null || target.Model == null)
+            {
+                MessageBox.Show("No plot available in the active tab.", "Export Graph",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            using var dlg = new GraphExportDialog();
+            if (dlg.ShowDialog() != DialogResult.OK) return;
+
+            PlotExportService.Export(target.Model, dlg.FilePath, dlg.Options);
+        }
+
         public void ExportKdePlot(object? sender, EventArgs e)
         {
             ExportPlotView(kdePlotView, null);
@@ -1712,20 +1912,10 @@ namespace modified_structure_analysis.Forms
             var model = plotView.Model;
             if (model == null) return;
 
-            filePath ??= GetExportFilePath("PNG|*.png|JPEG|*.jpg|SVG|*.svg|PDF|*.pdf");
-            if (filePath == null) return;
+            using var dlg = new GraphExportDialog();
+            if (dlg.ShowDialog() != DialogResult.OK) return;
 
-            var fmt = Path.GetExtension(filePath).ToLower() switch
-            {
-                ".png" => GraphExportFormat.Png,
-                ".jpg" or ".jpeg" => GraphExportFormat.Jpeg,
-                ".svg" => GraphExportFormat.Svg,
-                ".pdf" => GraphExportFormat.Pdf,
-                _ => GraphExportFormat.Png
-            };
-
-            PlotExportService.Export(model, filePath,
-                new GraphExportOptions { Format = fmt, Width = 800, Height = 600 });
+            PlotExportService.Export(model, dlg.FilePath, dlg.Options);
         }
 
         public void ExportClassification(object sender, EventArgs e)
@@ -1742,9 +1932,31 @@ namespace modified_structure_analysis.Forms
                 bands: _bands);
             if (dlg.ShowDialog() != DialogResult.OK) return;
 
-            ClassificationExporter.Export(_lastClassificationResult, dlg.ExportOptions, _bands);
+            var result = _lastClassificationResult;
+
+            if (dlg.UseHsvPalette && result.Palette != null)
+            {
+                result = new ClassificationResult(result.Width, result.Height,
+                    PaletteGenerator.GenerateHSV(result.Palette.Length));
+                Array.Copy(_lastClassificationResult.ClassIndices, result.ClassIndices, result.ClassIndices.Length);
+            }
+            else if (dlg.UseGrayscalePalette && result.Palette != null)
+            {
+                var grayPalette = new Color[result.Palette.Length];
+                for (int i = 0; i < grayPalette.Length; i++)
+                {
+                    byte shade = grayPalette.Length > 1
+                        ? (byte)(i * 255 / (grayPalette.Length - 1))
+                        : (byte)128;
+                    grayPalette[i] = Color.FromArgb(shade, shade, shade);
+                }
+                result = new ClassificationResult(result.Width, result.Height, grayPalette);
+                Array.Copy(_lastClassificationResult.ClassIndices, result.ClassIndices, result.ClassIndices.Length);
+            }
+
+            ClassificationExporter.Export(result, dlg.ExportOptions, _bands);
             if (dlg.ExportStatsChecked)
-                ClassificationExporter.ExportStats(_lastClassificationResult, dlg.StatsOptions);
+                ClassificationExporter.ExportStats(result, dlg.StatsOptions);
 
             MessageBox.Show("Export completed successfully.", "Export",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
