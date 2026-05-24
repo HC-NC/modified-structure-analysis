@@ -16,6 +16,7 @@
             if (disposing && (components != null))
             {
                 components.Dispose();
+                saveFileDialog1?.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -33,9 +34,12 @@
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
+            exportGraphToolStripMenuItem = new ToolStripMenuItem();
+            exportClassificationToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             exitToolStripMenuItem = new ToolStripMenuItem();
             openFileDialog1 = new OpenFileDialog();
+            saveFileDialog1 = new SaveFileDialog();
             statusStrip1 = new StatusStrip();
             mainStatusLabel = new ToolStripStatusLabel();
             mainProgressBar = new ToolStripProgressBar();
@@ -95,6 +99,7 @@
             toolStripSeparator7 = new ToolStripSeparator();
             toolStripButton12 = new ToolStripButton();
             toolStripButton13 = new ToolStripButton();
+            toolStripButtonExport = new ToolStripButton();
             tabControl3 = new TabControl();
             tabPage8 = new TabPage();
             viewport3 = new modified_structure_analysis.Forms.Viewport();
@@ -222,7 +227,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, toolStripSeparator1, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, exportGraphToolStripMenuItem, exportClassificationToolStripMenuItem, toolStripSeparator1, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(54, 29);
             fileToolStripMenuItem.Text = "File";
@@ -234,6 +239,22 @@
             openToolStripMenuItem.Size = new Size(223, 34);
             openToolStripMenuItem.Text = "Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
+            // 
+            // exportGraphToolStripMenuItem
+            // 
+            exportGraphToolStripMenuItem.Name = "exportGraphToolStripMenuItem";
+            exportGraphToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.G;
+            exportGraphToolStripMenuItem.Size = new Size(223, 34);
+            exportGraphToolStripMenuItem.Text = "Export Graph…";
+            exportGraphToolStripMenuItem.Click += ExportKdePlot;
+            // 
+            // exportClassificationToolStripMenuItem
+            // 
+            exportClassificationToolStripMenuItem.Name = "exportClassificationToolStripMenuItem";
+            exportClassificationToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.E;
+            exportClassificationToolStripMenuItem.Size = new Size(223, 34);
+            exportClassificationToolStripMenuItem.Text = "Export Classification…";
+            exportClassificationToolStripMenuItem.Click += ExportClassification;
             // 
             // toolStripSeparator1
             // 
@@ -890,7 +911,7 @@
             // 
             toolStrip4.GripStyle = ToolStripGripStyle.Hidden;
             toolStrip4.ImageScalingSize = new Size(24, 24);
-            toolStrip4.Items.AddRange(new ToolStripItem[] { toolStripButton8, toolStripButton10, toolStripSeparator7, toolStripButton12, toolStripButton13, ClassificationModeToolStripComboBox, toolStripButton16, toolStripSeparator9, toolStripButton15 });
+            toolStrip4.Items.AddRange(new ToolStripItem[] { toolStripButton8, toolStripButton10, toolStripSeparator7, toolStripButton12, toolStripButton13, ClassificationModeToolStripComboBox, toolStripButton16, toolStripSeparator9, toolStripButton15, toolStripButtonExport });
             toolStrip4.Location = new Point(0, 0);
             toolStrip4.Name = "toolStrip4";
             toolStrip4.Size = new Size(400, 34);
@@ -1372,6 +1393,15 @@
             toolStripButton15.Text = "Auto";
             toolStripButton15.Click += AutoButton_Click;
             // 
+            // toolStripButtonExport
+            // 
+            toolStripButtonExport.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButtonExport.ImageTransparentColor = Color.Magenta;
+            toolStripButtonExport.Name = "toolStripButtonExport";
+            toolStripButtonExport.Size = new Size(60, 29);
+            toolStripButtonExport.Text = "Export";
+            toolStripButtonExport.Click += ExportClassification;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -1581,5 +1611,9 @@
         private ToolStripSeparator toolStripSeparator9;
         private ToolStripButton toolStripButton15;
         private ToolStripButton toolStripButton16;
+        private ToolStripButton toolStripButtonExport;
+        private SaveFileDialog saveFileDialog1;
+        private ToolStripMenuItem exportGraphToolStripMenuItem;
+        private ToolStripMenuItem exportClassificationToolStripMenuItem;
     }
 }

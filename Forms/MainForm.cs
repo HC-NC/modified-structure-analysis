@@ -38,6 +38,7 @@ namespace modified_structure_analysis.Forms
         private ClassificationEngine? _firstStageEngine;
         private ClassificationResult? _firstStageResult;
         private ClassStatistics[]? _firstStageClassStats;
+        private ClassificationResult? _lastClassificationResult;
 
         private PlotModel _kdeModel;
 
@@ -1388,6 +1389,8 @@ namespace modified_structure_analysis.Forms
             {
                 if (e.Result is (Bitmap bitmap, ClassificationResult classificationResult, ClassificationMode mode))
                 {
+                    _lastClassificationResult = classificationResult;
+
                     if (mode == ClassificationMode.DirectCheck)
                         viewport3.UpdateImage(bitmap);
                     else
@@ -1688,5 +1691,69 @@ namespace modified_structure_analysis.Forms
         //    form.Controls.AddRange(new Control[] { chkLegend, chkGrid, lblXMin, txtXMin, lblXMax, txtXMax, lblYMin, txtYMin, lblYMax, txtYMax, cmbLegendPos, lblLegendPos, btnApply, btnClose });
         //    form.ShowDialog();
         //}
+
+        public void ExportKdePlot(object? sender, EventArgs e)
+        {
+            ExportPlotView(kdePlotView, null);
+        }
+
+        public void ExportScatterPlot(object? sender, EventArgs e)
+        {
+            ExportPlotView(scatterPlotView, null);
+        }
+
+        public void ExportHistogramPlot(object? sender, EventArgs e)
+        {
+            ExportPlotView(histogramPlotView, null);
+        }
+
+        private void ExportPlotView(PlotView plotView, string? filePath)
+        {
+            var model = plotView.Model;
+            if (model == null) return;
+
+            filePath ??= GetExportFilePath("PNG|*.png|JPEG|*.jpg|SVG|*.svg|PDF|*.pdf");
+            if (filePath == null) return;
+
+            var fmt = Path.GetExtension(filePath).ToLower() switch
+            {
+                ".png" => GraphExportFormat.Png,
+                ".jpg" or ".jpeg" => GraphExportFormat.Jpeg,
+                ".svg" => GraphExportFormat.Svg,
+                ".pdf" => GraphExportFormat.Pdf,
+                _ => GraphExportFormat.Png
+            };
+
+            PlotExportService.Export(model, filePath,
+                new GraphExportOptions { Format = fmt, Width = 800, Height = 600 });
+        }
+
+        public void ExportClassification(object sender, EventArgs e)
+        {
+            if (_lastClassificationResult == null)
+            {
+                MessageBox.Show("No classification result available. Run classification first.",
+                    "Export", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using var dlg = new ExportClassificationDialog(
+                projectionWkt: _bands?.FirstOrDefault()?.GeoTransform?.ProjectionWkt,
+                bands: _bands);
+            if (dlg.ShowDialog() != DialogResult.OK) return;
+
+            ClassificationExporter.Export(_lastClassificationResult, dlg.ExportOptions, _bands);
+            if (dlg.ExportStatsChecked)
+                ClassificationExporter.ExportStats(_lastClassificationResult, dlg.StatsOptions);
+
+            MessageBox.Show("Export completed successfully.", "Export",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private static string? GetExportFilePath(string filter)
+        {
+            using var dlg = new SaveFileDialog { Filter = filter };
+            return dlg.ShowDialog() == DialogResult.OK ? dlg.FileName : null;
+        }
     }
 }

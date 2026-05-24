@@ -61,15 +61,16 @@
 - [x] 6.3 Пакетное открытие файлов (с проверкой GeoTransform и Projection)
 
 ### Этап 7: Экспорт графиков
-- [ ] 7.1 Экспорт в PNG/JPEG с настройкой разрешения (DPI)
-- [ ] 7.2 Экспорт в SVG (векторный)
-- [ ] 7.3 Экспорт в PDF
-- [ ] 7.4 Настройка размера при экспорте
+- [x] 7.1 Экспорт в PNG/JPEG с настройкой разрешения (DPI) — `PlotExportService.ExportToPng/Jpeg`
+- [x] 7.2 Экспорт в SVG (векторный) — `PlotExportService.ExportToSvg` (через `OxyPlot.SvgExporter`)
+- [x] 7.3 Экспорт в PDF — `PlotExportService.ExportToPdf` (через `OxyPlot.PdfExporter`)
+- [x] 7.4 Настройка размера при экспорте — `GraphExportOptions` (Width, Height, Dpi, Quality)
 
 ### Этап 8: Экспорт классификации
-- [ ] 8.1 Сохранение в GeoTIFF с геопривязкой
-- [ ] 8.2 Сохранение проекции (CRS) из исходных данных
-- [ ] 8.3 Экспорт в PNG с world-файлом
+- [x] 8.1 Сохранение в GeoTIFF с геопривязкой — `ClassificationExporter.ExportToGeoTiff` (GDAL, LZW, проекция)
+- [x] 8.2 Сохранение проекции (CRS) из исходных данных — параметр `projectionWkt` из GeoTransform
+- [x] 8.3 Экспорт в PNG с world-файлом — `ClassificationExporter.ExportToPngWithWorldFile` (.pgw)
+- [x] 8.4 Экспорт статистики классов (CSV/TXT/JSON) — `ClassificationExporter.ExportStats`
 
 ---
 
@@ -201,5 +202,6 @@
 
 - KDE-графики (визуализация) считаются на нормализованных [0,1] значениях — осознанное решение для наглядности; движок классификации использует raw-значения
 - Дублирование методов классификации/плотностей (regular vs zScore) — **FIXED** (Этап 9.8.4–9.8.7)
+- Экспорт графиков и классификации — **DONE** (Этапы 7, 8, см. `PlotExportService`, `ClassificationExporter`, `ExportClassificationDialog`)
 - Окно "About" / "Help" отсутствует
 - Локализация отсутствует
