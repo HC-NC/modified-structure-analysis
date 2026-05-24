@@ -1,7 +1,9 @@
-using modified_structure_analysis;
+using modified_structure_analysis.Models;
+using modified_structure_analysis.Engine;
+using modified_structure_analysis.Services;
+using modified_structure_analysis.Config;
 using modified_structure_analysis.Forms;
 using modified_structure_analysis.Properties;
-using OSGeo.GDAL;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
@@ -13,7 +15,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using GdalBand = OSGeo.GDAL.Band;
 
-namespace modified_structure_analysis
+namespace modified_structure_analysis.Forms
 {
     public partial class MainForm : Form
     {
@@ -412,7 +414,7 @@ namespace modified_structure_analysis
                 var series = new FunctionSeries { Title = $"Single: {band.Name}", XAxisKey = "X", YAxisKey = "Y" };
                 for (double x = 0; x <= 1; x += 0.01)
                 {
-                    series.Points.Add(new DataPoint(x, band.GetKernelDensityEstimate((float)x)));
+                    series.Points.Add(new DataPoint(x, BandKdeEstimator.Estimate(band, (float)x)));
                 }
 
                 _kdeModel!.Series.Add(series);
@@ -445,7 +447,7 @@ namespace modified_structure_analysis
                 double product = 1;
                 foreach (var band in selectedBands)
                 {
-                    product *= band.GetKernelDensityEstimate((float)x);
+                    product *= BandKdeEstimator.Estimate(band, (float)x);
                 }
                 series.Points.Add(new DataPoint(x, product));
             }
@@ -619,7 +621,7 @@ namespace modified_structure_analysis
         {
             foreach (Band band in _bands)
             {
-                band.CalculateStatistics();
+                BandStatisticsComputer.Compute(band);
                 band.Normalize();
             }
         }
@@ -706,7 +708,7 @@ namespace modified_structure_analysis
         {
             try
             {
-                using (Dataset ds = Gdal.Open(fileName, Access.GA_ReadOnly))
+                using (OSGeo.GDAL.Dataset ds = OSGeo.GDAL.Gdal.Open(fileName, OSGeo.GDAL.Access.GA_ReadOnly))
                 {
                     if (ds == null)
                     {
@@ -979,7 +981,7 @@ namespace modified_structure_analysis
 
             foreach (Band band in _bands)
             {
-                band.CalculateStatistics();
+                BandStatisticsComputer.Compute(band);
             }
 
             _geoTransform = new GeoTransform(minX, maxY, _cellSize, _cellSize);
@@ -1354,7 +1356,7 @@ namespace modified_structure_analysis
                 for (int x = 0; x < _width; x++)
                 {
                     int i = y * _width + x;
-                    Color color = classificationResult.GetPixelColor(i);
+                    Color color = ResultRenderer.GetPixelColor(classificationResult, i);
 
                     int idx = (y * bmpData.Stride) + (x * 4);
                     rgbValues[idx] = color.B;

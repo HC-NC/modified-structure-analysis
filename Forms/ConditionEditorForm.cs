@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 
-namespace modified_structure_analysis
+using modified_structure_analysis.Models;
+
+namespace modified_structure_analysis.Forms
 {
     public partial class ConditionEditorForm : Form
     {

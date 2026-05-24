@@ -1,4 +1,4 @@
-﻿namespace modified_structure_analysis
+﻿namespace modified_structure_analysis.Forms
 {
     partial class DelimiterSelector
     {

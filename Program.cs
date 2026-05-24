@@ -1,3 +1,4 @@
+using modified_structure_analysis.Forms;
 using OSGeo.GDAL;
 
 namespace modified_structure_analysis

@@ -1,6 +1,8 @@
 using System.Collections.Concurrent;
+using modified_structure_analysis.Models;
+using modified_structure_analysis.Services;
 
-namespace modified_structure_analysis;
+namespace modified_structure_analysis.Engine;
 
 public class ClassificationEngine
 {
@@ -339,7 +341,7 @@ public class ClassificationEngine
         if (_singleDensityCache.TryGetValue(key, out float globalCached))
             return globalCached;
 
-        float globalDensity = (float)_bands[bandIndex].GetKernelDensityEstimate(normalizedValue);
+        float globalDensity = (float)BandKdeEstimator.Estimate(_bands[bandIndex], normalizedValue);
         _singleDensityCache[key] = globalDensity;
         return globalDensity;
     }
@@ -439,7 +441,7 @@ public class ClassificationEngine
         if (bandIndices.Count == 1 && bandIndices[0] >= 0 && bandIndices[0] < _bands.Count)
         {
             float normalizedValue = _bands[bandIndices[0]].GetNormalizedValue(pixelIndex);
-            float mvResult = (float)_bands[bandIndices[0]].GetKernelDensityEstimate(normalizedValue);
+            float mvResult = (float)BandKdeEstimator.Estimate(_bands[bandIndices[0]], normalizedValue);
             _multivariateDensityCache[key] = mvResult;
             return mvResult;
         }

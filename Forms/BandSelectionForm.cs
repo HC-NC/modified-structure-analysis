@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+using modified_structure_analysis.Models;
+
 namespace modified_structure_analysis.Forms
 {
     public partial class BandSelectionForm : Form

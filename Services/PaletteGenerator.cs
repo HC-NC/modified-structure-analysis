@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace modified_structure_analysis;
+namespace modified_structure_analysis.Services;
 
 public static class PaletteGenerator
 {

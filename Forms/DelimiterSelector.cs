@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace modified_structure_analysis
+namespace modified_structure_analysis.Forms
 {
     public partial class DelimiterSelector : Form
     {

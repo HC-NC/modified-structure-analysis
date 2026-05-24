@@ -2,7 +2,7 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
 
-namespace modified_structure_analysis;
+namespace modified_structure_analysis.Config;
 
 public class AxisSettings
 {

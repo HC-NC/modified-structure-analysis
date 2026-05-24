@@ -112,11 +112,15 @@
 - [x] 9.7.5 ConditionEditor: фильтрация band-листа для ZScore* типов (скрыть каналы без статистики)
 - [x] 9.7.6 **Regular density (Single/Product/Multivariate) для Second stage** — считают KDE внутри классов First stage (как ZScore*), используют per-class NormalizeKernelC и PixelIndices
 
-### Этап 9.8: Рефакторинг дублирования кода
-- [ ] 9.8.1 Устранить дублирование между `RunFirstStageWork` / `RunSecondStageWork` / исходным `backgroundWorker_DoWork`
-- [ ] 9.8.2 Устранить дублирование между `GetSingleDensity` / `GetZScoreSingleDensity`, `GetProductDensity`/`GetZScoreProductDensity`, `GetMultivariateDensity`/`GetZScoreMultivariateDensity`
-- [ ] 9.8.3 Устранить дублирование кэшей (single/product/multivariate + zScore варианты)
-- [ ] 9.8.4 Объединить `RunDirectCheck` / `RunRulePerClass` / `RunSecondStage` в единый метод с параметрами
+### Этап 9.8: Структурный рефакторинг (папки + namespace + разделение ответственности)
+- [x] 9.8.0 Разделение файлов по папкам: `Models/`, `Engine/`, `Services/`, `Config/`, `Forms/`
+- [x] 9.8.1 Разделение пространств имён: `Models`, `Engine`, `Services`, `Config`, `Forms`
+- [x] 9.8.2 **Band.cs** — stripped to pure data model: удалены `CalculateStatistics()` → `BandStatisticsComputer`, `GetKernelDensityEstimate()` → `BandKdeEstimator`
+- [x] 9.8.3 **ClassificationResult.cs** — stripped: удалены `GetPixelColor()`, `ToBitmap()` → `ResultRenderer`; исправлен баг с `Array.Fill(UndefinedClassIndex)` в palette-конструкторе
+- [ ] 9.8.4 Устранить дублирование между `RunFirstStageWork` / `RunSecondStageWork` / исходным `backgroundWorker_DoWork`
+- [ ] 9.8.5 Устранить дублирование между `GetSingleDensity` / `GetZScoreSingleDensity`, `GetProductDensity`/`GetZScoreProductDensity`, `GetMultivariateDensity`/`GetZScoreMultivariateDensity`
+- [ ] 9.8.6 Устранить дублирование кэшей (single/product/multivariate + zScore варианты)
+- [ ] 9.8.7 Объединить `RunDirectCheck` / `RunRulePerClass` / `RunSecondStage` в единый метод с параметрами
 
 ### Этап 9.9: Переход от нормализованных значений к абсолютным для KDE
 - [ ] 9.9.1 Изменить `GetSingleDensity` / `GetKernelDensityEstimate` на работу с raw-значениями вместо normalized [0,1]
@@ -195,9 +199,7 @@
 
 ## Известные проблемы текущей версии
 
-- `ClassificationResult(int, int, Color[])` не заполняет `ClassIndices` индексом неопределённого класса (-1) — **FIXED**
-- Regular density (Single/Product/Multivariate) для Second stage не учитывает per-class статистику — считает KDE по всем пикселям
-- Массовое дублирование кода классификации и плотностей (regular vs zScore варианты)
-- KDE считается на нормализованных [0,1] значениях — переход на raw-значения отложен
+- KDE считается на нормализованных [0,1] значениях — переход на raw-значения отложен (Этап 9.9)
+- Дублирование методов классификации/плотностей (regular vs zScore) — Этап 9.8.4–9.8.7
 - Окно "About" / "Help" отсутствует
 - Локализация отсутствует

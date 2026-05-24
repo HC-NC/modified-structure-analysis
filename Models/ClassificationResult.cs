@@ -1,6 +1,4 @@
-using System.Drawing;
-
-namespace modified_structure_analysis;
+namespace modified_structure_analysis.Models;
 
 public class ClassificationResult
 {
@@ -44,34 +42,6 @@ public class ClassificationResult
         if (pixelIndex >= 0 && pixelIndex < ClassIndices.Length)
             return ClassIndices[pixelIndex];
         return UndefinedClassIndex;
-    }
-
-    public Color GetPixelColor(int pixelIndex)
-    {
-        int classIdx = GetClass(pixelIndex);
-        if (Palette != null)
-        {
-            if (classIdx >= 0 && classIdx < Palette.Length)
-                return Palette[classIdx];
-            return UndefinedColor;
-        }
-        if (classIdx < 0 || Rules == null || classIdx >= Rules.Count)
-            return UndefinedColor;
-        return Rules[classIdx].Color;
-    }
-
-    public Bitmap ToBitmap()
-    {
-        Bitmap bmp = new Bitmap(Width, Height);
-        for (int y = 0; y < Height; y++)
-        {
-            for (int x = 0; x < Width; x++)
-            {
-                int idx = y * Width + x;
-                bmp.SetPixel(x, y, GetPixelColor(idx));
-            }
-        }
-        return bmp;
     }
 
     public Dictionary<int, int> GetClassStatistics()
