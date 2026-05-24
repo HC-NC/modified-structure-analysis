@@ -110,7 +110,7 @@
 - [x] 9.7.3 Передача zScoreCache из First stage во Second
 - [x] 9.7.4 Палитра Second stage на основе оригинальных цветов (с одним правилом — точная копия)
 - [x] 9.7.5 ConditionEditor: фильтрация band-листа для ZScore* типов (скрыть каналы без статистики)
-- [ ] 9.7.6 **Regular density (Single/Product/Multivariate) для Second stage** — сейчас считают KDE по всем пикселям, а надо внутри классов First stage (как ZScore*)
+- [x] 9.7.6 **Regular density (Single/Product/Multivariate) для Second stage** — считают KDE внутри классов First stage (как ZScore*), используют per-class NormalizeKernelC и PixelIndices
 
 ### Этап 9.8: Рефакторинг дублирования кода
 - [ ] 9.8.1 Устранить дублирование между `RunFirstStageWork` / `RunSecondStageWork` / исходным `backgroundWorker_DoWork`
