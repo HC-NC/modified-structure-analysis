@@ -324,7 +324,15 @@ public class ClassificationEngine
             return 0;
 
         float value = source.GetValue(bandIndex, pixelIndex);
-        int valueIndex = (int)(value * _singleCacheSteps);
+        if (float.IsNaN(value))
+            return 0;
+
+        float min = source.GetMinValue(bandIndex);
+        float max = source.GetMaxValue(bandIndex);
+        float range = max - min;
+        int valueIndex = range > 0
+            ? (int)((value - min) / range * _singleCacheSteps)
+            : 0;
         var key = (bandIndex, source.ClassId, valueIndex);
 
         if (_singleDensityCache.TryGetValue(key, out float cached))
@@ -347,6 +355,7 @@ public class ClassificationEngine
             foreach (int px in classPixels)
             {
                 float pv = source.GetValue(bandIndex, px);
+                if (float.IsNaN(pv)) continue;
                 density += KernelFunctions.GetKernel(kernelType, (value - pv) / kernelC);
             }
             density /= (count * kernelC);
@@ -358,11 +367,9 @@ public class ClassificationEngine
             for (int i = 0; i < totalPixels; i++)
             {
                 float pv = source.GetValue(bandIndex, i);
-                if (!float.IsNaN(_bands[bandIndex].GetPixelValue(i)))
-                {
-                    density += KernelFunctions.GetKernel(kernelType, (value - pv) / kernelC);
-                    count++;
-                }
+                if (float.IsNaN(pv)) continue;
+                density += KernelFunctions.GetKernel(kernelType, (value - pv) / kernelC);
+                count++;
             }
             if (count == 0)
                 return 0;
@@ -429,7 +436,9 @@ public class ClassificationEngine
                     if (idx < 0 || idx >= _bands.Count) continue;
 
                     float xi = source.GetValue(idx, pixelIndex);
+                    if (float.IsNaN(xi)) { kernelProduct = 0; break; }
                     float xj = source.GetValue(idx, samplePx);
+                    if (float.IsNaN(xj)) continue;
                     float kc = source.GetKernelC(idx);
 
                     kernelProduct *= KernelFunctions.GetKernel(
@@ -471,7 +480,9 @@ public class ClassificationEngine
                 if (idx < 0 || idx >= _bands.Count) continue;
 
                 float xi = source.GetValue(idx, pixelIndex);
+                if (float.IsNaN(xi)) { kernelProduct = 0; break; }
                 float xj = source.GetValue(idx, sampleIdx);
+                if (float.IsNaN(xj)) continue;
                 float kc = source.GetKernelC(idx);
 
                 kernelProduct *= KernelFunctions.GetKernel(

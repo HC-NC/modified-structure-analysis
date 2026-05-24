@@ -6,6 +6,8 @@ public interface IDensitySource
 {
     float GetValue(int bandIndex, int pixelIndex);
     float GetKernelC(int bandIndex);
+    float GetMinValue(int bandIndex);
+    float GetMaxValue(int bandIndex);
     int GetCount(int bandIndex);
     int ClassId { get; }
 }
@@ -22,10 +24,16 @@ public class GlobalDensitySource : IDensitySource
     public int ClassId => -1;
 
     public float GetValue(int bandIndex, int pixelIndex) =>
-        _bands[bandIndex].GetNormalizedValue(pixelIndex);
+        _bands[bandIndex].GetPixelValue(pixelIndex);
 
     public float GetKernelC(int bandIndex) =>
-        _bands[bandIndex].NormalizeKernelC;
+        _bands[bandIndex].KernelC;
+
+    public float GetMinValue(int bandIndex) =>
+        _bands[bandIndex].Minimum;
+
+    public float GetMaxValue(int bandIndex) =>
+        _bands[bandIndex].Maximum;
 
     public int GetCount(int bandIndex) =>
         _bands[bandIndex].Count;
@@ -47,12 +55,24 @@ public class PerClassRegularDensitySource : IDensitySource
     public int ClassId => _classIndex;
 
     public float GetValue(int bandIndex, int pixelIndex) =>
-        _bands[bandIndex].GetNormalizedValue(pixelIndex);
+        _bands[bandIndex].GetPixelValue(pixelIndex);
 
     public float GetKernelC(int bandIndex)
     {
         var bs = _classStats[_classIndex].Bands?[bandIndex];
-        return bs?.NormalizeKernelC ?? 0.01f;
+        return bs?.KernelC ?? 0.01f;
+    }
+
+    public float GetMinValue(int bandIndex)
+    {
+        var bs = _classStats[_classIndex].Bands?[bandIndex];
+        return bs?.Minimum ?? 0;
+    }
+
+    public float GetMaxValue(int bandIndex)
+    {
+        var bs = _classStats[_classIndex].Bands?[bandIndex];
+        return bs?.Maximum ?? 1;
     }
 
     public int GetCount(int bandIndex)
@@ -77,19 +97,25 @@ public class ZScoreDensitySource : IDensitySource
 
     public int ClassId => _classIndex;
 
-    public float GetValue(int bandIndex, int pixelIndex)
-    {
-        float z = _bands[bandIndex].GetZScore(pixelIndex);
-        var bs = _classStats[_classIndex].Bands?[bandIndex];
-        if (bs == null || bs.ZMax <= bs.ZMin)
-            return 0;
-        return Math.Clamp((z - bs.ZMin) / (bs.ZMax - bs.ZMin), 0, 1);
-    }
+    public float GetValue(int bandIndex, int pixelIndex) =>
+        _bands[bandIndex].GetZScore(pixelIndex);
 
     public float GetKernelC(int bandIndex)
     {
         var bs = _classStats[_classIndex].Bands?[bandIndex];
-        return bs?.ZNormalizeKernelC ?? 0.01f;
+        return bs?.ZKernelC ?? 0.01f;
+    }
+
+    public float GetMinValue(int bandIndex)
+    {
+        var bs = _classStats[_classIndex].Bands?[bandIndex];
+        return bs?.ZMin ?? 0;
+    }
+
+    public float GetMaxValue(int bandIndex)
+    {
+        var bs = _classStats[_classIndex].Bands?[bandIndex];
+        return bs?.ZMax ?? 1;
     }
 
     public int GetCount(int bandIndex)
