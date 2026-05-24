@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using GdalBand = OSGeo.GDAL.Band;
 
 namespace modified_structure_analysis.Forms
@@ -42,6 +43,10 @@ namespace modified_structure_analysis.Forms
         private DataGridView? _paletteGridView;
 
         private PlotModel _kdeModel;
+        private readonly BackgroundWorker _statsWorker;
+        private readonly BackgroundWorker _kdeWorker;
+        private readonly BackgroundWorker _scatterWorker;
+        private readonly BackgroundWorker _loadWorker;
 
         public MainForm()
         {
@@ -49,6 +54,26 @@ namespace modified_structure_analysis.Forms
 
             openFileDialog1.Filter = "All|*.tif;*.tiff;*.img;*.csv;*.txt|GeoTIFF|*.tif;*.tiff|ERDAS|*.img|CSV|*.csv|Text file|*.txt";
             openFileDialog1.Multiselect = true;
+
+            _loadWorker = new BackgroundWorker { WorkerReportsProgress = true };
+            _loadWorker.DoWork += LoadWorker_DoWork;
+            _loadWorker.RunWorkerCompleted += LoadWorker_RunWorkerCompleted;
+            _loadWorker.ProgressChanged += (_, args) => mainStatusLabel.Text = args.UserState?.ToString() ?? "";
+
+            _statsWorker = new BackgroundWorker { WorkerReportsProgress = true };
+            _statsWorker.DoWork += StatsWorker_DoWork;
+            _statsWorker.RunWorkerCompleted += StatsWorker_RunWorkerCompleted;
+            _statsWorker.ProgressChanged += (_, args) => mainStatusLabel.Text = args.UserState?.ToString() ?? "";
+
+            _kdeWorker = new BackgroundWorker { WorkerReportsProgress = true };
+            _kdeWorker.DoWork += KdeWorker_DoWork;
+            _kdeWorker.RunWorkerCompleted += KdeWorker_RunWorkerCompleted;
+            _kdeWorker.ProgressChanged += (_, args) => mainStatusLabel.Text = args.UserState?.ToString() ?? "";
+
+            _scatterWorker = new BackgroundWorker { WorkerReportsProgress = true };
+            _scatterWorker.DoWork += ScatterWorker_DoWork;
+            _scatterWorker.RunWorkerCompleted += ScatterWorker_RunWorkerCompleted;
+            _scatterWorker.ProgressChanged += (_, args) => mainStatusLabel.Text = args.UserState?.ToString() ?? "";
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -555,141 +580,37 @@ namespace modified_structure_analysis.Forms
 
             Band? bandX = scatterXListBox.SelectedItem as Band;
             Band? bandY = scatterYListBox.SelectedItem as Band;
+            if (bandX == null || bandY == null) return;
 
-            if (bandX == null || bandY == null)
-                return;
-
-            var model = new PlotModel();
-            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = bandX.Name });
-            model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = bandY.Name });
-
-            var scatterSeries = new ScatterSeries { MarkerType = MarkerType.Circle, MarkerSize = 2 };
-
-            for (int i = 0; i < _width * _height; i++)
-            {
-                float vx = bandX.GetNormalizedValue(i);
-                float vy = bandY.GetNormalizedValue(i);
-                if (vx > 0 && vy > 0)
-                {
-                    scatterSeries.Points.Add(new ScatterPoint(vx, vy));
-                }
-            }
-
-            model.Series.Add(scatterSeries);
-
-            scatterPlotView.Model = model;
+            if (_scatterWorker.IsBusy) return;
+            _scatterWorker.RunWorkerAsync((bandX, bandY));
         }
 
         private void KdeSingle(object? sender, EventArgs e)
         {
-            if (kdeBandsListBox!.SelectedItems.Count == 0)
-                return;
+            if (kdeBandsListBox!.SelectedItems.Count == 0) return;
+            if (_kdeWorker.IsBusy) return;
 
-            kdePlotView.Model = null;
-
-            foreach (var item in kdeBandsListBox.SelectedItems)
-            {
-                Band band = item as Band;
-                if (band == null) continue;
-
-                var series = new FunctionSeries { Title = $"Single: {band.Name}", XAxisKey = "X", YAxisKey = "Y" };
-                for (double x = 0; x <= 1; x += 0.01)
-                {
-                    series.Points.Add(new DataPoint(x, BandKdeEstimator.Estimate(band, (float)x)));
-                }
-
-                _kdeModel!.Series.Add(series);
-            }
-
-            kdePlotView.Model = _kdeModel;
-            PlotView_DoubleClick(kdePlotView, e);
+            var bands = kdeBandsListBox.SelectedItems.Cast<Band>().ToList();
+            _kdeWorker.RunWorkerAsync(("single", bands, (object?)null));
         }
 
         private void KdeProduct(object? sender, EventArgs e)
         {
-            if (kdeBandsListBox!.SelectedItems.Count < 2)
-            {
-                MessageBox.Show("Select at least 2 bands for Product", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            if (kdeBandsListBox!.SelectedItems.Count < 2) return;
+            if (_kdeWorker.IsBusy) return;
 
-            kdePlotView.Model = null;
-
-            var selectedBands = new List<Band>();
-            foreach (var item in kdeBandsListBox.SelectedItems)
-            {
-                Band band = item as Band;
-                if (band != null) selectedBands.Add(band);
-            }
-
-            var series = new FunctionSeries { Title = $"Product: {string.Join("×", selectedBands.Select(b => b.Name))}" };
-            for (double x = 0; x <= 1; x += 0.01)
-            {
-                double product = 1;
-                foreach (var band in selectedBands)
-                {
-                    product *= BandKdeEstimator.Estimate(band, (float)x);
-                }
-                series.Points.Add(new DataPoint(x, product));
-            }
-
-            _kdeModel!.Series.Add(series);
-
-            kdePlotView.Model = _kdeModel;
-            PlotView_DoubleClick(kdePlotView, e);
+            var bands = kdeBandsListBox.SelectedItems.Cast<Band>().ToList();
+            _kdeWorker.RunWorkerAsync(("product", bands, (object?)null));
         }
 
         private void KdeMultivariate(object? sender, EventArgs e)
         {
-            if (kdeBandsListBox!.SelectedItems.Count < 2)
-            {
-                MessageBox.Show("Select at least 2 bands for Multivariate", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            if (kdeBandsListBox!.SelectedItems.Count < 2) return;
+            if (_kdeWorker.IsBusy) return;
 
-            kdePlotView.Model = null;
-
-            var selectedBands = new List<Band>();
-            foreach (var item in kdeBandsListBox.SelectedItems)
-            {
-                Band band = item as Band;
-                if (band != null) selectedBands.Add(band);
-            }
-
-            int n = _width * _height;
-
-            double productBandwidths = 1;
-            foreach (var b in selectedBands)
-            {
-                productBandwidths *= b.NormalizeKernelC;
-            }
-            double normalization = n * productBandwidths;
-
-            var series = new FunctionSeries { Title = $"Multivariate: {string.Join(",", selectedBands.Select(b => b.Name))}" };
-            for (double x = 0; x <= 1; x += 0.01)
-            {
-                double density = 0;
-
-                for (int pixel = 0; pixel < n; pixel++)
-                {
-                    double kernelProduct = 1;
-                    foreach (var band in selectedBands)
-                    {
-                        double v = band.GetNormalizedValue(pixel);
-                        if (v <= 0) { kernelProduct = 0; break; }
-                        kernelProduct *= KernelFunctions.GetKernel(band.KernelType, (x - v) / band.NormalizeKernelC);
-                    }
-                    density += kernelProduct;
-                }
-
-                density /= normalization;
-                series.Points.Add(new DataPoint(x, density));
-            }
-
-            _kdeModel!.Series.Add(series);
-
-            kdePlotView.Model = _kdeModel;
-            PlotView_DoubleClick(kdePlotView, e);
+            var bands = kdeBandsListBox.SelectedItems.Cast<Band>().ToList();
+            _kdeWorker.RunWorkerAsync(("multivariate", bands, (object?)null));
         }
 
         private void ClearKdePlot(object? sender, EventArgs e)
@@ -697,8 +618,259 @@ namespace modified_structure_analysis.Forms
             if (_kdeModel == null) return;
 
             _kdeModel.Series.Clear();
-
             PlotView_DoubleClick(kdePlotView, e);
+        }
+
+        // ── Background Workers ──────────────────────────────────────────
+
+        private const int KdeMaxSamples = 500_000;
+        private const int ScatterMaxPoints = 50_000;
+
+        private void StatsWorker_DoWork(object? sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                var worker = sender as BackgroundWorker;
+                var bands = _bands.ToList();
+                int total = bands.Count;
+                for (int i = 0; i < total; i++)
+                {
+                    BandStatisticsComputer.Compute(bands[i]);
+                    int pct = (i + 1) * 100 / total;
+                    worker?.ReportProgress(pct, $"Statistics: band {i + 1}/{total}");
+                }
+
+                float[][]? corrData = null;
+                if (total > 1)
+                {
+                    worker?.ReportProgress(0, "Computing correlation...");
+                    corrData = CalcCorrelationData(bands);
+                }
+
+                e.Result = corrData;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"StatsWorker error: {ex.Message}", ex);
+            }
+        }
+
+        private void StatsWorker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                MessageBox.Show($"Stats error: {e.Error.Message}");
+                return;
+            }
+
+            foreach (Band band in _bands)
+                band.ClearRawData();
+
+            if (e.Result is float[][] corrData)
+            {
+                UpdateCorrelationGrid(corrData);
+            }
+
+            mainStatusLabel.Text = "Ready";
+        }
+
+        private void ScatterWorker_DoWork(object? sender, DoWorkEventArgs e)
+        {
+            var (bandX, bandY) = ((Band, Band))e.Argument!;
+            int totalPixels = bandX.OriginalWidth * bandX.OriginalHeight;
+            int targetSamples = ScatterMaxPoints * 2;
+            int step = Math.Max(1, totalPixels / targetSamples);
+
+            var rng = new Random(42);
+            var points = new List<(double x, double y)>(ScatterMaxPoints);
+
+            for (int i = 0; i < totalPixels; i += step)
+            {
+                if (!float.IsNaN(bandX.GetPixelValue(i)) && !float.IsNaN(bandY.GetPixelValue(i)))
+                {
+                    float vx = bandX.GetNormalizedValue(i);
+                    float vy = bandY.GetNormalizedValue(i);
+                    points.Add((vx, vy));
+                }
+            }
+
+            while (points.Count > ScatterMaxPoints)
+            {
+                int idx = rng.Next(points.Count);
+                points.RemoveAt(idx);
+            }
+
+            e.Result = points;
+        }
+
+        private void ScatterWorker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                MessageBox.Show($"Scatter error: {e.Error.Message}");
+                return;
+            }
+
+            var rawPoints = (List<(double x, double y)>)e.Result!;
+            var series = new ScatterSeries { MarkerType = MarkerType.Circle, MarkerSize = 2 };
+            foreach (var (x, y) in rawPoints)
+                series.Points.Add(new ScatterPoint(x, y));
+
+            var model = new PlotModel();
+            var bandX = scatterXListBox.SelectedItem as Band;
+            var bandY = scatterYListBox.SelectedItem as Band;
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = bandX?.Name ?? "X" });
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = bandY?.Name ?? "Y" });
+            model.Series.Add(series);
+
+            scatterPlotView.Model = model;
+            mainStatusLabel.Text = $"Scatter: {rawPoints.Count} points";
+        }
+
+        private void KdeWorker_DoWork(object? sender, DoWorkEventArgs e)
+        {
+            var (mode, bands, _) = ((string, List<Band>, object?))e.Argument!;
+            var worker = sender as BackgroundWorker;
+            int totalPixels = bands[0].OriginalWidth * bands[0].OriginalHeight;
+            int step = Math.Max(1, totalPixels / KdeMaxSamples);
+
+            if (mode == "single")
+            {
+                var results = new List<(Band band, List<DataPoint> points)>();
+                for (int bi = 0; bi < bands.Count; bi++)
+                {
+                    var band = bands[bi];
+                    var points = new List<DataPoint>(101);
+                    int barCount = 101;
+                    for (int xi = 0; xi < barCount; xi++)
+                    {
+                        double x = xi / 100.0;
+                        double bandDensity = 0;
+                        int validCount = 0;
+
+                        for (int i = 0; i < totalPixels; i += step)
+                        {
+                            float pv = band.GetNormalizedValue(i);
+                            if (!float.IsNaN(band.GetPixelValue(i)))
+                            {
+                                bandDensity += KernelFunctions.GetKernel(band.KernelType, (x - pv) / band.NormalizeKernelC);
+                                validCount++;
+                            }
+                        }
+
+                        bandDensity /= validCount * band.NormalizeKernelC;
+                        points.Add(new DataPoint(x, bandDensity));
+                        worker?.ReportProgress((bi * barCount + xi) * 100 / (bands.Count * barCount), $"KDE: band {bi + 1}/{bands.Count}");
+                    }
+                    results.Add((band, points));
+                }
+                e.Result = (mode, "", results);
+                return;
+            }
+
+            var allPoints = new List<DataPoint>(101);
+
+            if (mode == "multivariate")
+            {
+                string multiTitle = $"Multivariate: {string.Join(",", bands.Select(b => b.Name))}";
+                double productBandwidths = 1;
+                foreach (var b in bands)
+                    productBandwidths *= b.NormalizeKernelC;
+                double normalization = (totalPixels / step) * productBandwidths;
+
+                for (double x = 0; x <= 1; x += 0.01)
+                {
+                    double density = 0;
+
+                    for (int pixel = 0; pixel < totalPixels; pixel += step)
+                    {
+                        double kernelProduct = 1;
+                        foreach (var band in bands)
+                        {
+                            double v = band.GetNormalizedValue(pixel);
+                            if (v <= 0) { kernelProduct = 0; break; }
+                            kernelProduct *= KernelFunctions.GetKernel(band.KernelType, (x - v) / band.NormalizeKernelC);
+                        }
+                        density += kernelProduct;
+                    }
+
+                    density /= normalization;
+                    allPoints.Add(new DataPoint(x, density));
+
+                    int pct = (int)(x * 100);
+                    worker?.ReportProgress(pct, $"Multivariate KDE: {pct}%");
+                }
+
+                e.Result = (mode, multiTitle, new List<(Band? band, List<DataPoint> points)> { (null, allPoints) });
+            }
+            else
+            {
+                bool isProduct = mode == "product";
+                string prodTitle = isProduct
+                    ? $"Product: {string.Join("×", bands.Select(b => b.Name))}"
+                    : "";
+                int barCount = 101;
+                for (int xi = 0; xi < barCount; xi++)
+                {
+                    double x = xi / 100.0;
+                    double result = isProduct ? 1.0 : 0.0;
+
+                    foreach (var band in bands)
+                    {
+                        double bandDensity = 0;
+                        int validCount = 0;
+
+                        for (int i = 0; i < totalPixels; i += step)
+                        {
+                            float pv = band.GetNormalizedValue(i);
+                            if (!float.IsNaN(band.GetPixelValue(i)))
+                            {
+                                bandDensity += KernelFunctions.GetKernel(band.KernelType, (x - pv) / band.NormalizeKernelC);
+                                validCount++;
+                            }
+                        }
+
+                        bandDensity /= validCount * band.NormalizeKernelC;
+
+                        if (isProduct)
+                            result *= bandDensity;
+                        else
+                            result += bandDensity;
+                    }
+
+                    allPoints.Add(new DataPoint(x, result));
+                    worker?.ReportProgress(xi * 100 / barCount, $"KDE: {xi}/{barCount}");
+                }
+
+                e.Result = (mode, prodTitle, new List<(Band? band, List<DataPoint> points)> { (null, allPoints) });
+            }
+        }
+
+        private void KdeWorker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                MessageBox.Show($"KDE error: {e.Error.Message}");
+                return;
+            }
+
+            kdePlotView.Model = null;
+
+            var (mode, title, results) = ((string, string, List<(Band? band, List<DataPoint> points)>))e.Result!;
+
+            foreach (var (band, points) in results)
+            {
+                var series = new FunctionSeries
+                {
+                    Title = !string.IsNullOrEmpty(title) ? title : band?.Name ?? "KDE"
+                };
+                series.Points.AddRange(points);
+                _kdeModel!.Series.Add(series);
+            }
+
+            kdePlotView.Model = _kdeModel;
+            PlotView_DoubleClick(kdePlotView, e);
+            mainStatusLabel.Text = "KDE ready";
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -798,15 +970,6 @@ namespace modified_structure_analysis.Forms
             viewport1.UpdateImage(bitmap);
         }
 
-        private void CalculateBandsStatistics()
-        {
-            foreach (Band band in _bands)
-            {
-                BandStatisticsComputer.Compute(band);
-                band.Normalize();
-            }
-        }
-
         private void ClearFirstStageCache()
         {
             _firstStageEngine?.ClearCache();
@@ -817,56 +980,356 @@ namespace modified_structure_analysis.Forms
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (openFileDialog1.ShowDialog() != DialogResult.OK)
+                return;
+
+            ClearFirstStageCache();
+
+            string[] fileNames = openFileDialog1.FileNames;
+
+            // Determine content type
+            bool hasText = false, hasImage = false;
+            foreach (string fn in fileNames)
             {
-                ClearFirstStageCache();
+                string ext = Path.GetExtension(fn).ToLower();
+                if (ext == ".csv" || ext == ".txt") hasText = true;
+                else if (ext == ".tif" || ext == ".tiff" || ext == ".img") hasImage = true;
+            }
+
+            if (hasText && hasImage)
+            {
+                MessageBox.Show("Cannot mix text files with image files. Please open them separately.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (hasText)
+            {
+                // Text files are small enough to load on UI thread
+                foreach (Band b in _bands) b.UnloadPixelData();
                 _bands.Clear();
                 _geoTransform = null;
                 correlationDataGridView.Columns.Clear();
 
-                string[] fileNames = openFileDialog1.FileNames;
-
                 foreach (string fileName in fileNames)
                 {
                     string ext = Path.GetExtension(fileName).ToLower();
+                    if (ext == ".csv")
+                        ReadCsvFile(fileName);
+                    else
+                        ReadTextFile(fileName, '\t');
 
-                    switch (ext)
-                    {
-                        case ".txt":
-                        case ".csv":
-                            if (_bands.Count > 0)
-                            {
-                                MessageBox.Show("Cannot mix text files with image files. Please open them separately.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                _bands.Clear();
-                                return;
-                            }
-                            if (ext == ".csv")
-                                ReadCsvFile(fileName);
-                            else
-                                ReadTextFile(fileName, '\t');
-                            break;
-                        case ".tif":
-                        case ".tiff":
-                        case ".img":
-                            if (_geoTransform != null && (_bands.Count > 0 && _bands[0].GeoTransform == null))
-                            {
-                                MessageBox.Show("Cannot mix text files with image files. Please open them separately.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                _bands.Clear();
-                                return;
-                            }
-                            LoadGeoTiff(fileName);
-                            break;
-                    }
+                    if (_bands.Count == 0) break;
                 }
 
-                if (_bands.Count == 0)
-                    return;
-
+                if (_bands.Count == 0) return;
                 UpdateBandsList();
                 UpdateImage(sender, e);
-                CalculateBandsStatistics();
-                CalcCorrelation();
+                if (!_statsWorker.IsBusy) _statsWorker.RunWorkerAsync();
+                return;
             }
+
+            foreach (Band b in _bands) b.UnloadPixelData();
+            _bands.Clear();
+            _geoTransform = null;
+            correlationDataGridView.Columns.Clear();
+
+            if (_loadWorker.IsBusy) return;
+            _loadWorker.RunWorkerAsync(new FileLoadInfo(fileNames, '\t'));
+        }
+
+        private record FileLoadInfo(string[] FileNames, char CsvDelimiter);
+        private record FileLoadResult(List<Band> Bands, GeoTransform? GeoTransform, int Width, int Height, List<string> Messages);
+
+        private void LoadWorker_DoWork(object? sender, DoWorkEventArgs e)
+        {
+            var info = (FileLoadInfo)e.Argument!;
+            var worker = (BackgroundWorker)sender!;
+            var bands = new List<Band>();
+            GeoTransform? geoTransform = null;
+            int width = 0, height = 0;
+            var messages = new List<string>();
+
+            int fileIndex = 0;
+            foreach (string fileName in info.FileNames)
+            {
+                string ext = Path.GetExtension(fileName).ToLower();
+                worker.ReportProgress(fileIndex * 100 / info.FileNames.Length, $"Loading {Path.GetFileName(fileName)}...");
+
+                if (ext == ".tif" || ext == ".tiff" || ext == ".img")
+                {
+                    var (newBands, newGeo, newWidth, newHeight) = LoadGeoTiffCore(fileName, geoTransform, bands, messages);
+                    bands.AddRange(newBands);
+                    if (newGeo != null)
+                    {
+                        geoTransform ??= newGeo;
+                        width = newWidth;
+                        height = newHeight;
+                    }
+                }
+                else if (ext == ".csv" || ext == ".txt")
+                {
+                    if (geoTransform != null)
+                    {
+                        messages.Add($"Cannot mix text files with image files. Skipping '{fileName}'.");
+                        continue;
+                    }
+                    char delim = ext == ".csv" ? info.CsvDelimiter : '\t';
+                    var (newBands, newGeo, newWidth, newHeight) = ReadTextFileCore(fileName, delim, messages);
+                    bands.AddRange(newBands);
+                    geoTransform = newGeo;
+                    width = newWidth;
+                    height = newHeight;
+                }
+
+                fileIndex++;
+            }
+
+            e.Result = new FileLoadResult(bands, geoTransform, width, height, messages);
+        }
+
+        private void LoadWorker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                MessageBox.Show($"Error loading files: {e.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var result = (FileLoadResult)e.Result!;
+
+            foreach (string msg in result.Messages)
+                MessageBox.Show(msg, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            if (result.Bands.Count == 0)
+                return;
+
+            _bands = result.Bands;
+            _geoTransform = result.GeoTransform;
+            _width = result.Width;
+            _height = result.Height;
+
+            UpdateBandsList();
+            UpdateImage(this, EventArgs.Empty);
+
+            if (!_statsWorker.IsBusy)
+                _statsWorker.RunWorkerAsync();
+        }
+
+        private (List<Band> bands, GeoTransform? geo, int width, int height) LoadGeoTiffCore(string fileName, GeoTransform? existingGeo, List<Band> existingBands, List<string> messages)
+        {
+            var bands = new List<Band>();
+            GeoTransform? geo = null;
+            int width = 0, height = 0;
+
+            try
+            {
+                using (OSGeo.GDAL.Dataset ds = OSGeo.GDAL.Gdal.Open(fileName, OSGeo.GDAL.Access.GA_ReadOnly))
+                {
+                    if (ds == null)
+                    {
+                        messages.Add($"Error: Cannot open GeoTIFF file: {fileName}");
+                        return (bands, null, 0, 0);
+                    }
+
+                    width = ds.RasterXSize;
+                    height = ds.RasterYSize;
+
+                    double[] geoTransformArr = new double[6];
+                    ds.GetGeoTransform(geoTransformArr);
+                    var newGeoTransform = GeoTransform.FromGdalArray(geoTransformArr);
+                    newGeoTransform.ProjectionWkt = ds.GetProjection();
+                    newGeoTransform.ProjectionName = ds.GetProjectionRef();
+
+                    if (existingGeo != null)
+                    {
+                        if (!existingGeo.Equals(newGeoTransform))
+                        {
+                            messages.Add($"Error: GeoTransform mismatch in '{Path.GetFileName(fileName)}'!");
+                            return (bands, null, 0, 0);
+                        }
+
+                        if (!string.IsNullOrEmpty(existingGeo.ProjectionWkt) && !string.IsNullOrEmpty(newGeoTransform.ProjectionWkt))
+                        {
+                            if (existingGeo.ProjectionWkt != newGeoTransform.ProjectionWkt)
+                            {
+                                messages.Add($"Error: Projection mismatch in '{Path.GetFileName(fileName)}'!");
+                                return (bands, null, 0, 0);
+                            }
+                        }
+                    }
+
+                    geo = newGeoTransform;
+
+                    if (existingGeo == null && existingBands.Count > 0 && existingBands[0].GeoTransform == null)
+                    {
+                        messages.Add("Cannot mix text files with image files.");
+                        return (bands, null, 0, 0);
+                    }
+
+                    for (int i = 1; i <= ds.RasterCount; i++)
+                    {
+                        using (GdalBand gdalBand = ds.GetRasterBand(i))
+                        {
+                            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                            string bandName = ExtractShortLandsatName(fileNameWithoutExt);
+                            string desc;
+
+                            if (ds.RasterCount == 1)
+                                desc = ExtractDescription(fileName) ?? gdalBand.GetDescription();
+                            else
+                                desc = gdalBand.GetDescription();
+
+                            if (!string.IsNullOrWhiteSpace(desc))
+                                bandName += $"_{desc}";
+                            else if (ds.RasterCount > 1)
+                                bandName += $"_{i}";
+
+                            double[] minmax = new double[2];
+                            gdalBand.ComputeRasterMinMax(minmax, 0);
+
+                            double gdalNoDataValue = 0;
+                            int hasNoData = 0;
+                            gdalBand.GetNoDataValue(out gdalNoDataValue, out hasNoData);
+
+                            Band band = new Band(bandName);
+                            band.SetDimensions(width, height);
+                            band.SetGeoTransform(geo);
+                            band.SetMinMax((float)minmax[0], (float)minmax[1]);
+                            band.SetSource(fileName, i, gdalNoDataValue, hasNoData != 0, minmax[0], minmax[1]);
+
+                            bands.Add(band);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                messages.Add($"Error loading GeoTIFF '{fileName}': {ex.Message}");
+            }
+
+            return (bands, geo, width, height);
+        }
+
+        private (List<Band> bands, GeoTransform? geo, int width, int height) ReadTextFileCore(string fileName, char delimiter, List<string> messages)
+        {
+            var bands = new List<Band>();
+            GeoTransform? geo = null;
+            int width = 0, height = 0;
+
+            try
+            {
+                using (StreamReader reader = new StreamReader(fileName))
+                {
+                    if (reader.EndOfStream)
+                    {
+                        messages.Add("Error: Empty text file.");
+                        return (bands, null, 0, 0);
+                    }
+
+                    string? headerLine = reader.ReadLine();
+                    if (headerLine == null)
+                    {
+                        messages.Add("Error: Empty text file.");
+                        return (bands, null, 0, 0);
+                    }
+                    string[] hd = headerLine.Split(delimiter);
+
+                    // Determine column types
+                    int xIndex = -1, yIndex = -1;
+                    List<int> bandIndices = new List<int>();
+                    for (int i = 0; i < hd.Length; i++)
+                    {
+                        string lower = hd[i].ToLower();
+                        if (lower == "x" || lower == "longitude") xIndex = i;
+                        else if (lower == "y" || lower == "latitude") yIndex = i;
+                        else if (lower != "") bandIndices.Add(i);
+                    }
+
+                    if (xIndex < 0 || yIndex < 0 || bandIndices.Count == 0)
+                    {
+                        messages.Add("Error: X, Y and at least one Band column are required in text file.");
+                        return (bands, null, 0, 0);
+                    }
+
+                    // Read all data
+                    string[] values;
+                    int lineNumber = 1;
+                    double minX = double.MaxValue, maxX = double.MinValue;
+                    double minY = double.MaxValue, maxY = double.MinValue;
+                    List<(double x, double y, Dictionary<string, float> bandValues)> rawData = new();
+
+                    while (!reader.EndOfStream)
+                    {
+                        lineNumber++;
+                        values = reader.ReadLine()?.Split(delimiter) ?? [];
+                        if (values.Length <= Math.Max(xIndex, Math.Max(yIndex, bandIndices.Max())))
+                            continue;
+
+                        if (!double.TryParse(values[xIndex], out double x) || !double.TryParse(values[yIndex], out double y))
+                            continue;
+
+                        minX = Math.Min(minX, x);
+                        maxX = Math.Max(maxX, x);
+                        minY = Math.Min(minY, y);
+                        maxY = Math.Max(maxY, y);
+
+                        Dictionary<string, float> bandValues = new();
+                        foreach (int bandIdx in bandIndices)
+                        {
+                            if (float.TryParse(values[bandIdx], out float v))
+                                bandValues[hd[bandIdx]] = v;
+                        }
+
+                        if (bandValues.Count > 0)
+                            rawData.Add((x, y, bandValues));
+                    }
+
+                    if (rawData.Count == 0)
+                    {
+                        messages.Add("No valid data found in text file.");
+                        return (bands, null, 0, 0);
+                    }
+
+                    foreach (int bandIdx in bandIndices)
+                        bands.Add(new Band(hd[bandIdx]));
+
+                    double cellSize = Math.Min((maxX - minX) / rawData.Count, (maxY - minY) / rawData.Count);
+                    if (cellSize <= 0) cellSize = 1.0;
+
+                    width = Math.Max(1, (int)((maxX - minX) / cellSize));
+                    height = Math.Max(1, (int)((maxY - minY) / cellSize));
+
+                    foreach (Band band in bands)
+                    {
+                        band.SetDimensions(width, height);
+                        band.SetGeoTransform(new GeoTransform(minX, maxY, cellSize, -cellSize));
+                    }
+
+                    // Grid the data
+                    foreach (var point in rawData)
+                    {
+                        int gridX = (int)Math.Floor((point.x - minX) / cellSize);
+                        int gridY = (int)Math.Floor((maxY - point.y) / cellSize);
+                        gridX = Math.Clamp(gridX, 0, width - 1);
+                        gridY = Math.Clamp(gridY, 0, height - 1);
+                        int flatIndex = gridY * width + gridX;
+
+                        foreach (Band band in bands)
+                        {
+                            if (point.bandValues.TryGetValue(band.Name, out float val))
+                                band.SetValueAt(flatIndex, val);
+                        }
+                    }
+
+                    geo = new GeoTransform(minX, maxY, cellSize, cellSize);
+                }
+            }
+            catch (Exception ex)
+            {
+                messages.Add($"Error reading text file '{fileName}': {ex.Message}");
+            }
+
+            return (bands, geo, width, height);
         }
 
         private void ReadCsvFile(string fileName)
@@ -959,13 +1422,21 @@ namespace modified_structure_analysis.Forms
                             float[] values = new float[width * height];
                             gdalBand.ReadRaster(0, 0, width, height, values, width, height, 0, 0);
 
+                            double gdalNoDataValue = 0;
+                            int hasNoData = 0;
+                            gdalBand.GetNoDataValue(out gdalNoDataValue, out hasNoData);
+                            bool hasNoDataValue = hasNoData != 0;
+
                             Band band = new Band(bandName);
                             band.SetDimensions(width, height);
                             band.SetGeoTransform(_geoTransform);
                             band.SetMinMax((float)minmax[0], (float)minmax[1]);
                             for (int idx = 0; idx < values.Length; idx++)
                             {
-                                band.SetValueAt(idx, values[idx]);
+                                float v = values[idx];
+                                if (hasNoDataValue && (v == (float)gdalNoDataValue || double.IsNaN(v)))
+                                    v = float.NaN;
+                                band.SetValueAt(idx, v);
                             }
                             _bands.Add(band);
                         }
@@ -1201,116 +1672,157 @@ namespace modified_structure_analysis.Forms
         private void BuildHistogram()
         {
             Band? band = bandListBox.SelectedItem as Band;
-
-            if (band == null)
+            if (band == null || band.OriginalWidth * band.OriginalHeight == 0)
                 return;
 
             int columnsCount = BrooksCarrutherDivisionRule(band.Count);
-            float columnsWidth = (band.Maximum - band.Minimum) / columnsCount;
+            float minVal = band.Minimum;
+            float maxVal = band.Maximum;
+            float range = maxVal - minVal;
+            if (range <= 0 || columnsCount <= 0)
+                return;
 
-            int[] pointses = new int[columnsCount];
-            int[] asseses = new int[columnsCount];
+            float columnsWidth = range / columnsCount;
 
-            for (int i = 0; i < band.Count; i++)
+            mainStatusLabel.Text = "Building histogram...";
+
+            Task.Run(() =>
             {
-                float x = band.GetValue(i);
+                int[] pointses = new int[columnsCount];
+                int[] asseses = new int[columnsCount];
+                int totalPixels = band.OriginalWidth * band.OriginalHeight;
 
-                if (x == 0)
-                    continue;
+                for (int i = 0; i < totalPixels; i++)
+                {
+                    float x = band.GetPixelValue(i);
+                    if (float.IsNaN(x)) continue;
 
+                    int binIndex = (int)((x - minVal) / columnsWidth);
+                    if (binIndex >= 0 && binIndex < columnsCount)
+                        pointses[binIndex]++;
+                }
+
+                int cumulative = 0;
                 for (int j = 0; j < columnsCount; j++)
                 {
-                    float min = j * columnsWidth + band.Minimum;
-
-                    if (min <= x && x < min + columnsWidth)
-                        pointses[j]++;
-
-                    if (x <= min)
-                        asseses[j]++;
+                    cumulative += pointses[j];
+                    asseses[j] = cumulative;
                 }
-            }
 
-            var histSeries = new HistogramSeries();
-            var lineSeries = new LineSeries();
+                BeginInvoke(() =>
+                {
+                    var histSeries = new HistogramSeries();
+                    var lineSeries = new LineSeries();
 
-            for (int i = 0; i < columnsCount; i++)
-            {
-                float min = i * columnsWidth + band.Minimum;
+                    for (int i = 0; i < columnsCount; i++)
+                    {
+                        float binMin = i * columnsWidth + minVal;
+                        histSeries.Items.Add(new HistogramItem(binMin, binMin + columnsWidth, (float)pointses[i] / band.Count, pointses[i]));
+                        lineSeries.Points.Add(new DataPoint(binMin, (float)asseses[i] / band.Count));
+                    }
 
-                histSeries.Items.Add(new HistogramItem(min, min + columnsWidth, (float)pointses[i] / band.Count, pointses[i]));
-                lineSeries.Points.Add(new DataPoint(min, (float)asseses[i] / band.Count));
-            }
+                    var plot = new PlotModel();
+                    plot.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Minimum = minVal, Maximum = maxVal });
+                    plot.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Minimum = 0, Key = "axesY1" });
+                    plot.Axes.Add(new LinearAxis { Position = AxisPosition.Right, Minimum = 0, Maximum = 1d, Key = "axesY2" });
 
-            PlotModel plot = new PlotModel();
+                    histSeries.YAxisKey = "axesY1";
+                    lineSeries.YAxisKey = "axesY2";
+                    lineSeries.Color = OxyColor.FromRgb(255, 0, 0);
 
-            plot.Axes.Add(new LinearAxis() { Position = AxisPosition.Bottom, Minimum = band.Minimum, Maximum = band.Maximum });
-            plot.Axes.Add(new LinearAxis() { Position = AxisPosition.Left, Minimum = 0, Key = "axesY1" });
-            plot.Axes.Add(new LinearAxis() { Position = AxisPosition.Right, Minimum = 0, Maximum = 1d, Key = "axesY2" });
+                    plot.Series.Add(histSeries);
+                    plot.Series.Add(lineSeries);
 
-            histSeries.YAxisKey = "axesY1";
-            lineSeries.YAxisKey = "axesY2";
-
-            lineSeries.Color = OxyColor.FromRgb(255, 0, 0);
-
-            plot.Series.Add(histSeries);
-            plot.Series.Add(lineSeries);
-
-            //ApplyPlotSettings(plot);
-            histogramPlotView.Model = plot;
+                    histogramPlotView.Model = plot;
+                    mainStatusLabel.Text = "Ready";
+                });
+            });
         }
 
-        private void CalcCorrelation()
+        private float[][]? CalcCorrelationData(List<Band> bands)
         {
-            DataGridViewRow row;
+            int n = bands.Count;
+            var data = new float[n][];
 
-            Band bandX;
-            Band bandY;
-
-            for (int bandXI = 0; bandXI < _bands.Count; bandXI++)
+            for (int bandXI = 0; bandXI < n; bandXI++)
             {
-                row = new DataGridViewRow();
+                data[bandXI] = new float[n];
+                Band bandX = bands[bandXI];
+                int totalPixels = bandX.OriginalWidth * bandX.OriginalHeight;
 
-                bandX = _bands[bandXI];
-
-                for (int bandYI = 0; bandYI < _bands.Count; bandYI++)
+                for (int bandYI = 0; bandYI < n; bandYI++)
                 {
-                    if (bandYI == bandXI)
-                    {
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Style = new DataGridViewCellStyle() { BackColor = Color.Black } });
-                        continue;
-                    }
-
                     if (bandYI < bandXI)
                     {
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Value = correlationDataGridView.Rows[bandYI].Cells[bandXI].Value });
+                        data[bandXI][bandYI] = data[bandYI][bandXI];
                         continue;
                     }
 
-                    bandY = _bands[bandYI];
-
-                    if (bandX.Count != bandY.Count)
+                    if (bandYI == bandXI)
                     {
-                        row.Cells.Add(new DataGridViewTextBoxCell() { Style = new DataGridViewCellStyle() { BackColor = Color.Red } });
+                        data[bandXI][bandYI] = float.NaN;
                         continue;
                     }
 
-                    float tmp = 0;
+                    Band bandY = bands[bandYI];
 
-                    for (int i = 0; i < bandX.Count; i++)
+                    double sum = 0;
+                    int validPairs = 0;
+                    for (int i = 0; i < totalPixels; i++)
                     {
-                        tmp += F(bandX, i) * F(bandY, i);
+                        float vx = bandX.GetPixelValue(i);
+                        float vy = bandY.GetPixelValue(i);
+                        if (!float.IsNaN(vx) && !float.IsNaN(vy))
+                        {
+                            sum += F(vx, bandX.Mean, bandX.Sigma) * F(vy, bandY.Mean, bandY.Sigma);
+                            validPairs++;
+                        }
                     }
 
-                    row.Cells.Add(new DataGridViewTextBoxCell() { Value = tmp / (bandX.Count - 1) });
+                    data[bandXI][bandYI] = validPairs > 1 ? (float)(sum / (validPairs - 1)) : float.NaN;
                 }
-
-                int rowID = correlationDataGridView.Rows.Add(row);
-                correlationDataGridView.Rows[rowID].HeaderCell.Value = bandX.Name;
             }
 
-            float F(Band band, int i)
+            return data;
+
+            static float F(float v, float mean, float sigma)
             {
-                return (band.GetValue(i) - band.Mean) / band.Sigma;
+                return sigma != 0 ? (v - mean) / sigma : 0;
+            }
+        }
+
+        private void UpdateCorrelationGrid(float[][] data)
+        {
+            correlationDataGridView.Rows.Clear();
+            correlationDataGridView.Columns.Clear();
+
+            for (int i = 0; i < data.Length; i++)
+                correlationDataGridView.Columns.Add($"col{i}", _bands[i].Name);
+
+            for (int bandXI = 0; bandXI < data.Length; bandXI++)
+            {
+                var row = new DataGridViewRow();
+                Band bandX = _bands[bandXI];
+
+                for (int bandYI = 0; bandYI < data.Length; bandYI++)
+                {
+                    if (float.IsNaN(data[bandXI][bandYI]))
+                    {
+                        row.Cells.Add(new DataGridViewTextBoxCell
+                        {
+                            Style = bandXI == bandYI
+                                ? new DataGridViewCellStyle { BackColor = Color.Black }
+                                : new DataGridViewCellStyle { BackColor = Color.Red }
+                        });
+                    }
+                    else
+                    {
+                        row.Cells.Add(new DataGridViewTextBoxCell { Value = data[bandXI][bandYI] });
+                    }
+                }
+
+                int rowId = correlationDataGridView.Rows.Add(row);
+                correlationDataGridView.Rows[rowId].HeaderCell.Value = bandX.Name;
             }
         }
 
@@ -1450,13 +1962,9 @@ namespace modified_structure_analysis.Forms
                 ? (firstStagePalette != null
                     ? PaletteGenerator.GenerateSecondStage(firstStagePalette, secondStageRuleCount)
                     : PaletteGenerator.GenerateHSV(totalClassCount))
-                : mode == ClassificationMode.DirectCheck
-                    ? PaletteGenerator.GenerateHSV(totalClassCount)
-                    : [];
+                : PaletteGenerator.GenerateHSV(totalClassCount);
 
-            var classificationResult = isSecondStage || mode == ClassificationMode.DirectCheck
-                ? new ClassificationResult(_width, _height, palette)
-                : new ClassificationResult(_width, _height, rules);
+            var classificationResult = new ClassificationResult(_width, _height, palette);
 
             int processedPixels = 0;
 
@@ -1484,7 +1992,7 @@ namespace modified_structure_analysis.Forms
             localCount =>
             {
                 int finalCount = Interlocked.Add(ref processedPixels, localCount);
-                int progress = (finalCount * 99) / totalPixels;
+                int progress = totalPixels > 0 ? (int)((long)finalCount * 99 / totalPixels) : 0;
 
                 TimeSpan elapsed = DateTime.Now - startTime;
                 double pixelsPerMs = finalCount / Math.Max(1.0, elapsed.TotalMilliseconds);
@@ -1571,13 +2079,13 @@ namespace modified_structure_analysis.Forms
                 {
                     _lastClassificationResult = classificationResult;
 
-                    if (mode == ClassificationMode.DirectCheck)
+                    if (isSecondStage)
                     {
-                        viewport3.UpdateImage(bitmap);
+                        viewport2.UpdateImage(bitmap);
                     }
                     else
                     {
-                        viewport2.UpdateImage(bitmap);
+                        viewport3.UpdateImage(bitmap);
                     }
 
                     if (isSecondStage)

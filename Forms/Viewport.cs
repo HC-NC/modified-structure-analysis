@@ -35,12 +35,12 @@ namespace modified_structure_analysis.Forms
         public Viewport()
         {
             InitializeComponent();
+
+            _graphics = CreateGraphics();
         }
 
         private void Viewport_Load(object sender, EventArgs e)
         {
-            _graphics = CreateGraphics();
-
             _oldWidth = pictureBox.Width;
             _oldHeight = pictureBox.Height;
         }

@@ -163,6 +163,15 @@ public class ClassificationEngine
 
     public int? EvaluatePixel(int pixelIndex)
     {
+        if (_bands.Count > 0 && _bands[0].OriginalWidth * _bands[0].OriginalHeight > pixelIndex)
+        {
+            for (int b = 0; b < _bands.Count; b++)
+            {
+                if (float.IsNaN(_bands[b].GetPixelValue(pixelIndex)))
+                    return null;
+            }
+        }
+
         if (Mode == ClassificationMode.DirectCheck)
         {
             int classIndex = 0;

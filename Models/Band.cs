@@ -11,12 +11,18 @@ public class Band
     private int _originalWidth;
     private int _originalHeight;
 
-    private List<float> _values;
-    private List<float> _normalizeValues;
-    private Dictionary<(int x, int y), float> _spatialData;
+    private string? _sourceFilePath;
+    private int _sourceBandIndex;
+    private bool _isGdalSource;
+
+    private List<float>? _values;
+    private Dictionary<(int x, int y), float>? _spatialData;
     private float[]? _pixelValues;
     private float[]? _normalizedPixelValues;
     private float _noDataValue = float.NaN;
+    private double _gdalNoDataValue;
+    private bool _hasGdalNoData;
+    private double[] _gdalMinMax = new double[2];
     private GeoTransform? _geoTransform;
 
     private float _sum;
@@ -116,14 +122,11 @@ public class Band
     public Band(string name)
     {
         _name = name;
-
-        _values = new List<float>();
-        _normalizeValues = new List<float>();
-        _spatialData = new Dictionary<(int x, int y), float>();
     }
 
     public void AddValue(float value)
     {
+        _values ??= new List<float>();
         _values.Add(value);
 
         _sum += value;
@@ -135,6 +138,7 @@ public class Band
     public void AddValueAtPosition(int x, int y, float value)
     {
         AddValue(value);
+        _spatialData ??= new Dictionary<(int x, int y), float>();
         _spatialData[(x, y)] = value;
     }
 
@@ -149,17 +153,79 @@ public class Band
         _geoTransform = transform;
     }
 
+    public void SetSource(string filePath, int bandIndex, double noDataValue, bool hasNoData, double min, double max)
+    {
+        _sourceFilePath = filePath;
+        _sourceBandIndex = bandIndex;
+        _isGdalSource = true;
+        _gdalNoDataValue = noDataValue;
+        _hasGdalNoData = hasNoData;
+        _gdalMinMax[0] = min;
+        _gdalMinMax[1] = max;
+    }
+
+    public bool CanReload => _isGdalSource && _sourceFilePath != null && File.Exists(_sourceFilePath);
+
+    public void EnsurePixelValuesLoaded()
+    {
+        if (_pixelValues != null || !_isGdalSource || _sourceFilePath == null)
+            return;
+
+        using var ds = OSGeo.GDAL.Gdal.Open(_sourceFilePath, OSGeo.GDAL.Access.GA_ReadOnly);
+        if (ds == null) return;
+        using var gdalBand = ds.GetRasterBand(_sourceBandIndex);
+
+        _pixelValues = new float[_originalWidth * _originalHeight];
+        gdalBand.ReadRaster(0, 0, _originalWidth, _originalHeight, _pixelValues, _originalWidth, _originalHeight, 0, 0);
+
+        _normalizedPixelValues = new float[_originalWidth * _originalHeight];
+        Array.Fill(_normalizedPixelValues, float.NaN);
+
+        for (int idx = 0; idx < _pixelValues.Length; idx++)
+        {
+            float v = _pixelValues[idx];
+            if (_hasGdalNoData && (v == (float)_gdalNoDataValue || double.IsNaN(v)))
+            {
+                _pixelValues[idx] = float.NaN;
+            }
+        }
+
+        _count = 0;
+        _sum = 0;
+        _minimum = float.MaxValue;
+        _maximum = float.MinValue;
+        for (int idx = 0; idx < _pixelValues.Length; idx++)
+        {
+            float v = _pixelValues[idx];
+            if (!float.IsNaN(v))
+            {
+                _count++;
+                _sum += v;
+                if (v < _minimum) _minimum = v;
+                if (v > _maximum) _maximum = v;
+            }
+        }
+    }
+
     public void SetDimensions(int width, int height)
     {
         _originalWidth = width;
         _originalHeight = height;
-        _pixelValues = new float[width * height];
-        _normalizedPixelValues = new float[width * height];
-        for (int i = 0; i < _pixelValues.Length; i++)
-        {
-            _pixelValues[i] = _noDataValue;
-            _normalizedPixelValues[i] = 0;
-        }
+    }
+
+    public void ClearRawData()
+    {
+        _values?.Clear();
+        _values?.TrimExcess();
+        _spatialData?.Clear();
+    }
+
+    public bool HasPixelData => _pixelValues != null;
+
+    public void UnloadPixelData()
+    {
+        _pixelValues = null;
+        _normalizedPixelValues = null;
     }
 
     public void SetPixelValue(int x, int y, float value)
@@ -170,16 +236,24 @@ public class Band
 
     public void SetValueAt(int index, float value)
     {
-        if (index >= 0 && index < _pixelValues!.Length)
+        if (_pixelValues == null)
         {
-            _pixelValues[index] = value;
-            if (!float.IsNaN(value))
-            {
-                _sum += value;
-                _minimum = MathF.Min(value, _minimum);
-                _maximum = MathF.Max(value, _maximum);
-                _count++;
-            }
+            if (_originalWidth <= 0 || _originalHeight <= 0) return;
+            _pixelValues = new float[_originalWidth * _originalHeight];
+            Array.Fill(_pixelValues, _noDataValue);
+            _normalizedPixelValues = new float[_originalWidth * _originalHeight];
+            Array.Fill(_normalizedPixelValues, float.NaN);
+        }
+
+        if (index < 0 || index >= _pixelValues.Length) return;
+
+        _pixelValues[index] = value;
+        if (!float.IsNaN(value))
+        {
+            _sum += value;
+            _minimum = MathF.Min(value, _minimum);
+            _maximum = MathF.Max(value, _maximum);
+            _count++;
         }
     }
 
@@ -200,6 +274,9 @@ public class Band
 
     public float GetPixelValue(int i)
     {
+        if (_pixelValues == null && CanReload)
+            EnsurePixelValuesLoaded();
+
         if (_pixelValues == null || i < 0 || i >= _pixelValues.Length)
             return _noDataValue;
         return _pixelValues[i];
@@ -207,30 +284,25 @@ public class Band
 
     public float GetNormalizedPixelValue(int i)
     {
+        if (_pixelValues == null && CanReload)
+            EnsurePixelValuesLoaded();
+
         if (_pixelValues == null || i < 0 || i >= _pixelValues.Length)
             return 0;
 
         if (float.IsNaN(_pixelValues[i]))
             return 0;
 
-        if (_normalizedPixelValues![i] == 0 && _maximum != _minimum)
+        if (_normalizedPixelValues != null && float.IsNaN(_normalizedPixelValues[i]) && _maximum != _minimum)
         {
             _normalizedPixelValues[i] = (_pixelValues[i] - _minimum) / (_maximum - _minimum);
         }
-        return _normalizedPixelValues[i];
+        return _normalizedPixelValues?[i] ?? 0;
     }
 
     public override string ToString()
     {
         return Name;
-    }
-
-    public void Normalize()
-    {
-        _normalizeValues.Clear();
-
-        foreach (var v in _values)
-            _normalizeValues.Add(Normalize(v));
     }
 
     public float Normalize(float v)

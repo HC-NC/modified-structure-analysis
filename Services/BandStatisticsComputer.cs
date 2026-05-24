@@ -22,8 +22,8 @@ public static class BandStatisticsComputer
             {
                 count++;
                 sum += v;
-                min = MathF.Min(v, min);
-                max = MathF.Max(v, max);
+                if (v < min) min = v;
+                if (v > max) max = v;
             }
         }
 
@@ -41,9 +41,11 @@ public static class BandStatisticsComputer
             float v = band.GetPixelValue(i);
             if (!float.IsNaN(v))
             {
-                variance += MathF.Pow(v - mean, 2);
-                skewness += MathF.Pow(v - mean, 3);
-                kurtosis += MathF.Pow(v - mean, 4);
+                float d = v - mean;
+                float d2 = d * d;
+                variance += d2;
+                skewness += d2 * d;
+                kurtosis += d2 * d2;
             }
         }
 
@@ -52,8 +54,10 @@ public static class BandStatisticsComputer
 
         if (sigma > 0)
         {
-            skewness /= count * MathF.Pow(sigma, 3);
-            kurtosis = kurtosis / (count * MathF.Pow(sigma, 4)) - 3;
+            float sigma3 = sigma * sigma * sigma;
+            float sigma4 = sigma3 * sigma;
+            skewness /= count * sigma3;
+            kurtosis = kurtosis / (count * sigma4) - 3;
         }
 
         float kernelC = (float)KernelFunctions.GetDefaultBandwidth(sigma, count);
