@@ -1219,48 +1219,84 @@ namespace modified_structure_analysis.Forms
             if (rules.Count == 0)
                 return;
 
-            if (isSecondStage)
-            {
-                RunSecondStageWork(worker, rules, e);
-                return;
-            }
-
-            RunFirstStageWork(worker, rules, mode, e);
+            RunClassificationWork(worker, rules, mode, isSecondStage, e);
         }
 
-        private void RunFirstStageWork(BackgroundWorker worker, List<ClassificationRule> rules, ClassificationMode mode, DoWorkEventArgs e)
+        private void RunClassificationWork(BackgroundWorker worker, List<ClassificationRule> rules, ClassificationMode mode, bool isSecondStage, DoWorkEventArgs e)
         {
             int totalPixels = _width * _height;
-
             DateTime startTime = DateTime.Now;
-            worker.ReportProgress(0, "Starting classification...");
+            string stageName = isSecondStage ? "Second stage" : "Classification";
+            worker.ReportProgress(0, $"Starting {stageName}...");
 
             var engine = new ClassificationEngine(_bands, rules);
-            engine.Mode = mode;
+            engine.Mode = isSecondStage ? ClassificationMode.RulePerClass : mode;
 
-            ClassificationResult classificationResult;
+            int firstStageClassCount = 0;
+            Color[]? firstStagePalette = null;
+            int[]? firstStageClassIndices = null;
 
-            if (mode == ClassificationMode.DirectCheck)
+            if (isSecondStage)
             {
-                int classCount = 1 << rules.Count;
-                Color[] palette = PaletteGenerator.GenerateHSV(classCount);
-                classificationResult = new ClassificationResult(_width, _height, palette);
+                if (_firstStageEngine?.ZScoreCache != null)
+                    engine.UseZScoreCache(
+                        _firstStageEngine.ZScoreCache,
+                        _firstStageEngine.CachedBandCount,
+                        _firstStageEngine.CachedPixelCount);
 
-                engine.EnsureZScoreCache(_bands.Count, _width * _height);
+                if (_firstStageResult != null && _firstStageClassStats != null)
+                    engine.SetFirstStageContext(_firstStageResult.ClassIndices, _firstStageClassStats);
+
+                firstStageClassCount = _firstStageResult?.Palette?.Length
+                    ?? _firstStageResult?.Rules?.Count
+                    ?? 0;
+                firstStagePalette = _firstStageResult?.Palette;
+                firstStageClassIndices = _firstStageResult?.ClassIndices;
             }
-            else
+            else if (mode == ClassificationMode.DirectCheck)
             {
-                classificationResult = new ClassificationResult(_width, _height, rules);
+                engine.EnsureZScoreCache(_bands.Count, totalPixels);
             }
+
+            int secondStageRuleCount = isSecondStage ? rules.Count : 0;
+            int totalClassCount = isSecondStage
+                ? firstStageClassCount * secondStageRuleCount
+                : mode == ClassificationMode.DirectCheck
+                    ? 1 << rules.Count
+                    : rules.Count;
+
+            Color[] palette = isSecondStage
+                ? (firstStagePalette != null
+                    ? PaletteGenerator.GenerateSecondStage(firstStagePalette, secondStageRuleCount)
+                    : PaletteGenerator.GenerateHSV(totalClassCount))
+                : mode == ClassificationMode.DirectCheck
+                    ? PaletteGenerator.GenerateHSV(totalClassCount)
+                    : [];
+
+            var classificationResult = isSecondStage || mode == ClassificationMode.DirectCheck
+                ? new ClassificationResult(_width, _height, palette)
+                : new ClassificationResult(_width, _height, rules);
 
             int processedPixels = 0;
 
             Parallel.For(0, totalPixels, () => 0, (pixelIndex, loopState, localCount) =>
             {
+                if (firstStageClassIndices != null)
+                {
+                    int firstClass = firstStageClassIndices[pixelIndex];
+                    if (firstClass < 0 || firstClass >= firstStageClassCount)
+                        return localCount;
+                }
+
                 int? classIndex = engine.EvaluatePixel(pixelIndex);
 
                 if (classIndex.HasValue)
-                    classificationResult.SetClass(pixelIndex, classIndex.Value);
+                {
+                    int finalClass = isSecondStage
+                        ? firstStageClassIndices![pixelIndex] * secondStageRuleCount + classIndex.Value
+                        : classIndex.Value;
+                    classificationResult.SetClass(pixelIndex, finalClass);
+                }
 
                 return localCount + 1;
             },
@@ -1278,7 +1314,7 @@ namespace modified_structure_analysis.Forms
                     ? $"~{remaining.TotalSeconds:F0}s"
                     : $"~{remaining.TotalMinutes:F1}m";
 
-                worker.ReportProgress(progress, $"Classifying: {finalCount}/{totalPixels} ({progress}%) ETA: {remainingStr}");
+                worker.ReportProgress(progress, $"{stageName}: {finalCount}/{totalPixels} ({progress}%) ETA: {remainingStr}");
             });
 
             worker.ReportProgress(99, "Rendering bitmap...");
@@ -1287,58 +1323,24 @@ namespace modified_structure_analysis.Forms
 
             worker.ReportProgress(100, "Complete");
 
-            _firstStageEngine = engine;
-            _firstStageResult = classificationResult;
-
-            if (engine.ZScoreCache != null)
+            if (isSecondStage)
             {
-                _firstStageClassStats = ClassStatistics.ComputeFromResult(
-                    classificationResult, _bands, engine.ZScoreCache,
-                    engine.CachedPixelCount, _width, _height);
+                e.Result = (bitmap, classificationResult, ClassificationMode.RulePerClass);
             }
-
-            e.Result = (bitmap, classificationResult, mode);
-        }
-
-        private void RunSecondStageWork(BackgroundWorker worker, List<ClassificationRule> rules, DoWorkEventArgs e)
-        {
-            int totalPixels = _width * _height;
-
-            DateTime startTime = DateTime.Now;
-            worker.ReportProgress(0, "Starting second stage classification...");
-
-            var engine = new ClassificationEngine(_bands, rules);
-            engine.Mode = ClassificationMode.RulePerClass;
-
-            if (_firstStageEngine?.ZScoreCache != null)
+            else
             {
-                engine.UseZScoreCache(
-                    _firstStageEngine.ZScoreCache,
-                    _firstStageEngine.CachedBandCount,
-                    _firstStageEngine.CachedPixelCount);
+                _firstStageEngine = engine;
+                _firstStageResult = classificationResult;
+
+                if (engine.ZScoreCache != null)
+                {
+                    _firstStageClassStats = ClassStatistics.ComputeFromResult(
+                        classificationResult, _bands, engine.ZScoreCache,
+                        engine.CachedPixelCount, _width, _height);
+                }
+
+                e.Result = (bitmap, classificationResult, mode);
             }
-
-            if (_firstStageResult != null && _firstStageClassStats != null)
-            {
-                engine.SetFirstStageContext(_firstStageResult.ClassIndices, _firstStageClassStats);
-            }
-
-            int firstStageClassCount = _firstStageResult?.Palette?.Length
-                ?? _firstStageResult?.Rules?.Count
-                ?? 0;
-
-            int[] firstStageClassIndices = _firstStageResult!.ClassIndices;
-            Color[]? firstStagePalette = _firstStageResult.Palette;
-
-            ClassificationResult classificationResult = engine.RunSecondStage(firstStageClassIndices, firstStageClassCount, firstStagePalette);
-
-            worker.ReportProgress(99, "Rendering bitmap...");
-
-            Bitmap bitmap = RenderClassificationBitmap(classificationResult);
-
-            worker.ReportProgress(100, "Complete");
-
-            e.Result = (bitmap, classificationResult, ClassificationMode.RulePerClass);
         }
 
         private Bitmap RenderClassificationBitmap(ClassificationResult classificationResult)

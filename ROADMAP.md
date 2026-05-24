@@ -117,10 +117,10 @@
 - [x] 9.8.1 Разделение пространств имён: `Models`, `Engine`, `Services`, `Config`, `Forms`
 - [x] 9.8.2 **Band.cs** — stripped to pure data model: удалены `CalculateStatistics()` → `BandStatisticsComputer`, `GetKernelDensityEstimate()` → `BandKdeEstimator`
 - [x] 9.8.3 **ClassificationResult.cs** — stripped: удалены `GetPixelColor()`, `ToBitmap()` → `ResultRenderer`; исправлен баг с `Array.Fill(UndefinedClassIndex)` в palette-конструкторе
-- [ ] 9.8.4 Устранить дублирование между `RunFirstStageWork` / `RunSecondStageWork` / исходным `backgroundWorker_DoWork`
-- [ ] 9.8.5 Устранить дублирование между `GetSingleDensity` / `GetZScoreSingleDensity`, `GetProductDensity`/`GetZScoreProductDensity`, `GetMultivariateDensity`/`GetZScoreMultivariateDensity`
-- [ ] 9.8.6 Устранить дублирование кэшей (single/product/multivariate + zScore варианты)
-- [ ] 9.8.7 Объединить `RunDirectCheck` / `RunRulePerClass` / `RunSecondStage` в единый метод с параметрами
+- [x] 9.8.4 **IDensitySource** — интерфейс + 3 реализации: GlobalDensitySource, PerClassRegularDensitySource, ZScoreDensitySource
+- [x] 9.8.5 Устранить дублирование методов плотностей: `GetSingleDensity` / `GetZScoreSingleDensity` → один `GetSingleDensity(bandIndex, pixelIndex, IDensitySource)`; Product и Multivariate аналогично
+- [x] 9.8.6 Слить 6 кэшей в 2: `_singleDensityCache[(band, classId, valueIndex)]` + `_multivariateDensityCache[(classId, bandIndices, pixelIndex)]`; продукт без кэша (пересчёт из single — бесплатно)
+- [x] 9.8.7 Свести `backgroundWorker_DoWork` + `RunFirstStageWork` + `RunSecondStageWork` → один `RunClassificationWork()` с параметром `isSecondStage`
 
 ### Этап 9.9: Переход от нормализованных значений к абсолютным для KDE
 - [ ] 9.9.1 Изменить `GetSingleDensity` / `GetKernelDensityEstimate` на работу с raw-значениями вместо normalized [0,1]
@@ -200,6 +200,6 @@
 ## Известные проблемы текущей версии
 
 - KDE считается на нормализованных [0,1] значениях — переход на raw-значения отложен (Этап 9.9)
-- Дублирование методов классификации/плотностей (regular vs zScore) — Этап 9.8.4–9.8.7
+- Дублирование методов классификации/плотностей (regular vs zScore) — **FIXED** (Этап 9.8.4–9.8.7)
 - Окно "About" / "Help" отсутствует
 - Локализация отсутствует
