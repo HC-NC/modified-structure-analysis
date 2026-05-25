@@ -25,8 +25,6 @@ namespace modified_structure_analysis.Forms
             _rule = existingRule ?? new ClassificationRule();
             _oldRule = (ClassificationRule)_rule.Clone();
 
-            _colorBtn.BackColor = _rule.Color;
-
             Text = _isEdit ? "Edit Rule" : "Add Rule";
         }
 
@@ -99,19 +97,6 @@ namespace modified_structure_analysis.Forms
                 index = _conditionsListBox.Items.Count - 1;
 
             _conditionsListBox.SelectedIndex = index;
-        }
-
-        private void ColorBtn_Click(object? sender, EventArgs e)
-        {
-            using (var colorDialog = new ColorDialog())
-            {
-                colorDialog.Color = _rule.Color;
-                if (colorDialog.ShowDialog() == DialogResult.OK)
-                {
-                    _rule.Color = colorDialog.Color;
-                    _colorBtn.BackColor = _rule.Color;
-                }
-            }
         }
 
         private void Close_Click(object sender, EventArgs e)

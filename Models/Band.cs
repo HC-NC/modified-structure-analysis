@@ -22,16 +22,15 @@ public class Band
     private float _noDataValue = float.NaN;
     private double _gdalNoDataValue;
     private bool _hasGdalNoData;
-    private double[] _gdalMinMax = new double[2];
     private GeoTransform? _geoTransform;
 
-    private float _sum;
-    private int _count;
+    private float _sum = 0;
+    private int _count = 0;
     private float _minimum = float.MaxValue;
     private float _maximum = float.MinValue;
 
-    private float _mean;
-    private float _sigma;
+    private float _mean = 0;
+    private float _stdev = 0;
     private float _variance;
     private float _skewness;
     private float _kurtosis;
@@ -72,7 +71,7 @@ public class Band
     [DisplayName("Standard deviation")]
     [Description("Standard deviation of sample values")]
     [Category("Statistics")]
-    public float Sigma => _sigma;
+    public float StDev => _stdev;
 
     [DisplayName("Variance")]
     [Description("Variance of sample values")]
@@ -142,10 +141,12 @@ public class Band
         _spatialData[(x, y)] = value;
     }
 
-    public void SetMinMax(float min, float max)
+    public void SetStats(float min, float max, float mean, float stdev)
     {
         _minimum = min;
         _maximum = max;
+        _mean = mean;
+        _stdev = stdev;
     }
 
     public void SetGeoTransform(GeoTransform transform)
@@ -153,15 +154,13 @@ public class Band
         _geoTransform = transform;
     }
 
-    public void SetSource(string filePath, int bandIndex, double noDataValue, bool hasNoData, double min, double max)
+    public void SetSource(string filePath, int bandIndex, double noDataValue, bool hasNoData)
     {
         _sourceFilePath = filePath;
         _sourceBandIndex = bandIndex;
         _isGdalSource = true;
         _gdalNoDataValue = noDataValue;
         _hasGdalNoData = hasNoData;
-        _gdalMinMax[0] = min;
-        _gdalMinMax[1] = max;
     }
 
     public bool CanReload => _isGdalSource && _sourceFilePath != null && File.Exists(_sourceFilePath);
@@ -264,7 +263,7 @@ public class Band
         _minimum = min;
         _maximum = max;
         _mean = mean;
-        _sigma = sigma;
+        _stdev = sigma;
         _variance = variance;
         _skewness = skewness;
         _kurtosis = kurtosis;
@@ -325,8 +324,8 @@ public class Band
         float val = GetPixelValue(pixelIndex);
         if (float.IsNaN(val))
             return 0;
-        if (_sigma == 0)
+        if (_stdev == 0)
             return 0;
-        return (val - _mean) / _sigma;
+        return (val - _mean) / _stdev;
     }
 }

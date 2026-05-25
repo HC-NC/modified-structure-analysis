@@ -53,7 +53,7 @@
             splitContainer2 = new SplitContainer();
             dataTabControl = new TabControl();
             viewportTabPage = new TabPage();
-            viewport1 = new modified_structure_analysis.Forms.Viewport();
+            viewport1 = new Viewport();
             toolStrip1 = new ToolStrip();
             redToolStripDropDownButton = new ToolStripDropDownButton();
             greenToolStripDropDownButton = new ToolStripDropDownButton();
@@ -89,7 +89,6 @@
             splitContainer8 = new SplitContainer();
             splitContainer9 = new SplitContainer();
             dataGridView1 = new DataGridView();
-            dataGridViewImageColumn1 = new DataGridViewImageColumn();
             dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
             richTextBox1 = new RichTextBox();
@@ -99,18 +98,22 @@
             toolStripSeparator7 = new ToolStripSeparator();
             toolStripButton12 = new ToolStripButton();
             toolStripButton13 = new ToolStripButton();
+            ClassificationModeToolStripComboBox = new ToolStripComboBox();
+            toolStripButton16 = new ToolStripButton();
+            toolStripSeparator9 = new ToolStripSeparator();
+            toolStripButton15 = new ToolStripButton();
             toolStripButtonExport = new ToolStripButton();
             tabControl3 = new TabControl();
             tabPage8 = new TabPage();
-            viewport3 = new modified_structure_analysis.Forms.Viewport();
+            viewport3 = new Viewport();
             toolStrip5 = new ToolStrip();
             toolStripButton14 = new ToolStripButton();
+            toolStripButton9 = new ToolStripButton();
             tabPage9 = new TabPage();
             tabPage7 = new TabPage();
             splitContainer4 = new SplitContainer();
             splitContainer7 = new SplitContainer();
             ruleDataGridView = new DataGridView();
-            ColorColumn = new DataGridViewImageColumn();
             NameColumn = new DataGridViewTextBoxColumn();
             EditColumn = new DataGridViewButtonColumn();
             conditionsRichTextBox = new RichTextBox();
@@ -125,7 +128,7 @@
             toolStripButton6 = new ToolStripButton();
             tabControl1 = new TabControl();
             tabPage4 = new TabPage();
-            viewport2 = new modified_structure_analysis.Forms.Viewport();
+            viewport2 = new Viewport();
             toolStrip2 = new ToolStrip();
             compareToolStripButton = new ToolStripButton();
             tabPage5 = new TabPage();
@@ -139,11 +142,6 @@
             toolStripSeparator5 = new ToolStripSeparator();
             removeToolStripMenuItem = new ToolStripMenuItem();
             backgroundWorker = new System.ComponentModel.BackgroundWorker();
-            toolStripButton9 = new ToolStripButton();
-            ClassificationModeToolStripComboBox = new ToolStripComboBox();
-            toolStripSeparator9 = new ToolStripSeparator();
-            toolStripButton15 = new ToolStripButton();
-            toolStripButton16 = new ToolStripButton();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -236,7 +234,7 @@
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
-            openToolStripMenuItem.Size = new Size(223, 34);
+            openToolStripMenuItem.Size = new Size(345, 34);
             openToolStripMenuItem.Text = "Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
@@ -244,7 +242,7 @@
             // 
             exportGraphToolStripMenuItem.Name = "exportGraphToolStripMenuItem";
             exportGraphToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.G;
-            exportGraphToolStripMenuItem.Size = new Size(223, 34);
+            exportGraphToolStripMenuItem.Size = new Size(345, 34);
             exportGraphToolStripMenuItem.Text = "Export Graph…";
             exportGraphToolStripMenuItem.Click += ExportActivePlot;
             // 
@@ -252,20 +250,20 @@
             // 
             exportClassificationToolStripMenuItem.Name = "exportClassificationToolStripMenuItem";
             exportClassificationToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.E;
-            exportClassificationToolStripMenuItem.Size = new Size(223, 34);
+            exportClassificationToolStripMenuItem.Size = new Size(345, 34);
             exportClassificationToolStripMenuItem.Text = "Export Classification…";
             exportClassificationToolStripMenuItem.Click += ExportClassification;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(220, 6);
+            toolStripSeparator1.Size = new Size(342, 6);
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
-            exitToolStripMenuItem.Size = new Size(223, 34);
+            exitToolStripMenuItem.Size = new Size(345, 34);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
@@ -854,29 +852,20 @@
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.ColumnHeadersVisible = false;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { dataGridViewImageColumn1, dataGridViewTextBoxColumn1, dataGridViewButtonColumn1 });
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewButtonColumn1 });
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(0, 0);
             dataGridView1.MultiSelect = false;
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.RowHeadersVisible = false;
             dataGridView1.RowHeadersWidth = 62;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(400, 482);
             dataGridView1.TabIndex = 8;
             dataGridView1.CellClick += FirstGrid_CellClick;
             dataGridView1.CellMouseClick += FirstGrid_CellMouseClick;
+            dataGridView1.RowPrePaint += dataGridView_RowPrePaint;
             dataGridView1.SelectionChanged += FirstGrid_SelectionChanged;
-            // 
-            // dataGridViewImageColumn1
-            // 
-            dataGridViewImageColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewImageColumn1.HeaderText = "Color";
-            dataGridViewImageColumn1.MinimumWidth = 8;
-            dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
-            dataGridViewImageColumn1.ReadOnly = true;
-            dataGridViewImageColumn1.Width = 32;
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -963,6 +952,47 @@
             toolStripButton13.Text = "↓";
             toolStripButton13.Click += FirstStageMoveDown_Click;
             // 
+            // ClassificationModeToolStripComboBox
+            // 
+            ClassificationModeToolStripComboBox.Alignment = ToolStripItemAlignment.Right;
+            ClassificationModeToolStripComboBox.Items.AddRange(new object[] { "RulePerClass", "DirectCheck" });
+            ClassificationModeToolStripComboBox.Name = "ClassificationModeToolStripComboBox";
+            ClassificationModeToolStripComboBox.Size = new Size(121, 34);
+            ClassificationModeToolStripComboBox.Text = "RulePerClass";
+            // 
+            // toolStripButton16
+            // 
+            toolStripButton16.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton16.ImageTransparentColor = Color.Magenta;
+            toolStripButton16.Name = "toolStripButton16";
+            toolStripButton16.Size = new Size(48, 29);
+            toolStripButton16.Text = "Calc";
+            toolStripButton16.Click += FirstStageClassify_Click;
+            // 
+            // toolStripSeparator9
+            // 
+            toolStripSeparator9.Name = "toolStripSeparator9";
+            toolStripSeparator9.Size = new Size(6, 34);
+            // 
+            // toolStripButton15
+            // 
+            toolStripButton15.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton15.Image = (Image)resources.GetObject("toolStripButton15.Image");
+            toolStripButton15.ImageTransparentColor = Color.Magenta;
+            toolStripButton15.Name = "toolStripButton15";
+            toolStripButton15.Size = new Size(55, 29);
+            toolStripButton15.Text = "Auto";
+            toolStripButton15.Click += AutoButton_Click;
+            // 
+            // toolStripButtonExport
+            // 
+            toolStripButtonExport.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButtonExport.ImageTransparentColor = Color.Magenta;
+            toolStripButtonExport.Name = "toolStripButtonExport";
+            toolStripButtonExport.Size = new Size(67, 29);
+            toolStripButtonExport.Text = "Export";
+            toolStripButtonExport.Click += ExportClassification;
+            // 
             // tabControl3
             // 
             tabControl3.Alignment = TabAlignment.Bottom;
@@ -1018,12 +1048,21 @@
             toolStripButton14.Text = "Compare";
             toolStripButton14.Click += compareToolStripButton_Click;
             // 
+            // toolStripButton9
+            // 
+            toolStripButton9.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton9.Image = (Image)resources.GetObject("toolStripButton9.Image");
+            toolStripButton9.ImageTransparentColor = Color.Magenta;
+            toolStripButton9.Name = "toolStripButton9";
+            toolStripButton9.Size = new Size(42, 29);
+            toolStripButton9.Text = "GO";
+            // 
             // tabPage9
             // 
             tabPage9.Location = new Point(4, 4);
             tabPage9.Name = "tabPage9";
             tabPage9.Padding = new Padding(3);
-            tabPage9.Size = new Size(838, 553);
+            tabPage9.Size = new Size(738, 553);
             tabPage9.TabIndex = 1;
             tabPage9.Text = "Analysis";
             tabPage9.UseVisualStyleBackColor = true;
@@ -1085,29 +1124,20 @@
             ruleDataGridView.AllowUserToResizeRows = false;
             ruleDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             ruleDataGridView.ColumnHeadersVisible = false;
-            ruleDataGridView.Columns.AddRange(new DataGridViewColumn[] { ColorColumn, NameColumn, EditColumn });
+            ruleDataGridView.Columns.AddRange(new DataGridViewColumn[] { NameColumn, EditColumn });
             ruleDataGridView.Dock = DockStyle.Fill;
             ruleDataGridView.Location = new Point(0, 0);
             ruleDataGridView.MultiSelect = false;
             ruleDataGridView.Name = "ruleDataGridView";
             ruleDataGridView.ReadOnly = true;
-            ruleDataGridView.RowHeadersVisible = false;
             ruleDataGridView.RowHeadersWidth = 62;
             ruleDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             ruleDataGridView.Size = new Size(300, 356);
             ruleDataGridView.TabIndex = 8;
             ruleDataGridView.CellClick += DataGridView1_CellClick;
             ruleDataGridView.CellMouseClick += ruleDataGridView_CellMouseClick;
+            ruleDataGridView.RowPrePaint += dataGridView_RowPrePaint;
             ruleDataGridView.SelectionChanged += dataGridView1_SelectionChanged;
-            // 
-            // ColorColumn
-            // 
-            ColorColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            ColorColumn.HeaderText = "Color";
-            ColorColumn.MinimumWidth = 8;
-            ColorColumn.Name = "ColorColumn";
-            ColorColumn.ReadOnly = true;
-            ColorColumn.Width = 32;
             // 
             // NameColumn
             // 
@@ -1352,56 +1382,6 @@
             backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
             backgroundWorker.RunWorkerCompleted += backgroundWorker_RunWorkerCompleted;
             // 
-            // toolStripButton9
-            // 
-            toolStripButton9.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton9.Image = (Image)resources.GetObject("toolStripButton9.Image");
-            toolStripButton9.ImageTransparentColor = Color.Magenta;
-            toolStripButton9.Name = "toolStripButton9";
-            toolStripButton9.Size = new Size(42, 29);
-            toolStripButton9.Text = "GO";
-            // 
-            // ClassificationModeToolStripComboBox
-            // 
-            ClassificationModeToolStripComboBox.Alignment = ToolStripItemAlignment.Right;
-            ClassificationModeToolStripComboBox.Items.AddRange(new object[] { "RulePerClass", "DirectCheck" });
-            ClassificationModeToolStripComboBox.Name = "ClassificationModeToolStripComboBox";
-            ClassificationModeToolStripComboBox.Size = new Size(121, 34);
-            ClassificationModeToolStripComboBox.Text = "RulePerClass";
-            // 
-            // toolStripButton16
-            // 
-            toolStripButton16.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton16.ImageTransparentColor = Color.Magenta;
-            toolStripButton16.Name = "toolStripButton16";
-            toolStripButton16.Size = new Size(48, 29);
-            toolStripButton16.Text = "Calc";
-            toolStripButton16.Click += FirstStageClassify_Click;
-            // 
-            // toolStripSeparator9
-            // 
-            toolStripSeparator9.Name = "toolStripSeparator9";
-            toolStripSeparator9.Size = new Size(6, 34);
-            // 
-            // toolStripButton15
-            // 
-            toolStripButton15.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton15.Image = (Image)resources.GetObject("toolStripButton15.Image");
-            toolStripButton15.ImageTransparentColor = Color.Magenta;
-            toolStripButton15.Name = "toolStripButton15";
-            toolStripButton15.Size = new Size(55, 29);
-            toolStripButton15.Text = "Auto";
-            toolStripButton15.Click += AutoButton_Click;
-            // 
-            // toolStripButtonExport
-            // 
-            toolStripButtonExport.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButtonExport.ImageTransparentColor = Color.Magenta;
-            toolStripButtonExport.Name = "toolStripButtonExport";
-            toolStripButtonExport.Size = new Size(60, 29);
-            toolStripButtonExport.Text = "Export";
-            toolStripButtonExport.Click += ExportClassification;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -1569,9 +1549,6 @@
         private ToolStripButton toolStripButton6;
         private SplitContainer splitContainer7;
         private RichTextBox conditionsRichTextBox;
-        private DataGridViewImageColumn ColorColumn;
-        private DataGridViewTextBoxColumn NameColumn;
-        private DataGridViewButtonColumn EditColumn;
         private ToolStripButton compareToolStripButton;
         private ContextMenuStrip ruleContextMenuStrip;
         private ToolStripMenuItem editToolStripMenuItem;
@@ -1589,9 +1566,6 @@
         private SplitContainer splitContainer8;
         private SplitContainer splitContainer9;
         private DataGridView dataGridView1;
-        private DataGridViewImageColumn dataGridViewImageColumn1;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private DataGridViewButtonColumn dataGridViewButtonColumn1;
         private RichTextBox richTextBox1;
         private ToolStrip toolStrip4;
         private ToolStripButton toolStripButton8;
@@ -1615,5 +1589,9 @@
         private SaveFileDialog saveFileDialog1;
         private ToolStripMenuItem exportGraphToolStripMenuItem;
         private ToolStripMenuItem exportClassificationToolStripMenuItem;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewButtonColumn dataGridViewButtonColumn1;
+        private DataGridViewTextBoxColumn NameColumn;
+        private DataGridViewButtonColumn EditColumn;
     }
 }

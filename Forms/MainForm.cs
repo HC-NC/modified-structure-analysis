@@ -58,22 +58,22 @@ namespace modified_structure_analysis.Forms
             _loadWorker = new BackgroundWorker { WorkerReportsProgress = true };
             _loadWorker.DoWork += LoadWorker_DoWork;
             _loadWorker.RunWorkerCompleted += LoadWorker_RunWorkerCompleted;
-            _loadWorker.ProgressChanged += (_, args) => mainStatusLabel.Text = args.UserState?.ToString() ?? "";
+            _loadWorker.ProgressChanged += backgroundWorker_ProgressChanged;
 
             _statsWorker = new BackgroundWorker { WorkerReportsProgress = true };
             _statsWorker.DoWork += StatsWorker_DoWork;
             _statsWorker.RunWorkerCompleted += StatsWorker_RunWorkerCompleted;
-            _statsWorker.ProgressChanged += (_, args) => mainStatusLabel.Text = args.UserState?.ToString() ?? "";
+            _statsWorker.ProgressChanged += backgroundWorker_ProgressChanged;
 
             _kdeWorker = new BackgroundWorker { WorkerReportsProgress = true };
             _kdeWorker.DoWork += KdeWorker_DoWork;
             _kdeWorker.RunWorkerCompleted += KdeWorker_RunWorkerCompleted;
-            _kdeWorker.ProgressChanged += (_, args) => mainStatusLabel.Text = args.UserState?.ToString() ?? "";
+            _kdeWorker.ProgressChanged += backgroundWorker_ProgressChanged;
 
             _scatterWorker = new BackgroundWorker { WorkerReportsProgress = true };
             _scatterWorker.DoWork += ScatterWorker_DoWork;
             _scatterWorker.RunWorkerCompleted += ScatterWorker_RunWorkerCompleted;
-            _scatterWorker.ProgressChanged += (_, args) => mainStatusLabel.Text = args.UserState?.ToString() ?? "";
+            _scatterWorker.ProgressChanged += backgroundWorker_ProgressChanged;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -108,10 +108,7 @@ namespace modified_structure_analysis.Forms
         {
             if (e.RowIndex < 0) return;
 
-            if (e.ColumnIndex == 0)
-                ChangeRuleColor(sender, e);
-
-            if (e.ColumnIndex == 2)
+            if (e.ColumnIndex == 1)
             {
                 var rule = _secondStageRules[e.RowIndex];
 
@@ -378,8 +375,7 @@ namespace modified_structure_analysis.Forms
                 int rowIndex = ruleDataGridView.Rows.Add();
                 var row = ruleDataGridView.Rows[rowIndex];
 
-                row.Cells[0].Value = CreateColorBitmap(rule.Color);
-                row.Cells[1].Value = rule.GenerateName();
+                row.Cells[0].Value = rule.GenerateName();
             }
         }
 
@@ -496,20 +492,31 @@ namespace modified_structure_analysis.Forms
 
             grid.Columns.Add(new DataGridViewImageColumn
             {
-                HeaderText = "Color", Width = 40, AutoSizeMode = DataGridViewAutoSizeColumnMode.None, ReadOnly = true
+                HeaderText = "Color",
+                Width = 40,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
+                ReadOnly = true
             });
             grid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                HeaderText = "Class", ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                HeaderText = "Class",
+                ReadOnly = true,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             });
             grid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                HeaderText = "Pixels", ReadOnly = true, Width = 80, AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+                HeaderText = "Pixels",
+                ReadOnly = true,
+                Width = 80,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
             });
             grid.Columns.Add(new DataGridViewButtonColumn
             {
-                HeaderText = "", Text = "Change", UseColumnTextForButtonValue = true,
-                Width = 80, AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+                HeaderText = "",
+                Text = "Change",
+                UseColumnTextForButtonValue = true,
+                Width = 80,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
             });
 
             var stats = result.GetClassStatistics();
@@ -1184,8 +1191,7 @@ namespace modified_structure_analysis.Forms
                             else if (ds.RasterCount > 1)
                                 bandName += $"_{i}";
 
-                            double[] minmax = new double[2];
-                            gdalBand.ComputeRasterMinMax(minmax, 0);
+                            gdalBand.ComputeStatistics(false, out double min, out double max, out double mean, out double stdev, null, null);
 
                             double gdalNoDataValue = 0;
                             int hasNoData = 0;
@@ -1194,8 +1200,8 @@ namespace modified_structure_analysis.Forms
                             Band band = new Band(bandName);
                             band.SetDimensions(width, height);
                             band.SetGeoTransform(geo);
-                            band.SetMinMax((float)minmax[0], (float)minmax[1]);
-                            band.SetSource(fileName, i, gdalNoDataValue, hasNoData != 0, minmax[0], minmax[1]);
+                            band.SetStats((float)min, (float)max, (float)mean, (float)stdev);
+                            band.SetSource(fileName, i, gdalNoDataValue, hasNoData != 0);
 
                             bands.Add(band);
                         }
@@ -1416,8 +1422,7 @@ namespace modified_structure_analysis.Forms
                             else if (ds.RasterCount > 1)
                                 bandName += $"_{i}";
 
-                            double[] minmax = new double[2];
-                            gdalBand.ComputeRasterMinMax(minmax, 0);
+                            gdalBand.ComputeStatistics(false, out double min, out double max, out double mean, out double stdev, null, null);
 
                             float[] values = new float[width * height];
                             gdalBand.ReadRaster(0, 0, width, height, values, width, height, 0, 0);
@@ -1430,7 +1435,7 @@ namespace modified_structure_analysis.Forms
                             Band band = new Band(bandName);
                             band.SetDimensions(width, height);
                             band.SetGeoTransform(_geoTransform);
-                            band.SetMinMax((float)minmax[0], (float)minmax[1]);
+                            band.SetStats((float)min, (float)max, (float)mean, (float)stdev);
                             for (int idx = 0; idx < values.Length; idx++)
                             {
                                 float v = values[idx];
@@ -1470,7 +1475,7 @@ namespace modified_structure_analysis.Forms
                 int bandNum = int.Parse(bandNumMatch.Groups[1].Value);
                 return bandNum switch
                 {
-                    1 => "UltraBlue",
+                    1 => "Costal",
                     2 => "Blue",
                     3 => "Green",
                     4 => "Red",
@@ -1774,7 +1779,7 @@ namespace modified_structure_analysis.Forms
                         float vy = bandY.GetPixelValue(i);
                         if (!float.IsNaN(vx) && !float.IsNaN(vy))
                         {
-                            sum += F(vx, bandX.Mean, bandX.Sigma) * F(vy, bandY.Mean, bandY.Sigma);
+                            sum += F(vx, bandX.Mean, bandX.StDev) * F(vy, bandY.Mean, bandY.StDev);
                             validPairs++;
                         }
                     }
@@ -2100,7 +2105,7 @@ namespace modified_structure_analysis.Forms
             }
         }
 
-        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void backgroundWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
         {
             mainStatusLabel.Text = e.UserState?.ToString();
             mainProgressBar.Value = e.ProgressPercentage;
@@ -2142,10 +2147,7 @@ namespace modified_structure_analysis.Forms
         {
             if (e.RowIndex < 0) return;
 
-            if (e.ColumnIndex == 0)
-                ChangeFirstRuleColor(e.RowIndex);
-
-            if (e.ColumnIndex == 2)
+            if (e.ColumnIndex == 1)
             {
                 if (e.RowIndex < _firstStageRules.Count)
                 {
@@ -2239,136 +2241,9 @@ namespace modified_structure_analysis.Forms
             {
                 int rowIndex = dataGridView1.Rows.Add();
                 var row = dataGridView1.Rows[rowIndex];
-                row.Cells[0].Value = CreateColorBitmap(rule.Color);
-                row.Cells[1].Value = rule.GenerateName();
+                row.Cells[0].Value = rule.GenerateName();
             }
         }
-
-        //public void ApplyPlotSettings(PlotModel model)
-        //{
-        //    foreach (var axis in model.Axes)
-        //    {
-        //        if (axis.Position == AxisPosition.Bottom)
-        //            _plotSettings.XAxis.ApplyToAxis(axis);
-        //        else if (axis.Position == AxisPosition.Left || axis.Position == AxisPosition.Right)
-        //            _plotSettings.YAxis.ApplyToAxis(axis);
-        //    }
-
-        //    if (_plotSettings.Legend.IsVisible)
-        //    {
-        //        if (model.Legends.Count == 0)
-        //            model.Legends.Add(new Legend());
-        //        model.Legends[0].LegendPosition = _plotSettings.Legend.Position;
-        //    }
-
-        //    foreach (var axis in model.Axes)
-        //    {
-        //        axis.MajorGridlineStyle = _plotSettings.Grid.IsVisible ? LineStyle.Solid : LineStyle.None;
-        //        axis.MinorGridlineStyle = _plotSettings.Grid.IsMinorGridVisible ? LineStyle.Dot : LineStyle.None;
-        //    }
-        //}
-
-        //public PlotSettings GetPlotSettings() => _plotSettings;
-
-        //public void SetPlotSettings(PlotSettings settings)
-        //{
-        //    _plotSettings = settings;
-        //}
-
-        //public void SetAxisMinMax(double? xMin, double? xMax, double? yMin, double? yMax)
-        //{
-        //    _plotSettings.XAxis.Minimum = xMin;
-        //    _plotSettings.XAxis.Maximum = xMax;
-        //    _plotSettings.YAxis.Minimum = yMin;
-        //    _plotSettings.YAxis.Maximum = yMax;
-        //}
-
-        //public void SetAxisLogarithmic(bool xLog, bool yLog)
-        //{
-        //    _plotSettings.XAxis.IsLogarithmic = xLog;
-        //    _plotSettings.YAxis.IsLogarithmic = yLog;
-        //}
-
-        //public void SetLegendVisible(bool visible)
-        //{
-        //    _plotSettings.Legend.IsVisible = visible;
-        //}
-
-        //public void SetLegendPosition(LegendPosition position)
-        //{
-        //    _plotSettings.Legend.Position = position;
-        //}
-
-        //public void SetGridVisible(bool visible)
-        //{
-        //    _plotSettings.Grid.IsVisible = visible;
-        //}
-
-        //public void RefreshAllPlots()
-        //{
-        //    if (histogramPlotView?.Model != null)
-        //        ApplyPlotSettings(histogramPlotView.Model);
-        //    if (scatterPlotView?.Model != null)
-        //        ApplyPlotSettings(scatterPlotView.Model);
-        //    if (profilePlotView?.Model != null)
-        //        ApplyPlotSettings(profilePlotView.Model);
-        //    if (kdePlotView?.Model != null)
-        //        ApplyPlotSettings(kdePlotView.Model);
-        //    if (kdePlotView?.Model != null)
-        //        ApplyPlotSettings(kdePlotView.Model);
-        //}
-
-        //private void OpenPlotSettings(object? sender, EventArgs e)
-        //{
-        //    var form = new Form { Text = "Plot Settings", Width = 400, Height = 350, StartPosition = FormStartPosition.CenterParent };
-
-        //    var chkLegend = new CheckBox { Text = "Show Legend", Left = 20, Top = 20, Width = 150, Checked = _plotSettings.Legend.IsVisible };
-        //    chkLegend.CheckedChanged += (s, args) => { _plotSettings.Legend.IsVisible = chkLegend.Checked; };
-
-        //    var chkGrid = new CheckBox { Text = "Show Grid", Left = 20, Top = 50, Width = 150, Checked = _plotSettings.Grid.IsVisible };
-        //    chkGrid.CheckedChanged += (s, args) => { _plotSettings.Grid.IsVisible = chkGrid.Checked; };
-
-        //    var lblXMin = new Label { Left = 20, Top = 90, Width = 80, Text = "X Min:" };
-        //    var txtXMin = new TextBox { Left = 100, Top = 88, Width = 80 };
-        //    if (_plotSettings.XAxis.Minimum.HasValue) txtXMin.Text = _plotSettings.XAxis.Minimum.Value.ToString();
-
-        //    var lblXMax = new Label { Left = 190, Top = 90, Width = 80, Text = "X Max:" };
-        //    var txtXMax = new TextBox { Left = 270, Top = 88, Width = 80 };
-        //    if (_plotSettings.XAxis.Maximum.HasValue) txtXMax.Text = _plotSettings.XAxis.Maximum.Value.ToString();
-
-        //    var lblYMin = new Label { Left = 20, Top = 130, Width = 80, Text = "Y Min:" };
-        //    var txtYMin = new TextBox { Left = 100, Top = 128, Width = 80 };
-        //    if (_plotSettings.YAxis.Minimum.HasValue) txtYMin.Text = _plotSettings.YAxis.Minimum.Value.ToString();
-
-        //    var lblYMax = new Label { Left = 190, Top = 130, Width = 80, Text = "Y Max:" };
-        //    var txtYMax = new TextBox { Left = 270, Top = 128, Width = 80 };
-        //    if (_plotSettings.YAxis.Maximum.HasValue) txtYMax.Text = _plotSettings.YAxis.Maximum.Value.ToString();
-
-        //    var cmbLegendPos = new ComboBox { Left = 100, Top = 170, Width = 150 };
-        //    cmbLegendPos.Items.AddRange(new string[] { "Right Top", "Left Top", "Top Right", "Top Left" });
-        //    cmbLegendPos.SelectedIndex = 0;
-        //    var lblLegendPos = new Label { Left = 20, Top = 172, Width = 80, Text = "Legend:" };
-
-        //    var btnApply = new Button { Text = "Apply", Left = 100, Top = 220, Width = 80 };
-        //    btnApply.Click += (s, args) =>
-        //    {
-        //        if (double.TryParse(txtXMin.Text, out double xMin)) _plotSettings.XAxis.Minimum = xMin;
-        //        if (double.TryParse(txtXMax.Text, out double xMax)) _plotSettings.XAxis.Maximum = xMax;
-        //        if (double.TryParse(txtYMin.Text, out double yMin)) _plotSettings.YAxis.Minimum = yMin;
-        //        if (double.TryParse(txtYMax.Text, out double yMax)) _plotSettings.YAxis.Maximum = yMax;
-
-        //        _plotSettings.Legend.IsVisible = chkLegend.Checked;
-        //        _plotSettings.Grid.IsVisible = chkGrid.Checked;
-
-        //        RefreshAllPlots();
-        //    };
-
-        //    var btnClose = new Button { Text = "Close", Left = 190, Top = 220, Width = 80 };
-        //    btnClose.Click += (s, args) => form.Close();
-
-        //    form.Controls.AddRange(new Control[] { chkLegend, chkGrid, lblXMin, txtXMin, lblXMax, txtXMax, lblYMin, txtYMin, lblYMax, txtYMax, cmbLegendPos, lblLegendPos, btnApply, btnClose });
-        //    form.ShowDialog();
-        //}
 
         public void ExportActivePlot(object? sender, EventArgs e)
         {
@@ -2474,6 +2349,12 @@ namespace modified_structure_analysis.Forms
         {
             using var dlg = new SaveFileDialog { Filter = filter };
             return dlg.ShowDialog() == DialogResult.OK ? dlg.FileName : null;
+        }
+
+        private void dataGridView_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            if (sender is DataGridView dataGridView)
+                dataGridView.Rows[e.RowIndex].HeaderCell.Value = (e.RowIndex + 1).ToString();
         }
     }
 }

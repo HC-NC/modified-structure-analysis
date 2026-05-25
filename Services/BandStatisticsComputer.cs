@@ -10,27 +10,34 @@ public static class BandStatisticsComputer
         if (pixelCount == 0)
             return;
 
-        int count = 0;
-        float sum = 0;
-        float min = float.MaxValue;
-        float max = float.MinValue;
+        int count = band.Count;
+        float sum = band.Sum;
+        float min = band.Minimum;
+        float max = band.Maximum;
+        float mean = band.Mean;
 
-        for (int i = 0; i < pixelCount; i++)
+        if (count == 0 || sum == 0 || min == float.MaxValue || max == float.MinValue)
         {
-            float v = band.GetPixelValue(i);
-            if (!float.IsNaN(v))
+            for (int i = 0; i < pixelCount; i++)
             {
-                count++;
-                sum += v;
-                if (v < min) min = v;
-                if (v > max) max = v;
+                float v = band.GetPixelValue(i);
+                if (!float.IsNaN(v))
+                {
+                    count++;
+                    sum += v;
+                    if (v < min) min = v;
+                    if (v > max) max = v;
+                }
             }
+
+
+
+            if (count == 0)
+                return;
         }
 
-        if (count == 0)
-            return;
-
-        float mean = sum / count;
+        if (mean == 0)
+            mean = sum / count;
 
         float variance = 0;
         float skewness = 0;
@@ -50,19 +57,19 @@ public static class BandStatisticsComputer
         }
 
         variance /= count - 1;
-        float sigma = MathF.Sqrt(variance);
+        float stdev = MathF.Sqrt(variance);
 
-        if (sigma > 0)
+        if (stdev > 0)
         {
-            float sigma3 = sigma * sigma * sigma;
-            float sigma4 = sigma3 * sigma;
+            float sigma3 = stdev * stdev * stdev;
+            float sigma4 = sigma3 * stdev;
             skewness /= count * sigma3;
             kurtosis = kurtosis / (count * sigma4) - 3;
         }
 
-        float kernelC = (float)KernelFunctions.GetDefaultBandwidth(sigma, count);
+        float kernelC = (float)KernelFunctions.GetDefaultBandwidth(stdev, count);
         float normalizeKernelC = kernelC / (max - min);
 
-        band.SetStatistics(count, sum, min, max, mean, sigma, variance, skewness, kurtosis, kernelC, normalizeKernelC);
+        band.SetStatistics(count, sum, min, max, mean, stdev, variance, skewness, kurtosis, kernelC, normalizeKernelC);
     }
 }
