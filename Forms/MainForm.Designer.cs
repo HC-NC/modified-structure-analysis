@@ -58,8 +58,6 @@
             redToolStripDropDownButton = new ToolStripDropDownButton();
             greenToolStripDropDownButton = new ToolStripDropDownButton();
             blueToolStripDropDownButton = new ToolStripDropDownButton();
-            toolStripSeparator2 = new ToolStripSeparator();
-            toolStripButton1 = new ToolStripButton();
             histogramTabPage = new TabPage();
             histogramPlotView = new OxyPlot.WindowsForms.PlotView();
             explorationTabPage = new TabPage();
@@ -432,7 +430,7 @@
             // 
             toolStrip1.GripStyle = ToolStripGripStyle.Hidden;
             toolStrip1.ImageScalingSize = new Size(24, 24);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { redToolStripDropDownButton, greenToolStripDropDownButton, blueToolStripDropDownButton, toolStripSeparator2, toolStripButton1 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { redToolStripDropDownButton, greenToolStripDropDownButton, blueToolStripDropDownButton });
             toolStrip1.Location = new Point(3, 3);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(846, 34);
@@ -464,21 +462,6 @@
             blueToolStripDropDownButton.Overflow = ToolStripItemOverflow.Never;
             blueToolStripDropDownButton.Size = new Size(87, 29);
             blueToolStripDropDownButton.Text = "Blue";
-            // 
-            // toolStripSeparator2
-            // 
-            toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(6, 34);
-            // 
-            // toolStripButton1
-            // 
-            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
-            toolStripButton1.ImageTransparentColor = Color.Magenta;
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new Size(63, 29);
-            toolStripButton1.Text = "Apply";
-            toolStripButton1.Click += UpdateImage;
             // 
             // histogramTabPage
             // 
@@ -1508,8 +1491,6 @@
         private ToolStripDropDownButton redToolStripDropDownButton;
         private ToolStripDropDownButton greenToolStripDropDownButton;
         private ToolStripDropDownButton blueToolStripDropDownButton;
-        private ToolStripSeparator toolStripSeparator2;
-        private ToolStripButton toolStripButton1;
         private OxyPlot.WindowsForms.PlotView histogramPlotView;
         private TabPage classificationTabPage;
         private Forms.Viewport viewport1;

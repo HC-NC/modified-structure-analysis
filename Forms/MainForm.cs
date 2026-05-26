@@ -920,11 +920,11 @@ namespace modified_structure_analysis.Forms
                 bandListBox.Items.Add(band);
 
                 redToolStripDropDownButton.DropDownItems.Add(band.Name, null, (object? sender, EventArgs e) =>
-                { _redBand = band; redToolStripDropDownButton.Text = _redBand.ToString(); });
+                { _redBand = band; redToolStripDropDownButton.Text = _redBand.ToString(); UpdateImage(sender, e); });
                 greenToolStripDropDownButton.DropDownItems.Add(band.Name, null, (object? sender, EventArgs e) =>
-                { _greenBand = band; greenToolStripDropDownButton.Text = _greenBand.ToString(); });
+                { _greenBand = band; greenToolStripDropDownButton.Text = _greenBand.ToString(); UpdateImage(sender, e); });
                 blueToolStripDropDownButton.DropDownItems.Add(band.Name, null, (object? sender, EventArgs e) =>
-                { _blueBand = band; blueToolStripDropDownButton.Text = _blueBand.ToString(); });
+                { _blueBand = band; blueToolStripDropDownButton.Text = _blueBand.ToString(); UpdateImage(sender, e); });
 
                 scatterXListBox.Items.Add(band);
                 scatterYListBox.Items.Add(band);
@@ -936,7 +936,7 @@ namespace modified_structure_analysis.Forms
             bandListBox.SelectedIndex = 0;
         }
 
-        private void UpdateImage(object sender, EventArgs e)
+        private void UpdateImage(object? sender, EventArgs e)
         {
             if (_width == 0 || _height == 0)
                 return;

@@ -34,7 +34,7 @@ public static class ClassificationExporter
         if (driver == null)
             throw new InvalidOperationException("GTiff driver not available.");
 
-        using var ds = driver.Create(path, width, height, 1, DataType.GDT_Byte,
+        using var ds = driver.Create(path, width, height, 1, DataType.GDT_UInt16,
             new[] { "COMPRESS=LZW", "TILED=YES" });
 
         if (includeGeoTransform && bands != null && bands.Count > 0)
