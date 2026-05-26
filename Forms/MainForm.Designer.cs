@@ -106,7 +106,6 @@
             viewport3 = new Viewport();
             toolStrip5 = new ToolStrip();
             toolStripButton14 = new ToolStripButton();
-            toolStripButton9 = new ToolStripButton();
             tabPage9 = new TabPage();
             tabPage7 = new TabPage();
             splitContainer4 = new SplitContainer();
@@ -781,6 +780,7 @@
             // tabPage6
             // 
             tabPage6.Controls.Add(splitContainer8);
+            tabPage6.Controls.Add(toolStrip5);
             tabPage6.Location = new Point(4, 34);
             tabPage6.Name = "tabPage6";
             tabPage6.Padding = new Padding(3);
@@ -793,7 +793,7 @@
             // 
             splitContainer8.Dock = DockStyle.Fill;
             splitContainer8.FixedPanel = FixedPanel.Panel1;
-            splitContainer8.Location = new Point(3, 3);
+            splitContainer8.Location = new Point(3, 37);
             splitContainer8.Name = "splitContainer8";
             // 
             // splitContainer8.Panel1
@@ -804,7 +804,7 @@
             // splitContainer8.Panel2
             // 
             splitContainer8.Panel2.Controls.Add(tabControl3);
-            splitContainer8.Size = new Size(1150, 591);
+            splitContainer8.Size = new Size(1150, 557);
             splitContainer8.SplitterDistance = 400;
             splitContainer8.TabIndex = 1;
             // 
@@ -823,8 +823,8 @@
             // splitContainer9.Panel2
             // 
             splitContainer9.Panel2.Controls.Add(richTextBox1);
-            splitContainer9.Size = new Size(400, 557);
-            splitContainer9.SplitterDistance = 482;
+            splitContainer9.Size = new Size(400, 523);
+            splitContainer9.SplitterDistance = 448;
             splitContainer9.TabIndex = 10;
             // 
             // dataGridView1
@@ -843,7 +843,7 @@
             dataGridView1.ReadOnly = true;
             dataGridView1.RowHeadersWidth = 62;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(400, 482);
+            dataGridView1.Size = new Size(400, 448);
             dataGridView1.TabIndex = 8;
             dataGridView1.CellClick += FirstGrid_CellClick;
             dataGridView1.CellMouseClick += FirstGrid_CellMouseClick;
@@ -986,18 +986,17 @@
             tabControl3.Location = new Point(0, 0);
             tabControl3.Name = "tabControl3";
             tabControl3.SelectedIndex = 0;
-            tabControl3.Size = new Size(746, 591);
+            tabControl3.Size = new Size(746, 557);
             tabControl3.SizeMode = TabSizeMode.Fixed;
             tabControl3.TabIndex = 1;
             // 
             // tabPage8
             // 
             tabPage8.Controls.Add(viewport3);
-            tabPage8.Controls.Add(toolStrip5);
             tabPage8.Location = new Point(4, 4);
             tabPage8.Name = "tabPage8";
             tabPage8.Padding = new Padding(3);
-            tabPage8.Size = new Size(738, 553);
+            tabPage8.Size = new Size(738, 519);
             tabPage8.TabIndex = 0;
             tabPage8.Text = "Viewport";
             tabPage8.UseVisualStyleBackColor = true;
@@ -1005,7 +1004,7 @@
             // viewport3
             // 
             viewport3.Dock = DockStyle.Fill;
-            viewport3.Location = new Point(3, 37);
+            viewport3.Location = new Point(3, 3);
             viewport3.Name = "viewport3";
             viewport3.Size = new Size(732, 513);
             viewport3.TabIndex = 0;
@@ -1014,10 +1013,10 @@
             // 
             toolStrip5.GripStyle = ToolStripGripStyle.Hidden;
             toolStrip5.ImageScalingSize = new Size(24, 24);
-            toolStrip5.Items.AddRange(new ToolStripItem[] { toolStripButton14, toolStripButton9 });
+            toolStrip5.Items.AddRange(new ToolStripItem[] { toolStripButton14 });
             toolStrip5.Location = new Point(3, 3);
             toolStrip5.Name = "toolStrip5";
-            toolStrip5.Size = new Size(732, 34);
+            toolStrip5.Size = new Size(1150, 34);
             toolStrip5.TabIndex = 0;
             // 
             // toolStripButton14
@@ -1031,21 +1030,12 @@
             toolStripButton14.Text = "Compare";
             toolStripButton14.Click += compareToolStripButton_Click;
             // 
-            // toolStripButton9
-            // 
-            toolStripButton9.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton9.Image = (Image)resources.GetObject("toolStripButton9.Image");
-            toolStripButton9.ImageTransparentColor = Color.Magenta;
-            toolStripButton9.Name = "toolStripButton9";
-            toolStripButton9.Size = new Size(42, 29);
-            toolStripButton9.Text = "GO";
-            // 
             // tabPage9
             // 
             tabPage9.Location = new Point(4, 4);
             tabPage9.Name = "tabPage9";
             tabPage9.Padding = new Padding(3);
-            tabPage9.Size = new Size(738, 553);
+            tabPage9.Size = new Size(738, 519);
             tabPage9.TabIndex = 1;
             tabPage9.Text = "Analysis";
             tabPage9.UseVisualStyleBackColor = true;
@@ -1423,6 +1413,7 @@
             classificationTabPage.ResumeLayout(false);
             tabControl2.ResumeLayout(false);
             tabPage6.ResumeLayout(false);
+            tabPage6.PerformLayout();
             splitContainer8.Panel1.ResumeLayout(false);
             splitContainer8.Panel1.PerformLayout();
             splitContainer8.Panel2.ResumeLayout(false);
@@ -1437,7 +1428,6 @@
             toolStrip4.PerformLayout();
             tabControl3.ResumeLayout(false);
             tabPage8.ResumeLayout(false);
-            tabPage8.PerformLayout();
             toolStrip5.ResumeLayout(false);
             toolStrip5.PerformLayout();
             tabPage7.ResumeLayout(false);
@@ -1562,7 +1552,6 @@
         private TabPage tabPage9;
         private TabPage tabPage7;
         private ToolStripComboBox ClassificationModeToolStripComboBox;
-        private ToolStripButton toolStripButton9;
         private ToolStripSeparator toolStripSeparator9;
         private ToolStripButton toolStripButton15;
         private ToolStripButton toolStripButton16;

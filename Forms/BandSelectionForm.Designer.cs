@@ -89,6 +89,7 @@
             Controls.Add(listBox1);
             MaximizeBox = false;
             MinimizeBox = false;
+            MinimumSize = new Size(300, 300);
             Name = "BandSelectionForm";
             ShowIcon = false;
             ShowInTaskbar = false;

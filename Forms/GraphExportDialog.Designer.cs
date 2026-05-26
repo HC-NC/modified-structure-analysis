@@ -320,8 +320,11 @@
             MinimizeBox = false;
             MinimumSize = new Size(460, 380);
             Name = "GraphExportDialog";
+            ShowIcon = false;
+            ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Export Graph";
+            TopMost = true;
             Load += UpdateQualityVisibility;
             _layout.ResumeLayout(false);
             _layout.PerformLayout();

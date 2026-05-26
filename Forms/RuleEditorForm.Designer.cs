@@ -189,8 +189,10 @@
             MinimizeBox = false;
             Name = "RuleEditorForm";
             ShowIcon = false;
+            ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "RuleEditorForm";
+            TopMost = true;
             Load += RuleEditorForm_Load;
             contextMenuStrip1.ResumeLayout(false);
             flowLayoutPanel1.ResumeLayout(false);

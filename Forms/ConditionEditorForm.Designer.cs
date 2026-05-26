@@ -346,8 +346,10 @@
             MinimumSize = new Size(600, 400);
             Name = "ConditionEditorForm";
             ShowIcon = false;
+            ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "ConditionEditorForm";
+            TopMost = true;
             Load += ConditionEditorForm_Load;
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);

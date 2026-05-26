@@ -291,8 +291,11 @@
             MinimizeBox = false;
             MinimumSize = new Size(480, 416);
             Name = "ExportClassificationDialog";
+            ShowIcon = false;
+            ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Export Classification";
+            TopMost = true;
             _mainLayout.ResumeLayout(false);
             _mainLayout.PerformLayout();
             _statsGroup.ResumeLayout(false);
