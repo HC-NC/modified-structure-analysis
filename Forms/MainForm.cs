@@ -83,6 +83,9 @@ namespace modified_structure_analysis.Forms
 
             _primaryClassificationDataGridView.Enabled = !hasProcces;
             _secondaryClassificationDataGridView.Enabled = !hasProcces;
+			
+			_primaryClassificationDataGridView.Refresh();
+			_secondaryClassificationDataGridView.Refresh();
 
             _ruleContextMenuStrip.Enabled = !hasProcces;
         }
@@ -372,7 +375,7 @@ namespace modified_structure_analysis.Forms
 
             if (e.RowIndex >= result.Palette.Length) return;
 
-            if (e.RowIndex == 0)
+            if (e.ColumnIndex == 0)
             {
                 using var dialog = new ColorDialog();
                 dialog.Color = result.Palette[e.RowIndex];
@@ -389,7 +392,7 @@ namespace modified_structure_analysis.Forms
                 }
             }
 
-            if (e.RowIndex == 3)
+            if (e.ColumnIndex == 3)
             {
                 MessageBox.Show("Тут будет форма анализа");
             }
@@ -537,7 +540,7 @@ namespace modified_structure_analysis.Forms
 
                 if (pct != lastPct)
                 {
-                    worker?.ReportProgress(pct, $"Compute scatter ({pct}%)");
+                    worker?.ReportProgress(pct, $"Compute scatter {pct}%");
                     lastPct = pct;
                 }
             }
@@ -1745,8 +1748,6 @@ namespace modified_structure_analysis.Forms
             worker.ReportProgress(99, "Rendering bitmap...");
 
             Bitmap bitmap = RenderClassificationBitmap(classificationResult);
-
-            worker.ReportProgress(100, "Complete");
 
             if (isSecondStage)
             {

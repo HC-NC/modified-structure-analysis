@@ -65,6 +65,8 @@
             // 
             // _geoCheckBox
             // 
+            _geoCheckBox.Checked = true;
+            _geoCheckBox.CheckState = CheckState.Checked;
             _mainLayout.SetColumnSpan(_geoCheckBox, 2);
             _geoCheckBox.Dock = DockStyle.Fill;
             _geoCheckBox.Location = new Point(108, 46);

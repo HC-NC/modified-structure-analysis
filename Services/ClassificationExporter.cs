@@ -34,7 +34,7 @@ public static class ClassificationExporter
         if (driver == null)
             throw new InvalidOperationException("GTiff driver not available.");
 
-        using var ds = driver.Create(path, width, height, 1, DataType.GDT_UInt16,
+        using var ds = driver.Create(path, width, height, 1, DataType.GDT_Int32,
             new[] { "COMPRESS=LZW", "TILED=YES" });
 
         if (includeGeoTransform && bands != null && bands.Count > 0)
@@ -48,8 +48,8 @@ public static class ClassificationExporter
             ds.SetProjection(projectionWkt);
 
         using var band = ds.GetRasterBand(1);
-        byte[] rasterData = BuildRasterData(result, width, height);
-        band.WriteRaster(0, 0, width, height, rasterData, width, height, 0, 0);
+        band.WriteRaster(0, 0, width, height, result.ClassIndices, width, height, 0, 0);
+		band.SetNoDataValue(result.UndefinedClassIndex);
         band.FlushCache();
 
         WriteRasterAttributeTable(band, result);
@@ -128,13 +128,13 @@ public static class ClassificationExporter
         }
     }
 
-    private static byte[] BuildRasterData(ClassificationResult result, int width, int height)
+    private static ushort[] BuildRasterData(ClassificationResult result, int width, int height)
     {
-        byte[] data = new byte[width * height];
+        ushort[] data = new ushort[width * height];
         for (int i = 0; i < data.Length; i++)
         {
             int classIdx = result.ClassIndices[i];
-            data[i] = classIdx >= 0 ? (byte)(classIdx % 256) : (byte)255;
+            data[i] = classIdx >= 0 ? (ushort)(classIdx % ushort.MaxValue) : ushort.MaxValue;
         }
         return data;
     }
