@@ -27,10 +27,13 @@ namespace modified_structure_analysis.Forms
         private bool _mouseOnPicture = false;
         private float _zoom = 1;
 
+        private Point? _externalCursorPos = null;
+
         public Image Image => _img;
 
         public event Action<float> Zooming;
         public event Action<int, int> Moving;
+        public event Action<int, int> CursorMoved;
 
         public Viewport()
         {
@@ -83,6 +86,41 @@ namespace modified_structure_analysis.Forms
             e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
             e.Graphics.ScaleTransform(_zoom, _zoom);
             e.Graphics.DrawImage(_img, _imgx, _imgy);
+
+            if (_externalCursorPos.HasValue)
+            {
+                float drawX = _externalCursorPos.Value.X + _imgx;
+                float drawY = _externalCursorPos.Value.Y + _imgy;
+
+                float penWidthMain = 1.5f / _zoom;
+                float penWidthBorder = 3.5f / _zoom;
+
+                float radius = 8f / _zoom;
+                float lineLenght = 12f / _zoom;
+
+                var oldSmoothing = e.Graphics.SmoothingMode;
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+                using (Pen borderPen = new Pen(Color.Black, penWidthBorder))
+                {
+                    e.Graphics.DrawEllipse(borderPen, drawX - radius, drawY - radius, radius * 2, radius * 2);
+                    e.Graphics.DrawLine(borderPen, drawX - lineLenght, drawY, drawX + lineLenght, drawY);
+                    e.Graphics.DrawLine(borderPen, drawX, drawY - lineLenght, drawX, drawY + lineLenght);
+                }
+
+                using (Pen mainPen = new Pen(Color.Lime, penWidthMain))
+                {
+                    e.Graphics.DrawEllipse(mainPen, drawX - radius, drawY - radius, radius * 2, radius * 2);
+                    e.Graphics.DrawLine(mainPen, drawX - lineLenght, drawY, drawX + lineLenght, drawY);
+                    e.Graphics.DrawLine(mainPen, drawX, drawY - lineLenght, drawX, drawY + lineLenght);
+
+                    float dotSize = 2f / _zoom;
+
+                    e.Graphics.FillEllipse(Brushes.Lime, drawX - dotSize / 2, drawY - dotSize / 2, dotSize, dotSize);
+                }
+
+                e.Graphics.SmoothingMode = oldSmoothing;
+            }
         }
 
         private void pictureBox_Click(object sender, EventArgs e)
@@ -121,6 +159,8 @@ namespace modified_structure_analysis.Forms
         private void pictureBox_MouseLeave(object sender, EventArgs e)
         {
             _mouseOnPicture = false;
+
+            CursorMoved?.Invoke(-1, -1);
         }
 
         private void pictureBox_MouseMove(object sender, MouseEventArgs e)
@@ -140,6 +180,15 @@ namespace modified_structure_analysis.Forms
                 Moving?.Invoke(_imgx, _imgy);
 
                 pictureBox.Refresh();
+            }
+
+            if (_img != null)
+            {
+                int imgCursorX = (int)(e.X / _zoom) - _imgx;
+                int imgCursorY = (int)(e.Y / _zoom) - _imgy;
+
+                if (imgCursorX >= 0 && imgCursorX <= _img.Width && imgCursorY >= 0 && imgCursorY <= _img.Height)
+                    CursorMoved?.Invoke(imgCursorX, imgCursorY);
             }
         }
 
@@ -281,6 +330,21 @@ namespace modified_structure_analysis.Forms
             _imgy = y;
 
             pictureBox.Refresh();
+        }
+
+        public void UpdateExternalCursor(int imageX, int imageY)
+        {
+            _externalCursorPos = new Point(imageX, imageY);
+            pictureBox.Refresh();
+        }
+
+        public void ClearExternalCursor()
+        {
+            if (_externalCursorPos != null)
+            {
+                _externalCursorPos = null;
+                pictureBox.Refresh();
+            }
         }
     }
 }
