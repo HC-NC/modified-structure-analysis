@@ -14,7 +14,7 @@ public static class BandKdeEstimator
         for (int i = 0; i < totalPixels; i++)
         {
             float pv = band.GetNormalizedValue(i);
-            if (!float.IsNaN(band.GetPixelValue(i)))
+            if (!float.IsNaN(band.GetValue(i)))
                 result += KernelFunctions.GetKernel(band.KernelType, (normalizedValue - pv) / band.NormalizeKernelC);
         }
         return result / (band.Count * band.NormalizeKernelC);

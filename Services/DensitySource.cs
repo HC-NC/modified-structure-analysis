@@ -24,7 +24,7 @@ public class GlobalDensitySource : IDensitySource
     public int ClassId => -1;
 
     public float GetValue(int bandIndex, int pixelIndex) =>
-        _bands[bandIndex].GetPixelValue(pixelIndex);
+        _bands[bandIndex].GetValue(pixelIndex);
 
     public float GetKernelC(int bandIndex) =>
         _bands[bandIndex].KernelC;
@@ -55,7 +55,7 @@ public class PerClassRegularDensitySource : IDensitySource
     public int ClassId => _classIndex;
 
     public float GetValue(int bandIndex, int pixelIndex) =>
-        _bands[bandIndex].GetPixelValue(pixelIndex);
+        _bands[bandIndex].GetValue(pixelIndex);
 
     public float GetKernelC(int bandIndex)
     {

@@ -167,7 +167,7 @@ public class ClassificationEngine
         {
             for (int b = 0; b < _bands.Count; b++)
             {
-                if (float.IsNaN(_bands[b].GetPixelValue(pixelIndex)))
+                if (float.IsNaN(_bands[b].GetValue(pixelIndex)))
                     return null;
             }
         }
@@ -301,7 +301,7 @@ public class ClassificationEngine
     {
         if (bandIndex < 0 || bandIndex >= _bands.Count)
             return 0;
-        return _bands[bandIndex].GetPixelValue(pixelIndex);
+        return _bands[bandIndex].GetValue(pixelIndex);
     }
 
     private float GetChannelZScore(int bandIndex, int pixelIndex)

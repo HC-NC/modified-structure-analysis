@@ -22,8 +22,6 @@ namespace modified_structure_analysis.Forms
     {
         private List<Band> _bands = new List<Band>();
 
-        private double _cellSize = 30.0;
-
         private int _width;
         private int _height;
 
@@ -33,47 +31,25 @@ namespace modified_structure_analysis.Forms
 
         private GeoTransform? _geoTransform;
 
-        private List<ClassificationRule> _firstStageRules = new();
-        private List<ClassificationRule> _secondStageRules = new();
+        private List<ClassificationRule> _primaryClassificationRules = new();
+        private List<ClassificationRule> _secondaryClassificationRules = new();
 
-        private ClassificationEngine? _firstStageEngine;
-        private ClassificationResult? _firstStageResult;
-        private ClassStatistics[]? _firstStageClassStats;
-        private ClassificationResult? _lastClassificationResult;
-        private DataGridView? _paletteGridView;
+        private ClassificationEngine? _primaryClassificationEngine;
+        private ClassificationResult? _primaryClassificationResult;
+		private ClassificationResult? _secondaryClassificationResult;
+        private ClassStatistics[]? _primaryClassificationClassStats;
 
         private PlotModel _kdeModel;
-        private readonly BackgroundWorker _statsWorker;
-        private readonly BackgroundWorker _kdeWorker;
-        private readonly BackgroundWorker _scatterWorker;
-        private readonly BackgroundWorker _loadWorker;
 
         public MainForm()
         {
             InitializeComponent();
 
-            openFileDialog1.Filter = "All|*.tif;*.tiff;*.img;*.csv;*.txt|GeoTIFF|*.tif;*.tiff|ERDAS|*.img|CSV|*.csv|Text file|*.txt";
-            openFileDialog1.Multiselect = true;
+            _openFileDialog.Filter = "All|*.tif;*.tiff;*.img;*.csv;*.txt|GeoTIFF|*.tif;*.tiff|ERDAS|*.img|CSV|*.csv|Text file|*.txt";
+            _openFileDialog.Multiselect = true;
 
-            _loadWorker = new BackgroundWorker { WorkerReportsProgress = true };
-            _loadWorker.DoWork += LoadWorker_DoWork;
-            _loadWorker.RunWorkerCompleted += LoadWorker_RunWorkerCompleted;
-            _loadWorker.ProgressChanged += backgroundWorker_ProgressChanged;
-
-            _statsWorker = new BackgroundWorker { WorkerReportsProgress = true };
-            _statsWorker.DoWork += StatsWorker_DoWork;
-            _statsWorker.RunWorkerCompleted += StatsWorker_RunWorkerCompleted;
-            _statsWorker.ProgressChanged += backgroundWorker_ProgressChanged;
-
-            _kdeWorker = new BackgroundWorker { WorkerReportsProgress = true };
-            _kdeWorker.DoWork += KdeWorker_DoWork;
-            _kdeWorker.RunWorkerCompleted += KdeWorker_RunWorkerCompleted;
-            _kdeWorker.ProgressChanged += backgroundWorker_ProgressChanged;
-
-            _scatterWorker = new BackgroundWorker { WorkerReportsProgress = true };
-            _scatterWorker.DoWork += ScatterWorker_DoWork;
-            _scatterWorker.RunWorkerCompleted += ScatterWorker_RunWorkerCompleted;
-            _scatterWorker.ProgressChanged += backgroundWorker_ProgressChanged;
+            _mainStatusLabel.Text = "Open file (Ctrl+O)";
+            _mainProgressBar.Visible = false;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -82,86 +58,153 @@ namespace modified_structure_analysis.Forms
             _kdeModel.Axes.Add(new LinearAxis { Key = "X", Position = AxisPosition.Bottom, Title = "Normalized Value", Minimum = 0d, Maximum = 1d });
             _kdeModel.Axes.Add(new LinearAxis { Key = "Y", Position = AxisPosition.Left, Title = "Density", Minimum = 0d });
             _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
-            kdePlotView.Model = _kdeModel;
+            _kdePlotView.Model = _kdeModel;
         }
 
-        private void ruleDataGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void UpdateUI(bool hasProcces)
         {
+            _mainProgressBar.Visible = hasProcces;
+
+            _openToolStripMenuItem.Enabled = !hasProcces;
+            _exportGraphToolStripMenuItem.Enabled = !hasProcces;
+            _exportClassificationToolStripMenuItem.Enabled = !hasProcces;
+
+            _kdeSingleButton.Enabled = !hasProcces;
+            _kdeProductButton.Enabled = !hasProcces;
+            _kdeMultivariateButton.Enabled = !hasProcces;
+            _kdeClearButton.Enabled = !hasProcces;
+
+            _buildScatterButton.Enabled = !hasProcces;
+
+            _primaryClassificationToolStrip.Enabled = !hasProcces;
+            _primaryClassificationRuleToolStrip.Enabled = !hasProcces;
+            _secondaryClassificationToolStrip.Enabled = !hasProcces;
+            _secondaryClassificationRuleToolStrip.Enabled = !hasProcces;
+
+            _primaryClassificationDataGridView.Enabled = !hasProcces;
+            _secondaryClassificationDataGridView.Enabled = !hasProcces;
+
+            _ruleContextMenuStrip.Enabled = !hasProcces;
+        }
+
+        private void RuleDataGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+			DataGridView grid = sender.Equals(_primaryRuleDataGridView) ? _primaryRuleDataGridView : _secondaryRuleDataGridView; 
+			
             if (e.Button == MouseButtons.Right)
             {
-                ruleDataGridView.Rows[e.RowIndex].Selected = true;
+                grid.Rows[e.RowIndex].Selected = true;
 
                 int x = e.X;
                 int y = e.Y;
 
                 for (int i = 0; i < e.ColumnIndex; i++)
-                    x += ruleDataGridView.Columns[i].Width;
+                    x += grid.Columns[i].Width;
 
                 for (int i = 0; i < e.RowIndex; i++)
-                    y += ruleDataGridView.Rows[e.RowIndex].Height;
+                    y += grid.Rows[e.RowIndex].Height;
 
-                ruleContextMenuStrip.Show((Control)sender, x, y);
+                _ruleContextMenuStrip.Show(grid, x, y);
             }
         }
 
-        private void DataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void RuleDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
+			
+			List<ClassificationRule> rules = sender.Equals(_primaryRuleDataGridView) ? _primaryClassificationRules : _secondaryClassificationRules; 
 
-            if (e.ColumnIndex == 1)
+            if (e.ColumnIndex == 1 && e.RowIndex < rules.Count)
             {
-                var rule = _secondStageRules[e.RowIndex];
+                EditClassificationRule(rules, e.RowIndex, (DataGridView)sender);
+            }
+        }
+		
+		private void UpdateClassificationRulesGrid(DataGridView grid, List<ClassificationRule> rules)
+        {
+            grid.Rows.Clear();
+            foreach (var rule in rules)
+            {
+                int rowIndex = grid.Rows.Add();
+                var row = grid.Rows[rowIndex];
 
-                EditClassificationRule(rule);
+                row.Cells[0].Value = rule.GenerateName();
             }
         }
 
         private void AddClassificationRule(object sender, EventArgs e)
         {
-            var editor = new RuleEditorForm(_bands, null, isSecondStage: true, classStats: _firstStageClassStats);
+			DataGridView grid = _primaryRuleDataGridView;
+			List<ClassificationRule> rules = _primaryClassificationRules;
+			bool isSecondStage = false;
+			
+			if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
+			{
+				grid = _secondaryRuleDataGridView;
+				rules = _secondaryClassificationRules;
+				isSecondStage = true;
+			}
+			
+            var editor = new RuleEditorForm(_bands, null, isSecondStage: isSecondStage, classStats: _primaryClassificationClassStats);
             if (editor.ShowDialog(this) == DialogResult.OK)
             {
-                _secondStageRules.Add(editor.Rule);
-                UpdateClassificationRulesGrid();
-                ruleDataGridView.Rows[ruleDataGridView.Rows.GetLastRow(DataGridViewElementStates.None)].Selected = true;
+                rules.Add(editor.Rule);
+                UpdateClassificationRulesGrid(grid, rules);
+                grid.Rows[grid.Rows.GetLastRow(DataGridViewElementStates.None)].Selected = true;
             }
         }
 
-        private void EditClassificationRule(ClassificationRule rule)
+        private void EditClassificationRule(List<ClassificationRule> rules, int ruleIndex, DataGridView grid)
         {
-            var editor = new RuleEditorForm(_bands, rule, isSecondStage: true, classStats: _firstStageClassStats);
+            var editor = new RuleEditorForm(_bands, rules[ruleIndex], grid.Equals(_secondaryRuleDataGridView), classStats: _primaryClassificationClassStats);
 
             if (editor.ShowDialog(this) == DialogResult.OK)
             {
-                UpdateClassificationRulesGrid();
-                ruleDataGridView.Rows[_secondStageRules.IndexOf(rule)].Selected = true;
+                UpdateClassificationRulesGrid(grid, rules);
+                grid.Rows[ruleIndex].Selected = true;
             }
         }
 
         private void EditClassificationRule(object sender, EventArgs e)
         {
-            if (ruleDataGridView.SelectedRows.Count == 0)
+			DataGridView grid = _primaryRuleDataGridView;
+			List<ClassificationRule> rules = _primaryClassificationRules;
+			
+			if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
+			{
+				grid = _secondaryRuleDataGridView;
+				rules = _secondaryClassificationRules;
+			}
+			
+            if (grid.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a rule to edit.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
+            int selectedIndex = grid.SelectedRows[0].Index;
 
-            var rule = _secondStageRules[selectedIndex];
-
-            EditClassificationRule(rule);
+            EditClassificationRule(rules, selectedIndex, grid);
         }
 
         private void DeleteClassificationRule(object sender, EventArgs e)
         {
-            if (ruleDataGridView.SelectedRows.Count == 0)
+			DataGridView grid = _primaryRuleDataGridView;
+			List<ClassificationRule> rules = _primaryClassificationRules;
+			
+			if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
+			{
+				grid = _secondaryRuleDataGridView;
+				rules = _secondaryClassificationRules;
+			}
+			
+            if (grid.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Please select a rule to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
+            int selectedIndex = grid.SelectedRows[0].Index;
 
             var result = MessageBox.Show(
                 $"Are you sure you want to delete rule #{selectedIndex + 1}?",
@@ -171,212 +214,107 @@ namespace modified_structure_analysis.Forms
 
             if (result == DialogResult.Yes)
             {
-                _secondStageRules.RemoveAt(selectedIndex);
-                UpdateClassificationRulesGrid();
+                rules.RemoveAt(selectedIndex);
+                UpdateClassificationRulesGrid(grid, rules);
 
-                if (_secondStageRules.Count == 0)
+                if (rules.Count == 0)
                     return;
 
-                if (selectedIndex >= ruleDataGridView.Rows.Count)
-                    selectedIndex = ruleDataGridView.Rows.GetLastRow(DataGridViewElementStates.None);
+                if (selectedIndex >= grid.Rows.Count)
+                    selectedIndex = grid.Rows.GetLastRow(DataGridViewElementStates.None);
 
-                ruleDataGridView.Rows[selectedIndex].Selected = true;
+                grid.Rows[selectedIndex].Selected = true;
             }
         }
 
         private void CloneClassificationRule(object sender, EventArgs e)
         {
-            if (ruleDataGridView.SelectedRows.Count == 0)
+			DataGridView grid = _primaryRuleDataGridView;
+			List<ClassificationRule> rules = _primaryClassificationRules;
+			
+			if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
+			{
+				grid = _secondaryRuleDataGridView;
+				rules = _secondaryClassificationRules;
+			}
+			
+            if (grid.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a rule to clone.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
+            int selectedIndex = grid.SelectedRows[0].Index;
 
-            var rule = _secondStageRules[selectedIndex];
+            var rule = rules[selectedIndex];
 
-            _secondStageRules.Insert(selectedIndex + 1, (ClassificationRule)rule.Clone());
+            rules.Insert(selectedIndex + 1, (ClassificationRule)rule.Clone());
 
-            UpdateClassificationRulesGrid();
+            UpdateClassificationRulesGrid(grid, rules);
 
-            ruleDataGridView.Rows[selectedIndex + 1].Selected = true;
+            grid.Rows[selectedIndex + 1].Selected = true;
         }
 
         private void MoveRuleUp(object sender, EventArgs e)
         {
-            if (ruleDataGridView.SelectedRows.Count == 0)
+			DataGridView grid = _primaryRuleDataGridView;
+			List<ClassificationRule> rules = _primaryClassificationRules;
+			
+			if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
+			{
+				grid = _secondaryRuleDataGridView;
+				rules = _secondaryClassificationRules;
+			}
+			
+            if (grid.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
+            int selectedIndex = grid.SelectedRows[0].Index;
 
             if (selectedIndex == 0)
                 return;
 
-            var rule = _secondStageRules[selectedIndex];
-            _secondStageRules.RemoveAt(selectedIndex);
-            _secondStageRules.Insert(selectedIndex - 1, rule);
+            var rule = rules[selectedIndex];
+            rules.RemoveAt(selectedIndex);
+            rules.Insert(selectedIndex - 1, rule);
 
-            UpdateClassificationRulesGrid();
+            UpdateClassificationRulesGrid(grid, rules);
 
-            ruleDataGridView.Rows[selectedIndex - 1].Selected = true;
+            grid.Rows[selectedIndex - 1].Selected = true;
         }
 
         private void MoveRuleDown(object sender, EventArgs e)
         {
-            if (ruleDataGridView.SelectedRows.Count == 0)
+			DataGridView grid = _primaryRuleDataGridView;
+			List<ClassificationRule> rules = _primaryClassificationRules;
+			
+			if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
+			{
+				grid = _secondaryRuleDataGridView;
+				rules = _secondaryClassificationRules;
+			}
+			
+            if (grid.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
+            int selectedIndex = grid.SelectedRows[0].Index;
 
-            if (selectedIndex >= _secondStageRules.Count - 1)
+            if (selectedIndex >= rules.Count - 1)
                 return;
 
-            var rule = _secondStageRules[selectedIndex];
-            _secondStageRules.RemoveAt(selectedIndex);
-            _secondStageRules.Insert(selectedIndex + 1, rule);
+            var rule = rules[selectedIndex];
+            rules.RemoveAt(selectedIndex);
+            rules.Insert(selectedIndex + 1, rule);
 
-            UpdateClassificationRulesGrid();
+            UpdateClassificationRulesGrid(grid, rules);
 
-            ruleDataGridView.Rows[selectedIndex + 1].Selected = true;
-        }
-
-        private void ChangeRuleColor(object sender, EventArgs e)
-        {
-            if (ruleDataGridView.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            int selectedIndex = ruleDataGridView.SelectedRows[0].Index;
-
-            var rule = _secondStageRules[selectedIndex];
-
-            using (var colorDialog = new ColorDialog())
-            {
-                colorDialog.Color = rule.Color;
-                if (colorDialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    rule.Color = colorDialog.Color;
-                }
-            }
-
-            UpdateClassificationRulesGrid();
-
-            ruleDataGridView.Rows[selectedIndex].Selected = true;
-        }
-
-        private void FirstStageAddRule_Click(object? sender, EventArgs e)
-        {
-            ClassificationMode mode = ClassificationModeToolStripComboBox.SelectedItem?.ToString() == "DirectCheck"
-                ? ClassificationMode.DirectCheck
-                : ClassificationMode.RulePerClass;
-
-            if (mode == ClassificationMode.DirectCheck)
-            {
-                MessageBox.Show("In DirectCheck mode, use 'Auto' to generate rules from bands.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            var editor = new RuleEditorForm(_bands, null);
-            if (editor.ShowDialog(this) == DialogResult.OK)
-            {
-                _firstStageRules.Add(editor.Rule);
-                UpdateFirstStageRulesGrid();
-                dataGridView1.Rows[dataGridView1.Rows.GetLastRow(DataGridViewElementStates.None)].Selected = true;
-            }
-        }
-
-        private void FirstStageDeleteRule_Click(object? sender, EventArgs e)
-        {
-            if (dataGridView1.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Please select a rule to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            int selectedIndex = dataGridView1.SelectedRows[0].Index;
-
-            var result = MessageBox.Show(
-                $"Are you sure you want to delete rule #{selectedIndex + 1}?",
-                "Confirm Delete",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if (result == DialogResult.Yes)
-            {
-                _firstStageRules.RemoveAt(selectedIndex);
-                UpdateFirstStageRulesGrid();
-
-                if (_firstStageRules.Count == 0)
-                    return;
-
-                if (selectedIndex >= dataGridView1.Rows.Count)
-                    selectedIndex = dataGridView1.Rows.GetLastRow(DataGridViewElementStates.None);
-
-                dataGridView1.Rows[selectedIndex].Selected = true;
-            }
-        }
-
-        private void FirstStageMoveUp_Click(object? sender, EventArgs e)
-        {
-            if (dataGridView1.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            int selectedIndex = dataGridView1.SelectedRows[0].Index;
-
-            if (selectedIndex == 0)
-                return;
-
-            var rule = _firstStageRules[selectedIndex];
-            _firstStageRules.RemoveAt(selectedIndex);
-            _firstStageRules.Insert(selectedIndex - 1, rule);
-
-            UpdateFirstStageRulesGrid();
-            dataGridView1.Rows[selectedIndex - 1].Selected = true;
-        }
-
-        private void FirstStageMoveDown_Click(object? sender, EventArgs e)
-        {
-            if (dataGridView1.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            int selectedIndex = dataGridView1.SelectedRows[0].Index;
-
-            if (selectedIndex >= _firstStageRules.Count - 1)
-                return;
-
-            var rule = _firstStageRules[selectedIndex];
-            _firstStageRules.RemoveAt(selectedIndex);
-            _firstStageRules.Insert(selectedIndex + 1, rule);
-
-            UpdateFirstStageRulesGrid();
-            dataGridView1.Rows[selectedIndex + 1].Selected = true;
-        }
-
-        private void UpdateClassificationRulesGrid()
-        {
-            ruleDataGridView.Rows.Clear();
-            foreach (var rule in _secondStageRules)
-            {
-                int rowIndex = ruleDataGridView.Rows.Add();
-                var row = ruleDataGridView.Rows[rowIndex];
-
-                row.Cells[0].Value = rule.GenerateName();
-            }
+            grid.Rows[selectedIndex + 1].Selected = true;
         }
 
         private Bitmap CreateColorBitmap(Color color)
@@ -390,67 +328,20 @@ namespace modified_structure_analysis.Forms
             return bmp;
         }
 
-        private void PopulatePaletteTab()
+        private void PopelateTableTab(DataGridView grid)
         {
-            tabPage9.Controls.Clear();
-
-            var result = _lastClassificationResult;
+            var result = grid.Equals(_primaryClassificationDataGridView) ? _primaryClassificationResult :_secondaryClassificationResult;
             if (result?.Palette == null) return;
 
-            _paletteGridView?.Dispose();
-            _paletteGridView = new DataGridView
-            {
-                Dock = DockStyle.Fill,
-                AllowUserToAddRows = false,
-                AllowUserToDeleteRows = false,
-                AllowUserToResizeRows = false,
-                ColumnHeadersVisible = true,
-                ReadOnly = false,
-                RowHeadersVisible = false,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            };
-
-            var colorCol = new DataGridViewImageColumn
-            {
-                HeaderText = "Color",
-                Width = 40,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-                ReadOnly = true
-            };
-            var nameCol = new DataGridViewTextBoxColumn
-            {
-                HeaderText = "Class",
-                ReadOnly = true,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-            };
-            var countCol = new DataGridViewTextBoxColumn
-            {
-                HeaderText = "Pixels",
-                ReadOnly = true,
-                Width = 80,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
-            };
-            var editCol = new DataGridViewButtonColumn
-            {
-                HeaderText = "",
-                Text = "Change",
-                UseColumnTextForButtonValue = true,
-                Width = 80,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
-            };
-
-            _paletteGridView.Columns.Add(colorCol);
-            _paletteGridView.Columns.Add(nameCol);
-            _paletteGridView.Columns.Add(countCol);
-            _paletteGridView.Columns.Add(editCol);
-
+            grid.Rows.Clear();
+			
             var stats = result.GetClassStatistics();
             int totalPixels = result.Width * result.Height;
 
             for (int i = 0; i < result.Palette.Length; i++)
             {
-                int rowIdx = _paletteGridView.Rows.Add();
-                var row = _paletteGridView.Rows[rowIdx];
+                int rowIdx = grid.Rows.Add();
+                var row = grid.Rows[rowIdx];
                 row.Cells[0].Value = CreateColorBitmap(result.Palette[i]);
                 row.Cells[1].Value = $"Class {i}";
                 row.Cells[2].Value = stats.GetValueOrDefault(i, 0);
@@ -459,164 +350,99 @@ namespace modified_structure_analysis.Forms
             int undefCount = stats.GetValueOrDefault(-1, 0);
             if (undefCount > 0)
             {
-                int rowIdx = _paletteGridView.Rows.Add();
-                var row = _paletteGridView.Rows[rowIdx];
+                int rowIdx = grid.Rows.Add();
+                var row = grid.Rows[rowIdx];
                 row.Cells[0].Value = CreateColorBitmap(Color.Transparent);
                 row.Cells[1].Value = "Undefined";
                 row.Cells[2].Value = undefCount;
             }
-
-            _paletteGridView.CellClick += PaletteGrid_CellClick;
-
-            tabPage9.Controls.Add(_paletteGridView);
         }
 
-        private void PopulateSecondAnalysisTab()
+        private void ClassificationGrid_CellClick(object? sender, DataGridViewCellEventArgs e)
         {
-            tabPage5.Controls.Clear();
+            if (e.RowIndex < 0) return;
 
-            var result = _lastClassificationResult;
+            DataGridView? grid = sender as DataGridView;
+
+            if (grid == null) return;
+
+            var result = grid.Equals(_primaryClassificationDataGridView) ? _primaryClassificationResult : _secondaryClassificationResult;
+
             if (result?.Palette == null) return;
 
-            var grid = new DataGridView
-            {
-                Dock = DockStyle.Fill,
-                AllowUserToAddRows = false,
-                AllowUserToDeleteRows = false,
-                AllowUserToResizeRows = false,
-                ColumnHeadersVisible = true,
-                ReadOnly = false,
-                RowHeadersVisible = false,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            };
+            if (e.RowIndex >= result.Palette.Length) return;
 
-            grid.Columns.Add(new DataGridViewImageColumn
+            if (e.RowIndex == 0)
             {
-                HeaderText = "Color",
-                Width = 40,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-                ReadOnly = true
-            });
-            grid.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                HeaderText = "Class",
-                ReadOnly = true,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-            });
-            grid.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                HeaderText = "Pixels",
-                ReadOnly = true,
-                Width = 80,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
-            });
-            grid.Columns.Add(new DataGridViewButtonColumn
-            {
-                HeaderText = "",
-                Text = "Change",
-                UseColumnTextForButtonValue = true,
-                Width = 80,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.None
-            });
-
-            var stats = result.GetClassStatistics();
-            for (int i = 0; i < result.Palette.Length; i++)
-            {
-                int rowIdx = grid.Rows.Add();
-                var row = grid.Rows[rowIdx];
-                row.Cells[0].Value = CreateColorBitmap(result.Palette[i]);
-                row.Cells[1].Value = $"Class {i}";
-                row.Cells[2].Value = stats.GetValueOrDefault(i, 0);
-            }
-
-            int undefCount = stats.GetValueOrDefault(-1, 0);
-            if (undefCount > 0)
-            {
-                int rowIdx = grid.Rows.Add();
-                var row = grid.Rows[rowIdx];
-                row.Cells[0].Value = CreateColorBitmap(Color.Transparent);
-                row.Cells[1].Value = "Undefined";
-                row.Cells[2].Value = undefCount;
-            }
-
-            grid.CellClick += (s, args) =>
-            {
-                if (args.RowIndex < 0 || args.ColumnIndex != 3) return;
-                if (_lastClassificationResult?.Palette == null) return;
-                int rowIdx = args.RowIndex;
-                if (rowIdx >= _lastClassificationResult.Palette.Length) return; // Undefined row
-
                 using var dialog = new ColorDialog();
-                dialog.Color = _lastClassificationResult.Palette[rowIdx];
+                dialog.Color = result.Palette[e.RowIndex];
                 dialog.FullOpen = true;
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    _lastClassificationResult.Palette[rowIdx] = dialog.Color;
-                    grid.Rows[rowIdx].Cells[0].Value = CreateColorBitmap(dialog.Color);
-                    var bitmap = ResultRenderer.ToBitmap(_lastClassificationResult);
-                    viewport2.UpdateImage(bitmap);
+                    result.Palette[e.RowIndex] = dialog.Color;
+
+                    if (e.RowIndex < grid.Rows.Count)
+                        grid.Rows[e.RowIndex].Cells[0].Value = CreateColorBitmap(dialog.Color);
+
+                    var bitmap = ResultRenderer.ToBitmap(result);
+                    (grid.Equals(_primaryClassificationDataGridView) ? _primaryClassificationViewport : _secondaryClassificationViewport).UpdateImage(bitmap);
                 }
-            };
+            }
 
-            tabPage5.Controls.Add(grid);
-        }
-
-        private void PaletteGrid_CellClick(object? sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0 || e.ColumnIndex != 3) return;
-            if (_firstStageResult?.Palette == null) return;
-            if (e.RowIndex >= _firstStageResult.Palette.Length) return;
-
-            using var dialog = new ColorDialog();
-            dialog.Color = _firstStageResult.Palette[e.RowIndex];
-            dialog.FullOpen = true;
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (e.RowIndex == 3)
             {
-                _firstStageResult.Palette[e.RowIndex] = dialog.Color;
-                if (_paletteGridView != null && e.RowIndex < _paletteGridView.Rows.Count)
-                    _paletteGridView.Rows[e.RowIndex].Cells[0].Value = CreateColorBitmap(dialog.Color);
-                var bitmap = ResultRenderer.ToBitmap(_firstStageResult);
-                viewport3.UpdateImage(bitmap);
+                MessageBox.Show("Тут будет форма анализа");
             }
         }
 
         private void BuildScatterPlot(object? sender, EventArgs e)
         {
-            if (scatterXListBox.SelectedItem == null || scatterYListBox.SelectedItem == null)
+            if (_scatterXListBox.SelectedItem == null || _scatterYListBox.SelectedItem == null)
                 return;
 
-            Band? bandX = scatterXListBox.SelectedItem as Band;
-            Band? bandY = scatterYListBox.SelectedItem as Band;
+            Band? bandX = _scatterXListBox.SelectedItem as Band;
+            Band? bandY = _scatterYListBox.SelectedItem as Band;
             if (bandX == null || bandY == null) return;
 
             if (_scatterWorker.IsBusy) return;
+
+            UpdateUI(true);
+
             _scatterWorker.RunWorkerAsync((bandX, bandY));
         }
 
         private void KdeSingle(object? sender, EventArgs e)
         {
-            if (kdeBandsListBox!.SelectedItems.Count == 0) return;
+            if (_kdeBandsListBox!.SelectedItems.Count == 0) return;
             if (_kdeWorker.IsBusy) return;
 
-            var bands = kdeBandsListBox.SelectedItems.Cast<Band>().ToList();
+            UpdateUI(true);
+
+            var bands = _kdeBandsListBox.SelectedItems.Cast<Band>().ToList();
             _kdeWorker.RunWorkerAsync(("single", bands, (object?)null));
         }
 
         private void KdeProduct(object? sender, EventArgs e)
         {
-            if (kdeBandsListBox!.SelectedItems.Count < 2) return;
+            if (_kdeBandsListBox!.SelectedItems.Count < 2) return;
             if (_kdeWorker.IsBusy) return;
 
-            var bands = kdeBandsListBox.SelectedItems.Cast<Band>().ToList();
+            UpdateUI(true);
+
+            var bands = _kdeBandsListBox.SelectedItems.Cast<Band>().ToList();
+
             _kdeWorker.RunWorkerAsync(("product", bands, (object?)null));
         }
 
         private void KdeMultivariate(object? sender, EventArgs e)
         {
-            if (kdeBandsListBox!.SelectedItems.Count < 2) return;
+            if (_kdeBandsListBox!.SelectedItems.Count < 2) return;
             if (_kdeWorker.IsBusy) return;
 
-            var bands = kdeBandsListBox.SelectedItems.Cast<Band>().ToList();
+            UpdateUI(true);
+
+            var bands = _kdeBandsListBox.SelectedItems.Cast<Band>().ToList();
+
             _kdeWorker.RunWorkerAsync(("multivariate", bands, (object?)null));
         }
 
@@ -625,7 +451,7 @@ namespace modified_structure_analysis.Forms
             if (_kdeModel == null) return;
 
             _kdeModel.Series.Clear();
-            PlotView_DoubleClick(kdePlotView, e);
+            PlotView_DoubleClick(_kdePlotView, e);
         }
 
         // ── Background Workers ──────────────────────────────────────────
@@ -667,6 +493,7 @@ namespace modified_structure_analysis.Forms
             if (e.Error != null)
             {
                 MessageBox.Show($"Stats error: {e.Error.Message}");
+                UpdateUI(false);
                 return;
             }
 
@@ -678,11 +505,14 @@ namespace modified_structure_analysis.Forms
                 UpdateCorrelationGrid(corrData);
             }
 
-            mainStatusLabel.Text = "Ready";
+            _mainStatusLabel.Text = "Ready";
+            UpdateUI(false);
         }
 
         private void ScatterWorker_DoWork(object? sender, DoWorkEventArgs e)
         {
+            BackgroundWorker? worker = sender as BackgroundWorker;
+
             var (bandX, bandY) = ((Band, Band))e.Argument!;
             int totalPixels = bandX.OriginalWidth * bandX.OriginalHeight;
             int targetSamples = ScatterMaxPoints * 2;
@@ -691,13 +521,24 @@ namespace modified_structure_analysis.Forms
             var rng = new Random(42);
             var points = new List<(double x, double y)>(ScatterMaxPoints);
 
+            int lastPct = 0;
+            worker?.ReportProgress(0, "Compute scatter");
+
             for (int i = 0; i < totalPixels; i += step)
             {
-                if (!float.IsNaN(bandX.GetPixelValue(i)) && !float.IsNaN(bandY.GetPixelValue(i)))
+                if (!float.IsNaN(bandX.GetValue(i)) && !float.IsNaN(bandY.GetValue(i)))
                 {
-                    float vx = bandX.GetNormalizedValue(i);
-                    float vy = bandY.GetNormalizedValue(i);
+                    float vx = bandX.GetValue(i);
+                    float vy = bandY.GetValue(i);
                     points.Add((vx, vy));
+                }
+
+                int pct = i * 100 / totalPixels;
+
+                if (pct != lastPct)
+                {
+                    worker?.ReportProgress(pct, $"Compute scatter ({pct}%)");
+                    lastPct = pct;
                 }
             }
 
@@ -715,6 +556,7 @@ namespace modified_structure_analysis.Forms
             if (e.Error != null)
             {
                 MessageBox.Show($"Scatter error: {e.Error.Message}");
+                UpdateUI(false);
                 return;
             }
 
@@ -724,14 +566,15 @@ namespace modified_structure_analysis.Forms
                 series.Points.Add(new ScatterPoint(x, y));
 
             var model = new PlotModel();
-            var bandX = scatterXListBox.SelectedItem as Band;
-            var bandY = scatterYListBox.SelectedItem as Band;
+            var bandX = _scatterXListBox.SelectedItem as Band;
+            var bandY = _scatterYListBox.SelectedItem as Band;
             model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = bandX?.Name ?? "X" });
             model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = bandY?.Name ?? "Y" });
             model.Series.Add(series);
 
-            scatterPlotView.Model = model;
-            mainStatusLabel.Text = $"Scatter: {rawPoints.Count} points";
+            _scatterPlotView.Model = model;
+            _mainStatusLabel.Text = $"Scatter completed: {rawPoints.Count} points";
+            UpdateUI(false);
         }
 
         private void KdeWorker_DoWork(object? sender, DoWorkEventArgs e)
@@ -758,7 +601,7 @@ namespace modified_structure_analysis.Forms
                         for (int i = 0; i < totalPixels; i += step)
                         {
                             float pv = band.GetNormalizedValue(i);
-                            if (!float.IsNaN(band.GetPixelValue(i)))
+                            if (!float.IsNaN(band.GetValue(i)))
                             {
                                 bandDensity += KernelFunctions.GetKernel(band.KernelType, (x - pv) / band.NormalizeKernelC);
                                 validCount++;
@@ -830,7 +673,7 @@ namespace modified_structure_analysis.Forms
                         for (int i = 0; i < totalPixels; i += step)
                         {
                             float pv = band.GetNormalizedValue(i);
-                            if (!float.IsNaN(band.GetPixelValue(i)))
+                            if (!float.IsNaN(band.GetValue(i)))
                             {
                                 bandDensity += KernelFunctions.GetKernel(band.KernelType, (x - pv) / band.NormalizeKernelC);
                                 validCount++;
@@ -858,10 +701,11 @@ namespace modified_structure_analysis.Forms
             if (e.Error != null)
             {
                 MessageBox.Show($"KDE error: {e.Error.Message}");
+                UpdateUI(false);
                 return;
             }
 
-            kdePlotView.Model = null;
+            _kdePlotView.Model = null;
 
             var (mode, title, results) = ((string, string, List<(Band? band, List<DataPoint> points)>))e.Result!;
 
@@ -875,9 +719,10 @@ namespace modified_structure_analysis.Forms
                 _kdeModel!.Series.Add(series);
             }
 
-            kdePlotView.Model = _kdeModel;
-            PlotView_DoubleClick(kdePlotView, e);
-            mainStatusLabel.Text = "KDE ready";
+            _kdePlotView.Model = _kdeModel;
+            PlotView_DoubleClick(_kdePlotView, e);
+            _mainStatusLabel.Text = "KDE ready";
+            UpdateUI(false);
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -887,14 +732,14 @@ namespace modified_structure_analysis.Forms
 
         private void UpdateBandsList()
         {
-            bandListBox.Items.Clear();
-            redToolStripDropDownButton.DropDownItems.Clear();
-            greenToolStripDropDownButton.DropDownItems.Clear();
-            blueToolStripDropDownButton.DropDownItems.Clear();
+            _bandListBox.Items.Clear();
+            _redToolStripDropDownButton.DropDownItems.Clear();
+            _greenToolStripDropDownButton.DropDownItems.Clear();
+            _blueToolStripDropDownButton.DropDownItems.Clear();
 
-            scatterXListBox.Items.Clear();
-            scatterYListBox.Items.Clear();
-            kdeBandsListBox.Items.Clear();
+            _scatterXListBox.Items.Clear();
+            _scatterYListBox.Items.Clear();
+            _kdeBandsListBox.Items.Clear();
 
             if (_bands.Count == 0)
                 return;
@@ -911,29 +756,29 @@ namespace modified_structure_analysis.Forms
                 _blueBand = _bands[0];
             }
 
-            redToolStripDropDownButton.Text = _redBand.ToString();
-            greenToolStripDropDownButton.Text = _greenBand.ToString();
-            blueToolStripDropDownButton.Text = _blueBand.ToString();
+            _redToolStripDropDownButton.Text = _redBand.ToString();
+            _greenToolStripDropDownButton.Text = _greenBand.ToString();
+            _blueToolStripDropDownButton.Text = _blueBand.ToString();
 
             foreach (Band band in _bands)
             {
-                bandListBox.Items.Add(band);
+                _bandListBox.Items.Add(band);
 
-                redToolStripDropDownButton.DropDownItems.Add(band.Name, null, (object? sender, EventArgs e) =>
-                { _redBand = band; redToolStripDropDownButton.Text = _redBand.ToString(); UpdateImage(sender, e); });
-                greenToolStripDropDownButton.DropDownItems.Add(band.Name, null, (object? sender, EventArgs e) =>
-                { _greenBand = band; greenToolStripDropDownButton.Text = _greenBand.ToString(); UpdateImage(sender, e); });
-                blueToolStripDropDownButton.DropDownItems.Add(band.Name, null, (object? sender, EventArgs e) =>
-                { _blueBand = band; blueToolStripDropDownButton.Text = _blueBand.ToString(); UpdateImage(sender, e); });
+                _redToolStripDropDownButton.DropDownItems.Add(band.Name, null, (object? sender, EventArgs e) =>
+                { _redBand = band; _redToolStripDropDownButton.Text = _redBand.ToString(); UpdateImage(sender, e); });
+                _greenToolStripDropDownButton.DropDownItems.Add(band.Name, null, (object? sender, EventArgs e) =>
+                { _greenBand = band; _greenToolStripDropDownButton.Text = _greenBand.ToString(); UpdateImage(sender, e); });
+                _blueToolStripDropDownButton.DropDownItems.Add(band.Name, null, (object? sender, EventArgs e) =>
+                { _blueBand = band; _blueToolStripDropDownButton.Text = _blueBand.ToString(); UpdateImage(sender, e); });
 
-                scatterXListBox.Items.Add(band);
-                scatterYListBox.Items.Add(band);
-                kdeBandsListBox.Items.Add(band);
+                _scatterXListBox.Items.Add(band);
+                _scatterYListBox.Items.Add(band);
+                _kdeBandsListBox.Items.Add(band);
 
-                correlationDataGridView.Columns.Add(new DataGridViewTextBoxColumn() { HeaderText = band.Name });
+                _correlationDataGridView.Columns.Add(new DataGridViewTextBoxColumn() { HeaderText = band.Name });
             }
 
-            bandListBox.SelectedIndex = 0;
+            _bandListBox.SelectedIndex = 0;
         }
 
         private void UpdateImage(object? sender, EventArgs e)
@@ -974,25 +819,25 @@ namespace modified_structure_analysis.Forms
             Marshal.Copy(rgbValues, 0, ptr, bytes);
             bitmap.UnlockBits(bmpData);
 
-            viewport1.UpdateImage(bitmap);
+            _dataViewport.UpdateImage(bitmap);
         }
 
         private void ClearFirstStageCache()
         {
-            _firstStageEngine?.ClearCache();
-            _firstStageEngine = null;
-            _firstStageResult = null;
-            _firstStageClassStats = null;
+            _primaryClassificationEngine?.ClearCache();
+            _primaryClassificationEngine = null;
+            _primaryClassificationResult = null;
+            _primaryClassificationClassStats = null;
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() != DialogResult.OK)
+            if (_openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
 
             ClearFirstStageCache();
 
-            string[] fileNames = openFileDialog1.FileNames;
+            string[] fileNames = _openFileDialog.FileNames;
 
             // Determine content type
             bool hasText = false, hasImage = false;
@@ -1015,7 +860,7 @@ namespace modified_structure_analysis.Forms
                 foreach (Band b in _bands) b.UnloadPixelData();
                 _bands.Clear();
                 _geoTransform = null;
-                correlationDataGridView.Columns.Clear();
+                _correlationDataGridView.Columns.Clear();
 
                 foreach (string fileName in fileNames)
                 {
@@ -1031,16 +876,21 @@ namespace modified_structure_analysis.Forms
                 if (_bands.Count == 0) return;
                 UpdateBandsList();
                 UpdateImage(sender, e);
-                if (!_statsWorker.IsBusy) _statsWorker.RunWorkerAsync();
+                if (!_statsWorker.IsBusy)
+                {
+                    UpdateUI(true);
+                    _statsWorker.RunWorkerAsync();
+                }
                 return;
             }
 
             foreach (Band b in _bands) b.UnloadPixelData();
             _bands.Clear();
             _geoTransform = null;
-            correlationDataGridView.Columns.Clear();
+            _correlationDataGridView.Columns.Clear();
 
             if (_loadWorker.IsBusy) return;
+            UpdateUI(true);
             _loadWorker.RunWorkerAsync(new FileLoadInfo(fileNames, '\t'));
         }
 
@@ -1099,6 +949,7 @@ namespace modified_structure_analysis.Forms
             if (e.Error != null)
             {
                 MessageBox.Show($"Error loading files: {e.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UpdateUI(false);
                 return;
             }
 
@@ -1120,6 +971,8 @@ namespace modified_structure_analysis.Forms
 
             if (!_statsWorker.IsBusy)
                 _statsWorker.RunWorkerAsync();
+            else
+                UpdateUI(false);
         }
 
         private (List<Band> bands, GeoTransform? geo, int width, int height) LoadGeoTiffCore(string fileName, GeoTransform? existingGeo, List<Band> existingBands, List<string> messages)
@@ -1354,106 +1207,6 @@ namespace modified_structure_analysis.Forms
             ReadTextFile(fileName, delimiter);
         }
 
-        private void LoadGeoTiff(string fileName)
-        {
-            try
-            {
-                using (OSGeo.GDAL.Dataset ds = OSGeo.GDAL.Gdal.Open(fileName, OSGeo.GDAL.Access.GA_ReadOnly))
-                {
-                    if (ds == null)
-                    {
-                        MessageBox.Show($"Error: Cannot open GeoTIFF file: {fileName}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    int width = ds.RasterXSize;
-                    int height = ds.RasterYSize;
-
-                    double[] geoTransform = new double[6];
-                    ds.GetGeoTransform(geoTransform);
-
-                    GeoTransform newGeoTransform = GeoTransform.FromGdalArray(geoTransform);
-                    newGeoTransform.ProjectionWkt = ds.GetProjection();
-                    newGeoTransform.ProjectionName = ds.GetProjectionRef();
-
-                    if (_geoTransform != null)
-                    {
-                        if (!_geoTransform.Equals(newGeoTransform))
-                        {
-                            MessageBox.Show($"Error: GeoTransform mismatch!\n\nFile: {Path.GetFileName(fileName)}\nExpected: Origin=({_geoTransform.OriginX}, {_geoTransform.OriginY}), PixelSize=({_geoTransform.PixelSizeX}, {_geoTransform.PixelSizeY})\nGot: Origin=({newGeoTransform.OriginX}, {newGeoTransform.OriginY}), PixelSize=({newGeoTransform.PixelSizeX}, {newGeoTransform.PixelSizeY})",
-                                "GeoTransform Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
-                        }
-
-                        if (!string.IsNullOrEmpty(_geoTransform.ProjectionWkt) && !string.IsNullOrEmpty(newGeoTransform.ProjectionWkt))
-                        {
-                            if (_geoTransform.ProjectionWkt != newGeoTransform.ProjectionWkt)
-                            {
-                                MessageBox.Show($"Error: Projection mismatch!\n\nFile: {Path.GetFileName(fileName)}\nExpected: {_geoTransform.ProjectionName}\nGot: {newGeoTransform.ProjectionName}",
-                                    "Projection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        _geoTransform = newGeoTransform;
-                        _width = width;
-                        _height = height;
-                        _cellSize = Math.Abs(_geoTransform.PixelSizeX);
-                    }
-
-                    for (int i = 1; i <= ds.RasterCount; i++)
-                    {
-                        using (GdalBand gdalBand = ds.GetRasterBand(i))
-                        {
-                            string fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
-
-                            string bandName = ExtractShortLandsatName(fileNameWithoutExt);
-                            string desc;
-
-                            if (ds.RasterCount == 1)
-                                desc = ExtractDescription(fileName) ?? gdalBand.GetDescription();
-                            else
-                                desc = gdalBand.GetDescription();
-
-                            if (!string.IsNullOrWhiteSpace(desc))
-                                bandName += $"_{desc}";
-                            else if (ds.RasterCount > 1)
-                                bandName += $"_{i}";
-
-                            gdalBand.ComputeStatistics(false, out double min, out double max, out double mean, out double stdev, null, null);
-
-                            float[] values = new float[width * height];
-                            gdalBand.ReadRaster(0, 0, width, height, values, width, height, 0, 0);
-
-                            double gdalNoDataValue = 0;
-                            int hasNoData = 0;
-                            gdalBand.GetNoDataValue(out gdalNoDataValue, out hasNoData);
-                            bool hasNoDataValue = hasNoData != 0;
-
-                            Band band = new Band(bandName);
-                            band.SetDimensions(width, height);
-                            band.SetGeoTransform(_geoTransform);
-                            band.SetStats((float)min, (float)max, (float)mean, (float)stdev);
-                            for (int idx = 0; idx < values.Length; idx++)
-                            {
-                                float v = values[idx];
-                                if (hasNoDataValue && (v == (float)gdalNoDataValue || double.IsNaN(v)))
-                                    v = float.NaN;
-                                band.SetValueAt(idx, v);
-                            }
-                            _bands.Add(band);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error loading GeoTIFF: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private string ExtractShortLandsatName(string fileName)
         {
             var match = Regex.Match(fileName, @"(LC\d\d)?[_]?(?:\w{4})?[_](\d{6})?[_](\d{8})", RegexOptions.IgnoreCase);
@@ -1508,7 +1261,7 @@ namespace modified_structure_analysis.Forms
             if (columnSelector.ShowDialog() == DialogResult.Cancel)
                 return;
 
-            _cellSize = columnSelector.GetResolution();
+            double cellSize = columnSelector.GetResolution();
 
             List<TextTableColumnSelector.FieldType> fieldTypes = columnSelector.GetFieldTypes();
 
@@ -1592,15 +1345,15 @@ namespace modified_structure_analysis.Forms
                 return;
             }
 
-            _width = Math.Max(1, (int)(dataRangeX / _cellSize));
-            _height = Math.Max(1, (int)(dataRangeY / _cellSize));
+            _width = Math.Max(1, (int)(dataRangeX / cellSize));
+            _height = Math.Max(1, (int)(dataRangeY / cellSize));
 
             Dictionary<(int x, int y), Dictionary<string, float>> gridData = new();
 
             foreach (var point in rawData)
             {
-                int gridX = (int)Math.Floor((point.x - minX) / _cellSize);
-                int gridY = (int)Math.Floor((maxY - point.y) / _cellSize);
+                int gridX = (int)Math.Floor((point.x - minX) / cellSize);
+                int gridY = (int)Math.Floor((maxY - point.y) / cellSize);
 
                 gridX = Math.Clamp(gridX, 0, _width - 1);
                 gridY = Math.Clamp(gridY, 0, _height - 1);
@@ -1616,11 +1369,13 @@ namespace modified_structure_analysis.Forms
                         gridData[(gridX, gridY)][kvp.Key] = kvp.Value;
                 }
             }
+			
+			_geoTransform = new GeoTransform(maxX, maxY, cellSize, -cellSize);
 
             foreach (Band band in _bands)
             {
                 band.SetDimensions(_width, _height);
-                band.SetGeoTransform(new GeoTransform(minX, maxY, _cellSize, -_cellSize));
+                band.SetGeoTransform(_geoTransform);
             }
 
             foreach (var cell in gridData)
@@ -1640,43 +1395,23 @@ namespace modified_structure_analysis.Forms
             {
                 BandStatisticsComputer.Compute(band);
             }
-
-            _geoTransform = new GeoTransform(minX, maxY, _cellSize, _cellSize);
-        }
-
-        private Band? GetBand(string name, bool createIsNull)
-        {
-            foreach (Band band in _bands)
-            {
-                if (band.Name == name)
-                    return band;
-            }
-
-            if (createIsNull)
-            {
-                Band band = new Band(name);
-                _bands.Add(band);
-                return band;
-            }
-
-            return null;
         }
 
         private void bandListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Band? band = bandListBox.SelectedItem as Band;
+            Band? band = _bandListBox.SelectedItem as Band;
 
             if (band == null)
                 return;
 
-            bandPropertyGrid.SelectedObject = band;
+            _bandPropertyGrid.SelectedObject = band;
 
             BuildHistogram();
         }
 
         private void BuildHistogram()
         {
-            Band? band = bandListBox.SelectedItem as Band;
+            Band? band = _bandListBox.SelectedItem as Band;
             if (band == null || band.OriginalWidth * band.OriginalHeight == 0)
                 return;
 
@@ -1689,8 +1424,6 @@ namespace modified_structure_analysis.Forms
 
             float columnsWidth = range / columnsCount;
 
-            mainStatusLabel.Text = "Building histogram...";
-
             Task.Run(() =>
             {
                 int[] pointses = new int[columnsCount];
@@ -1699,7 +1432,7 @@ namespace modified_structure_analysis.Forms
 
                 for (int i = 0; i < totalPixels; i++)
                 {
-                    float x = band.GetPixelValue(i);
+                    float x = band.GetValue(i);
                     if (float.IsNaN(x)) continue;
 
                     int binIndex = (int)((x - minVal) / columnsWidth);
@@ -1738,8 +1471,7 @@ namespace modified_structure_analysis.Forms
                     plot.Series.Add(histSeries);
                     plot.Series.Add(lineSeries);
 
-                    histogramPlotView.Model = plot;
-                    mainStatusLabel.Text = "Ready";
+                    _histogramPlotView.Model = plot;
                 });
             });
         }
@@ -1775,8 +1507,8 @@ namespace modified_structure_analysis.Forms
                     int validPairs = 0;
                     for (int i = 0; i < totalPixels; i++)
                     {
-                        float vx = bandX.GetPixelValue(i);
-                        float vy = bandY.GetPixelValue(i);
+                        float vx = bandX.GetValue(i);
+                        float vy = bandY.GetValue(i);
                         if (!float.IsNaN(vx) && !float.IsNaN(vy))
                         {
                             sum += F(vx, bandX.Mean, bandX.StDev) * F(vy, bandY.Mean, bandY.StDev);
@@ -1798,11 +1530,11 @@ namespace modified_structure_analysis.Forms
 
         private void UpdateCorrelationGrid(float[][] data)
         {
-            correlationDataGridView.Rows.Clear();
-            correlationDataGridView.Columns.Clear();
+            _correlationDataGridView.Rows.Clear();
+            _correlationDataGridView.Columns.Clear();
 
             for (int i = 0; i < data.Length; i++)
-                correlationDataGridView.Columns.Add($"col{i}", _bands[i].Name);
+                _correlationDataGridView.Columns.Add($"col{i}", _bands[i].Name);
 
             for (int bandXI = 0; bandXI < data.Length; bandXI++)
             {
@@ -1826,14 +1558,14 @@ namespace modified_structure_analysis.Forms
                     }
                 }
 
-                int rowId = correlationDataGridView.Rows.Add(row);
-                correlationDataGridView.Rows[rowId].HeaderCell.Value = bandX.Name;
+                int rowId = _correlationDataGridView.Rows.Add(row);
+                _correlationDataGridView.Rows[rowId].HeaderCell.Value = bandX.Name;
             }
         }
 
         private void TabControl_Selected(object sender, TabControlEventArgs e)
         {
-            if (e.TabPage == histogramTabPage)
+            if (e.TabPage == _dataHistogramTabPage)
                 BuildHistogram();
         }
 
@@ -1860,11 +1592,11 @@ namespace modified_structure_analysis.Forms
             return (int)(Math.Sqrt(v));
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Classify_Click(object sender, EventArgs e)
         {
-            if (_secondStageRules.Count == 0)
+            if (_classifyWorker.IsBusy)
             {
-                MessageBox.Show("No classification rules defined for Second stage. Please add rules first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Classification is in progress! Wait.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1874,37 +1606,37 @@ namespace modified_structure_analysis.Forms
                 return;
             }
 
-            if (_firstStageResult == null || _firstStageEngine == null || _firstStageClassStats == null)
+            bool isSecondary = _classificationTabControl.SelectedTab == _secondaryClassificationTabPage;
+
+            if (isSecondary && (_primaryClassificationResult == null || _primaryClassificationEngine == null || _primaryClassificationClassStats == null))
             {
-                MessageBox.Show("Please run First stage classification (DirectCheck) first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please run primary classification first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            backgroundWorker.RunWorkerAsync((_secondStageRules, ClassificationMode.RulePerClass, viewport2, true));
+            List<ClassificationRule> rules = isSecondary ? _secondaryClassificationRules : _primaryClassificationRules;
+
+            if (rules.Count == 0)
+            {
+                MessageBox.Show("No classification rules defined. Please add rules first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            Viewport viewport = isSecondary ? _secondaryClassificationViewport : _primaryClassificationViewport;
+            ClassificationMode mode = isSecondary ? ClassificationMode.RulePerClass : (ClassificationMode)_primaryClassificationModeToolStripComboBox.SelectedIndex;
+
+            UpdateUI(true);
+            _classificationAbortButton.Visible = true;
+            _classifyWorker.RunWorkerAsync((rules, mode, viewport, isSecondary));
         }
 
-        private void FirstStageClassify_Click(object? sender, EventArgs e)
+        private void AbortClassification_Click(object sender, EventArgs e)
         {
-            if (_firstStageRules.Count == 0)
-            {
-                MessageBox.Show("No classification rules defined for First stage. Please generate rules first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (_bands.Count == 0)
-            {
-                MessageBox.Show("No bands loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            ClassificationMode mode = ClassificationModeToolStripComboBox.SelectedItem?.ToString() == "DirectCheck"
-                ? ClassificationMode.DirectCheck
-                : ClassificationMode.RulePerClass;
-
-            backgroundWorker.RunWorkerAsync((_firstStageRules, mode, viewport3, false));
+            if (MessageBox.Show("Classification will be interrupted!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes)
+                _classifyWorker.CancelAsync();
         }
 
-        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void ClassifyWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker? worker = sender as BackgroundWorker;
 
@@ -1936,20 +1668,20 @@ namespace modified_structure_analysis.Forms
 
             if (isSecondStage)
             {
-                if (_firstStageEngine?.ZScoreCache != null)
+                if (_primaryClassificationEngine?.ZScoreCache != null)
                     engine.UseZScoreCache(
-                        _firstStageEngine.ZScoreCache,
-                        _firstStageEngine.CachedBandCount,
-                        _firstStageEngine.CachedPixelCount);
+                        _primaryClassificationEngine.ZScoreCache,
+                        _primaryClassificationEngine.CachedBandCount,
+                        _primaryClassificationEngine.CachedPixelCount);
 
-                if (_firstStageResult != null && _firstStageClassStats != null)
-                    engine.SetFirstStageContext(_firstStageResult.ClassIndices, _firstStageClassStats);
+                if (_primaryClassificationResult != null && _primaryClassificationClassStats != null)
+                    engine.SetFirstStageContext(_primaryClassificationResult.ClassIndices, _primaryClassificationClassStats);
 
-                firstStageClassCount = _firstStageResult?.Palette?.Length
-                    ?? _firstStageResult?.Rules?.Count
+                firstStageClassCount = _primaryClassificationResult?.Palette?.Length
+                    ?? _primaryClassificationResult?.Rules?.Count
                     ?? 0;
-                firstStagePalette = _firstStageResult?.Palette;
-                firstStageClassIndices = _firstStageResult?.ClassIndices;
+                firstStagePalette = _primaryClassificationResult?.Palette;
+                firstStageClassIndices = _primaryClassificationResult?.ClassIndices;
             }
             else if (mode == ClassificationMode.DirectCheck)
             {
@@ -2004,11 +1736,10 @@ namespace modified_structure_analysis.Forms
                 int remainingPixels = totalPixels - finalCount;
                 double remainingMsDouble = remainingPixels / Math.Max(0.01, pixelsPerMs);
                 TimeSpan remaining = TimeSpan.FromMilliseconds(remainingMsDouble);
-                string remainingStr = remaining.TotalSeconds < 60
-                    ? $"~{remaining.TotalSeconds:F0}s"
-                    : $"~{remaining.TotalMinutes:F1}m";
+                string remainingStr = remaining.ToString(@"hh\:mm\:ss");
+				string elapsedStr = elapsed.ToString(@"hh\:mm\:ss");
 
-                worker.ReportProgress(progress, $"{stageName}: {finalCount}/{totalPixels} ({progress}%) ETA: {remainingStr}");
+                worker.ReportProgress(progress, $"{stageName}: {finalCount}/{totalPixels} ({progress}%) ETA: {remainingStr} ({elapsedStr})");
             });
 
             worker.ReportProgress(99, "Rendering bitmap...");
@@ -2019,16 +1750,18 @@ namespace modified_structure_analysis.Forms
 
             if (isSecondStage)
             {
+				_secondaryClassificationResult = classificationResult;
+				
                 e.Result = (bitmap, classificationResult, ClassificationMode.RulePerClass, true);
             }
             else
             {
-                _firstStageEngine = engine;
-                _firstStageResult = classificationResult;
+                _primaryClassificationEngine = engine;
+                _primaryClassificationResult = classificationResult;
 
                 if (engine.ZScoreCache != null)
                 {
-                    _firstStageClassStats = ClassStatistics.ComputeFromResult(
+                    _primaryClassificationClassStats = ClassStatistics.ComputeFromResult(
                         classificationResult, _bands, engine.ZScoreCache,
                         engine.CachedPixelCount, _width, _height);
                 }
@@ -2068,55 +1801,68 @@ namespace modified_structure_analysis.Forms
             return bitmap;
         }
 
-        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void ClassifyWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled)
             {
                 MessageBox.Show("Operation was canceled");
+                _mainStatusLabel.Text = "Classification was canceled";
             }
             else if (e.Error != null)
             {
                 MessageBox.Show($"An error occurred: {e.Error.Message}");
+                _mainStatusLabel.Text = "Error classification";
             }
             else
             {
                 if (e.Result is (Bitmap bitmap, ClassificationResult classificationResult, ClassificationMode mode, bool isSecondStage))
                 {
-                    _lastClassificationResult = classificationResult;
-
                     if (isSecondStage)
                     {
-                        viewport2.UpdateImage(bitmap);
+                        _secondaryClassificationViewport.UpdateImage(bitmap);
+                        PopelateTableTab(_secondaryClassificationDataGridView);
                     }
                     else
                     {
-                        viewport3.UpdateImage(bitmap);
+                        _primaryClassificationViewport.UpdateImage(bitmap);
+                        PopelateTableTab(_primaryClassificationDataGridView);
                     }
-
-                    if (isSecondStage)
-                        PopulateSecondAnalysisTab();
-                    else
-                        PopulatePaletteTab();
 
                     var stats = classificationResult.GetClassStatistics();
                     string summary = $"Classification complete — {stats.GetValueOrDefault(-1, 0)} undefined pixels";
-                    mainStatusLabel.Text = summary;
+                    _mainStatusLabel.Text = summary;
                 }
             }
+
+            _classificationAbortButton.Visible = false;
+            UpdateUI(false);
         }
 
-        private void backgroundWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
+        private void BackgroundWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
         {
-            mainStatusLabel.Text = e.UserState?.ToString();
-            mainProgressBar.Value = e.ProgressPercentage;
+            _mainStatusLabel.Text = e.UserState?.ToString();
+            _mainProgressBar.Value = e.ProgressPercentage;
         }
 
-        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        private void RuleDataGridView_SelectionChanged(object sender, EventArgs e)
         {
-            if (ruleDataGridView.SelectedRows.Count == 0)
-                conditionsRichTextBox.Text = "No rule select";
+            DataGridView? grid = sender as DataGridView;
+
+            if (grid == null) return;
+
+            RichTextBox richText = _primaryClassificationRichTextBox;
+            List<ClassificationRule> rules = _primaryClassificationRules;
+
+            if (grid.Equals(_secondaryRuleDataGridView))
+            {
+                richText = _secondaryClassificationRichTextBox;
+                rules = _secondaryClassificationRules;
+            }
+
+            if (grid.SelectedRows.Count == 0)
+                richText.Text = "No rule select";
             else
-                conditionsRichTextBox.Text = GetRulePreview(_secondStageRules[ruleDataGridView.Rows.IndexOf(ruleDataGridView.SelectedRows[0])]);
+                richText.Text = GetRulePreview(rules[grid.Rows.IndexOf(grid.SelectedRows[0])]);
         }
 
         private string GetRulePreview(ClassificationRule rule)
@@ -2128,69 +1874,13 @@ namespace modified_structure_analysis.Forms
             return string.Join('\n', parts);
         }
 
-        private void compareToolStripButton_Click(object sender, EventArgs e)
+        private void CompareToolStripButton_Click(object sender, EventArgs e)
         {
-            TwoImageViewForm twoImageView = new TwoImageViewForm(viewport1.Image, tabControl2.SelectedIndex == 0 ? viewport3.Image : viewport2.Image);
+            Viewport viewport = _classificationTabControl.SelectedTab == _primaryClassificationTabPage ? _primaryClassificationViewport : _secondaryClassificationViewport;
+
+            TwoImageViewForm twoImageView = new TwoImageViewForm(_dataViewport.Image, viewport.Image);
 
             twoImageView.ShowDialog(this);
-        }
-
-        private void FirstGrid_SelectionChanged(object? sender, EventArgs e)
-        {
-            if (dataGridView1.SelectedRows.Count == 0)
-                richTextBox1.Text = "No rule select";
-            else
-                richTextBox1.Text = GetRulePreview(_firstStageRules[dataGridView1.Rows.IndexOf(dataGridView1.SelectedRows[0])]);
-        }
-
-        private void FirstGrid_CellClick(object? sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-
-            if (e.ColumnIndex == 1)
-            {
-                if (e.RowIndex < _firstStageRules.Count)
-                {
-                    var rule = _firstStageRules[e.RowIndex];
-                    var editor = new RuleEditorForm(_bands, rule);
-                    if (editor.ShowDialog(this) == DialogResult.OK)
-                        UpdateFirstStageRulesGrid();
-                }
-            }
-        }
-
-        private void FirstGrid_CellMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                dataGridView1.Rows[e.RowIndex].Selected = true;
-                int x = e.X;
-                int y = e.Y;
-                for (int i = 0; i < e.ColumnIndex; i++)
-                    x += dataGridView1.Columns[i].Width;
-                for (int i = 0; i < e.RowIndex; i++)
-                    y += dataGridView1.Rows[e.RowIndex].Height;
-                ruleContextMenuStrip.Show(dataGridView1, x, y);
-            }
-        }
-
-        private void ChangeFirstRuleColor(int rowIndex)
-        {
-            if (rowIndex < 0 || rowIndex >= _firstStageRules.Count) return;
-
-            var rule = _firstStageRules[rowIndex];
-            using (var colorDialog = new ColorDialog())
-            {
-                colorDialog.Color = rule.Color;
-                if (colorDialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    rule.Color = colorDialog.Color;
-                }
-            }
-
-            UpdateFirstStageRulesGrid();
-            if (rowIndex < dataGridView1.Rows.Count)
-                dataGridView1.Rows[rowIndex].Selected = true;
         }
 
         private void AutoButton_Click(object sender, EventArgs e)
@@ -2203,7 +1893,7 @@ namespace modified_structure_analysis.Forms
                 if (selectedBands.Count == 0)
                     return;
 
-                _firstStageRules.Clear();
+                _primaryClassificationRules.Clear();
 
                 foreach (Band band in selectedBands)
                 {
@@ -2226,22 +1916,11 @@ namespace modified_structure_analysis.Forms
                     };
 
                     rule.Conditions.Add(condition);
-                    _firstStageRules.Add(rule);
+                    _primaryClassificationRules.Add(rule);
                 }
 
-                ClassificationModeToolStripComboBox.SelectedItem = "DirectCheck";
-                UpdateFirstStageRulesGrid();
-            }
-        }
-
-        private void UpdateFirstStageRulesGrid()
-        {
-            dataGridView1.Rows.Clear();
-            foreach (var rule in _firstStageRules)
-            {
-                int rowIndex = dataGridView1.Rows.Add();
-                var row = dataGridView1.Rows[rowIndex];
-                row.Cells[0].Value = rule.GenerateName();
+                _primaryClassificationModeToolStripComboBox.SelectedIndex = (int)ClassificationMode.DirectCheck;
+                UpdateClassificationRulesGrid(_primaryRuleDataGridView, _primaryClassificationRules);
             }
         }
 
@@ -2249,17 +1928,17 @@ namespace modified_structure_analysis.Forms
         {
             PlotView? target = null;
 
-            if (mainTabControl.SelectedTab == dataTabPage)
+            if (_mainTabControl.SelectedTab == _dataTabPage)
             {
-                if (dataTabControl.SelectedTab == histogramTabPage)
-                    target = histogramPlotView;
+                if (_dataTabControl.SelectedTab == _dataHistogramTabPage)
+                    target = _histogramPlotView;
             }
-            else if (mainTabControl.SelectedTab == explorationTabPage)
+            else if (_mainTabControl.SelectedTab == _explorationTabPage)
             {
-                if (explorationTabControl.SelectedTab == tabPage2)
-                    target = kdePlotView;
-                else if (explorationTabControl.SelectedTab == tabPage3)
-                    target = scatterPlotView;
+                if (_explorationTabControl.SelectedTab == _kdeTabPage)
+                    target = _kdePlotView;
+                else if (_explorationTabControl.SelectedTab == _scatterTabPage)
+                    target = _scatterPlotView;
             }
 
             if (target == null || target.Model == null)
@@ -2277,17 +1956,17 @@ namespace modified_structure_analysis.Forms
 
         public void ExportKdePlot(object? sender, EventArgs e)
         {
-            ExportPlotView(kdePlotView, null);
+            ExportPlotView(_kdePlotView, null);
         }
 
         public void ExportScatterPlot(object? sender, EventArgs e)
         {
-            ExportPlotView(scatterPlotView, null);
+            ExportPlotView(_scatterPlotView, null);
         }
 
         public void ExportHistogramPlot(object? sender, EventArgs e)
         {
-            ExportPlotView(histogramPlotView, null);
+            ExportPlotView(_histogramPlotView, null);
         }
 
         private void ExportPlotView(PlotView plotView, string? filePath)
@@ -2303,7 +1982,9 @@ namespace modified_structure_analysis.Forms
 
         public void ExportClassification(object sender, EventArgs e)
         {
-            if (_lastClassificationResult == null)
+            ClassificationResult? classificationResult = _classificationTabControl.SelectedTab == _primaryClassificationTabPage ? _primaryClassificationResult : _secondaryClassificationResult;
+
+            if (classificationResult == null)
             {
                 MessageBox.Show("No classification result available. Run classification first.",
                     "Export", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -2315,13 +1996,13 @@ namespace modified_structure_analysis.Forms
                 bands: _bands);
             if (dlg.ShowDialog() != DialogResult.OK) return;
 
-            var result = _lastClassificationResult;
+            var result = classificationResult;
 
             if (dlg.UseHsvPalette && result.Palette != null)
             {
                 result = new ClassificationResult(result.Width, result.Height,
                     PaletteGenerator.GenerateHSV(result.Palette.Length));
-                Array.Copy(_lastClassificationResult.ClassIndices, result.ClassIndices, result.ClassIndices.Length);
+                Array.Copy(classificationResult.ClassIndices, result.ClassIndices, result.ClassIndices.Length);
             }
             else if (dlg.UseGrayscalePalette && result.Palette != null)
             {
@@ -2334,7 +2015,7 @@ namespace modified_structure_analysis.Forms
                     grayPalette[i] = Color.FromArgb(shade, shade, shade);
                 }
                 result = new ClassificationResult(result.Width, result.Height, grayPalette);
-                Array.Copy(_lastClassificationResult.ClassIndices, result.ClassIndices, result.ClassIndices.Length);
+                Array.Copy(classificationResult.ClassIndices, result.ClassIndices, result.ClassIndices.Length);
             }
 
             ClassificationExporter.Export(result, dlg.ExportOptions, _bands);
@@ -2345,13 +2026,7 @@ namespace modified_structure_analysis.Forms
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private static string? GetExportFilePath(string filter)
-        {
-            using var dlg = new SaveFileDialog { Filter = filter };
-            return dlg.ShowDialog() == DialogResult.OK ? dlg.FileName : null;
-        }
-
-        private void dataGridView_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        private void DataGridView_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
             if (sender is DataGridView dataGridView)
                 dataGridView.Rows[e.RowIndex].HeaderCell.Value = (e.RowIndex + 1).ToString();

@@ -83,7 +83,7 @@ public class ClassStatistics
 
                 foreach (int px in classPixels[cls])
                 {
-                    float v = band.GetPixelValue(px);
+                    float v = band.GetValue(px);
                     if (!float.IsNaN(v))
                     {
                         sum += v;
@@ -117,7 +117,7 @@ public class ClassStatistics
 
                 foreach (int px in classPixels[cls])
                 {
-                    float v = band.GetPixelValue(px);
+                    float v = band.GetValue(px);
                     if (!float.IsNaN(v))
                     {
                         variance += MathF.Pow(v - bs.Mean, 2);

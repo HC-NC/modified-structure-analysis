@@ -20,7 +20,7 @@ public static class BandStatisticsComputer
         {
             for (int i = 0; i < pixelCount; i++)
             {
-                float v = band.GetPixelValue(i);
+                float v = band.GetValue(i);
                 if (!float.IsNaN(v))
                 {
                     count++;
@@ -45,7 +45,7 @@ public static class BandStatisticsComputer
 
         for (int i = 0; i < pixelCount; i++)
         {
-            float v = band.GetPixelValue(i);
+            float v = band.GetValue(i);
             if (!float.IsNaN(v))
             {
                 float d = v - mean;

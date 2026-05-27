@@ -271,7 +271,7 @@ public class Band
         _normalizeKernelC = normalizeKernelC;
     }
 
-    public float GetPixelValue(int i)
+    public float GetValue(int i)
     {
         if (_pixelValues == null && CanReload)
             EnsurePixelValuesLoaded();
@@ -281,7 +281,7 @@ public class Band
         return _pixelValues[i];
     }
 
-    public float GetNormalizedPixelValue(int i)
+    public float GetNormalizedValue(int i)
     {
         if (_pixelValues == null && CanReload)
             EnsurePixelValuesLoaded();
@@ -309,19 +309,9 @@ public class Band
         return (v - _minimum) / (_maximum - _minimum);
     }
 
-    public float GetValue(int i)
-    {
-        return GetPixelValue(i);
-    }
-
-    public float GetNormalizedValue(int i)
-    {
-        return GetNormalizedPixelValue(i);
-    }
-
     public float GetZScore(int pixelIndex)
     {
-        float val = GetPixelValue(pixelIndex);
+        float val = GetValue(pixelIndex);
         if (float.IsNaN(val))
             return 0;
         if (_stdev == 0)
