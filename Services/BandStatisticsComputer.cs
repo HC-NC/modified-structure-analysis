@@ -75,7 +75,7 @@ public static class BandStatisticsComputer
                 values.Add(v);
         }
 
-        float kernelC = (float)BandwidthOptimizer.Compute(values, stdev, count, min, max);
+        float kernelC = (float)BandwidthOptimizer.Compute(values, stdev, count, min, max, band.KernelType);
         float normalizeKernelC = kernelC / (max - min);
 
         band.SetStatistics(count, sum, min, max, mean, stdev, variance, skewness, kurtosis, kernelC, normalizeKernelC);

@@ -179,7 +179,7 @@ public class ClassStatistics
                         if (!float.IsNaN(v))
                             classValues.Add(v);
                     }
-                    bs.KernelC = (float)BandwidthOptimizer.Compute(classValues, bs.Sigma, count, min, max);
+                    bs.KernelC = (float)BandwidthOptimizer.Compute(classValues, bs.Sigma, count, min, max, band.KernelType);
                 }
                 bs.NormalizeKernelC = bs.Maximum > bs.Minimum
                     ? bs.KernelC / (bs.Maximum - bs.Minimum)
@@ -212,7 +212,7 @@ public class ClassStatistics
                         if (!float.IsNaN(z))
                             zValues.Add(z);
                     }
-                    bs.ZKernelC = (float)BandwidthOptimizer.Compute(zValues, bs.ZSigma, pixelCount, bs.ZMin, bs.ZMax);
+                    bs.ZKernelC = (float)BandwidthOptimizer.Compute(zValues, bs.ZSigma, pixelCount, bs.ZMin, bs.ZMax, band.KernelType);
                 }
                 bs.ZNormalizeKernelC = bs.ZMax > bs.ZMin
                     ? bs.ZKernelC / (bs.ZMax - bs.ZMin)

@@ -13,7 +13,8 @@ public static class BandwidthOptimizer
     }
 
     public static double Compute(IReadOnlyList<float> values, double sigma, int count,
-        double dataMin, double dataMax, IProgress<int>? progress = null)
+        double dataMin, double dataMax, KernelType? kernelType = null,
+        IProgress<int>? progress = null)
     {
         return AppSettings.Instance.BandwidthMethod switch
         {
@@ -22,7 +23,7 @@ public static class BandwidthOptimizer
             BandwidthMethod.DirectPlugIn =>
                 ComputeDirectPlugIn(values, sigma, count, progress),
             BandwidthMethod.LeaveOneOutLikelihood =>
-                ComputeLeaveOneOutLikelihood(values, count, progress),
+                ComputeLeaveOneOutLikelihood(values, count, kernelType, progress),
             _ => ComputeDefault(sigma, count)
         };
     }
@@ -130,10 +131,11 @@ public static class BandwidthOptimizer
     // ── Leave-One-Out Likelihood (classification) ─────────────
 
     private static double ComputeLeaveOneOutLikelihood(IReadOnlyList<float> values,
-        int n, IProgress<int>? progress)
+        int n, KernelType? kernelType, IProgress<int>? progress)
     {
         var sample = Subsample(values, Math.Min(n, MaxSamples));
         int m = sample.Count;
+        KernelType kt = kernelType ?? AppSettings.Instance.DefaultKernelType;
 
         double h0 = ComputeDefault(StdDev(sample), m);
         double hMin = Math.Max(h0 * 0.1, 1e-8);
@@ -155,14 +157,14 @@ public static class BandwidthOptimizer
                 {
                     if (s == t) continue;
                     double u = (sample[t] - sample[s]) / h;
-                    density += KernelFunctions.GetKernel(AppSettings.Instance.DefaultKernelType, u);
+                    density += KernelFunctions.GetKernel(kt, u);
                 }
                 density /= (m - 1) * h;
 
                 if (density > 1e-10)
                     nll -= Math.Log(density);
                 else
-                    nll += 100; // penalty for degenerate density
+                    nll += 100;
             }
 
             if (nll < bestNll)
