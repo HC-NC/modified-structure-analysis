@@ -17,7 +17,7 @@ public enum BandwidthMethod
     RuleOfThumb,
     LeastSquaresCrossValidation,
     DirectPlugIn,
-    Adaptive
+    LeaveOneOutLikelihood
 }
 
 public enum ViewportInterpolation
@@ -41,7 +41,6 @@ public sealed class AppSettings
     // ── General ────────────────────────────────────────────────
     public KernelType DefaultKernelType { get; set; } = KernelType.Epanechnikov;
     public BandwidthMethod BandwidthMethod { get; set; } = BandwidthMethod.RuleOfThumb;
-    public bool UseBandwidthOptimization { get; set; }
     public string Language { get; set; } = CultureInfo.CurrentCulture.Name;
 
     // ── Histogram ──────────────────────────────────────────────

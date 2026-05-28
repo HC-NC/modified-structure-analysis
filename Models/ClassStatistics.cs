@@ -170,9 +170,17 @@ public class ClassStatistics
                     bs.Kurtosis = kurtosis / (count * MathF.Pow(bs.Sigma, 4)) - 3;
                 }
 
-                bs.KernelC = count > 0
-                    ? (float)KernelFunctions.GetDefaultBandwidth(bs.Sigma, count)
-                    : 0;
+                if (count > 0)
+                {
+                    var classValues = new List<float>(count);
+                    foreach (int px in classPixels[cls])
+                    {
+                        float v = band.GetValue(px);
+                        if (!float.IsNaN(v))
+                            classValues.Add(v);
+                    }
+                    bs.KernelC = (float)BandwidthOptimizer.Compute(classValues, bs.Sigma, count, min, max);
+                }
                 bs.NormalizeKernelC = bs.Maximum > bs.Minimum
                     ? bs.KernelC / (bs.Maximum - bs.Minimum)
                     : 0.01f;
@@ -194,9 +202,18 @@ public class ClassStatistics
                 }
 
                 bs.ZSigma = pixelCount > 1 ? MathF.Sqrt(zVariance / (pixelCount - 1)) : 0;
-                bs.ZKernelC = pixelCount > 0
-                    ? (float)KernelFunctions.GetDefaultBandwidth(bs.ZSigma, pixelCount)
-                    : 0;
+                if (pixelCount > 0 && zScoreCache != null)
+                {
+                    var zValues = new List<float>(pixelCount);
+                    foreach (int px in classPixels[cls])
+                    {
+                        int cacheIdx = b * cachedPixelCount + px;
+                        float z = zScoreCache[cacheIdx];
+                        if (!float.IsNaN(z))
+                            zValues.Add(z);
+                    }
+                    bs.ZKernelC = (float)BandwidthOptimizer.Compute(zValues, bs.ZSigma, pixelCount, bs.ZMin, bs.ZMax);
+                }
                 bs.ZNormalizeKernelC = bs.ZMax > bs.ZMin
                     ? bs.ZKernelC / (bs.ZMax - bs.ZMin)
                     : 0.01f;

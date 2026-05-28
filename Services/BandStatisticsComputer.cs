@@ -67,7 +67,15 @@ public static class BandStatisticsComputer
             kurtosis = kurtosis / (count * sigma4) - 3;
         }
 
-        float kernelC = (float)KernelFunctions.GetDefaultBandwidth(stdev, count);
+        var values = new List<float>(count);
+        for (int i = 0; i < pixelCount; i++)
+        {
+            float v = band.GetValue(i);
+            if (!float.IsNaN(v))
+                values.Add(v);
+        }
+
+        float kernelC = (float)BandwidthOptimizer.Compute(values, stdev, count, min, max);
         float normalizeKernelC = kernelC / (max - min);
 
         band.SetStatistics(count, sum, min, max, mean, stdev, variance, skewness, kurtosis, kernelC, normalizeKernelC);

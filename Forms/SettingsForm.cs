@@ -25,9 +25,10 @@ public partial class SettingsForm : Form
             "Rule of Thumb (fast)",
             "Least-Squares Cross-Validation",
             "Direct Plug-In (Sheather–Jones)",
-            "Adaptive (Abramson)"
+            "Leave-One-Out Likelihood (classification)"
         });
-        _bandwidthMethodCombo.SelectedIndex = (int)_settings.BandwidthMethod;
+        int bwIdx = (int)_settings.BandwidthMethod;
+        _bandwidthMethodCombo.SelectedIndex = bwIdx >= 0 && bwIdx < _bandwidthMethodCombo.Items.Count ? bwIdx : 0;
 
         _binsRuleCombo.Items.Clear();
         _binsRuleCombo.Items.AddRange(Enum.GetNames<HistogramBinsRule>());

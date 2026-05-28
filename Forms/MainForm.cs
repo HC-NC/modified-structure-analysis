@@ -54,6 +54,7 @@ namespace modified_structure_analysis.Forms
 
             _primaryClassificationDataGridView.CellToolTipTextNeeded += ClassificationGrid_CellToolTipTextNeeded;
             _secondaryClassificationDataGridView.CellToolTipTextNeeded += ClassificationGrid_CellToolTipTextNeeded;
+            _bandPropertyGrid.PropertyValueChanged += BandPropertyGrid_PropertyValueChanged;
 
             WireViewportNavButtons();
         }
@@ -795,9 +796,38 @@ namespace modified_structure_analysis.Forms
 
         private void SettingsToolStripMenuItem_Click(object? sender, EventArgs e)
         {
+            var oldMethod = AppSettings.Instance.BandwidthMethod;
             using var form = new Forms.SettingsForm();
             form.ShowDialog(this);
             ApplyKdeSettings();
+
+            if (_bands.Count > 0 && AppSettings.Instance.BandwidthMethod != oldMethod && !_statsWorker.IsBusy)
+            {
+                _mainStatusLabel.Text = "Recalculating bandwidth...";
+                UpdateUI(true);
+                _statsWorker.RunWorkerAsync();
+            }
+        }
+
+        private void BandPropertyGrid_PropertyValueChanged(object? sender, PropertyValueChangedEventArgs e)
+        {
+            if (e.ChangedItem?.PropertyDescriptor?.Name != nameof(Band.KernelType))
+                return;
+            if (AppSettings.Instance.BandwidthMethod != BandwidthMethod.LeaveOneOutLikelihood)
+                return;
+
+            var band = _bandPropertyGrid.SelectedObject as Band;
+            if (band == null) return;
+
+            _mainStatusLabel.Text = $"Recalculating bandwidth for \"{band.Name}\"...";
+            Task.Run(() =>
+            {
+                BandStatisticsComputer.Compute(band);
+                BeginInvoke(() =>
+                {
+                    _mainStatusLabel.Text = $"Bandwidth recalculated for \"{band.Name}\"";
+                });
+            });
         }
 
         private void ApplyKdeSettings()
@@ -951,6 +981,7 @@ namespace modified_structure_analysis.Forms
                 foreach (string fileName in fileNames)
                 {
                     string ext = Path.GetExtension(fileName).ToLower();
+                    _mainStatusLabel.Text = $"Opening \"{Path.GetFileName(fileName)}\"...";
                     if (ext == ".csv")
                         ReadCsvFile(fileName);
                     else
@@ -964,6 +995,7 @@ namespace modified_structure_analysis.Forms
                 UpdateImage(sender, e);
                 if (!_statsWorker.IsBusy)
                 {
+                    _mainStatusLabel.Text = "Computing statistics and bandwidth...";
                     UpdateUI(true);
                     _statsWorker.RunWorkerAsync();
                 }
@@ -1477,10 +1509,7 @@ namespace modified_structure_analysis.Forms
                 }
             }
 
-            foreach (Band band in _bands)
-            {
-                BandStatisticsComputer.Compute(band);
-            }
+            // Background worker computes stats at line 968
         }
 
         private void bandListBox_SelectedIndexChanged(object sender, EventArgs e)
