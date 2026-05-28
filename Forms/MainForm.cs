@@ -90,10 +90,12 @@ namespace modified_structure_analysis.Forms
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            var s = AppSettings.Instance;
             _kdeModel = new PlotModel();
-            _kdeModel.Axes.Add(new LinearAxis { Key = "X", Position = AxisPosition.Bottom, Title = "Normalized Value", Minimum = 0d, Maximum = 1d });
-            _kdeModel.Axes.Add(new LinearAxis { Key = "Y", Position = AxisPosition.Left, Title = "Density", Minimum = 0d });
-            _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
+            _kdeModel.Axes.Add(new LinearAxis { Key = "X", Position = AxisPosition.Bottom, Title = s.GraphShowAxisLabels ? "Normalized Value" : null, Minimum = 0d, Maximum = 1d });
+            _kdeModel.Axes.Add(new LinearAxis { Key = "Y", Position = AxisPosition.Left, Title = s.GraphShowAxisLabels ? "Density" : null, Minimum = 0d });
+            if (s.GraphShowLegend)
+                _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
             _kdePlotView.Model = _kdeModel;
         }
 
@@ -627,8 +629,9 @@ namespace modified_structure_analysis.Forms
             var model = new PlotModel();
             var bandX = _scatterXListBox.SelectedItem as Band;
             var bandY = _scatterYListBox.SelectedItem as Band;
-            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = bandX?.Name ?? "X" });
-            model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = bandY?.Name ?? "Y" });
+            var showLabels = AppSettings.Instance.GraphShowAxisLabels;
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = showLabels ? bandX?.Name ?? "X" : null });
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = showLabels ? bandY?.Name ?? "Y" : null });
             model.Series.Add(series);
 
             _scatterPlotView.Model = model;
@@ -794,6 +797,29 @@ namespace modified_structure_analysis.Forms
         {
             using var form = new Forms.SettingsForm();
             form.ShowDialog(this);
+            ApplyKdeSettings();
+        }
+
+        private void ApplyKdeSettings()
+        {
+            if (_kdeModel == null) return;
+            var s = AppSettings.Instance;
+
+            foreach (var axis in _kdeModel.Axes)
+            {
+                if (axis.Key == "X")
+                    axis.Title = s.GraphShowAxisLabels ? "Normalized Value" : null;
+                else if (axis.Key == "Y")
+                    axis.Title = s.GraphShowAxisLabels ? "Density" : null;
+            }
+
+            bool hasLegend = _kdeModel.Legends.Count > 0;
+            if (s.GraphShowLegend && !hasLegend)
+                _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
+            else if (!s.GraphShowLegend && hasLegend)
+                _kdeModel.Legends.Clear();
+
+            _kdePlotView.InvalidatePlot(true);
         }
 
         private void UpdateBandsList()
@@ -809,18 +835,12 @@ namespace modified_structure_analysis.Forms
 
             if (_bands.Count == 0)
                 return;
-            else if (_bands.Count >= 3)
-            {
-                _redBand = _bands[2];
-                _greenBand = _bands[1];
-                _blueBand = _bands[0];
-            }
-            else
-            {
-                _redBand = _bands[0];
-                _greenBand = _bands[0];
-                _blueBand = _bands[0];
-            }
+
+            var s = AppSettings.Instance;
+            int Clamp(int idx) => Math.Clamp(idx, 0, _bands.Count - 1);
+            _redBand = _bands[Clamp(s.DefaultRedBand)];
+            _greenBand = _bands[Clamp(s.DefaultGreenBand)];
+            _blueBand = _bands[Clamp(s.DefaultBlueBand)];
 
             _redToolStripDropDownButton.Text = _redBand.ToString();
             _greenToolStripDropDownButton.Text = _greenBand.ToString();
@@ -1515,27 +1535,63 @@ namespace modified_structure_analysis.Forms
 
                 BeginInvoke(() =>
                 {
-                    var histSeries = new HistogramSeries();
-                    var lineSeries = new LineSeries();
+                    var s = AppSettings.Instance;
+                    var plot = new PlotModel();
 
+                    plot.Axes.Add(new LinearAxis
+                    {
+                        Position = AxisPosition.Bottom,
+                        Minimum = minVal,
+                        Maximum = maxVal,
+                        Title = s.GraphShowAxisLabels ? "Value" : null
+                    });
+                    plot.Axes.Add(new LinearAxis
+                    {
+                        Position = AxisPosition.Left,
+                        Minimum = 0,
+                        Key = "axesY1",
+                        Title = s.GraphShowAxisLabels ? "Frequency" : null
+                    });
+                    plot.Axes.Add(new LinearAxis
+                    {
+                        Position = AxisPosition.Right,
+                        Minimum = 0,
+                        Maximum = 1d,
+                        Key = "axesY2"
+                    });
+
+                    if (s.GraphShowLegend)
+                        plot.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
+
+                    var barColor = System.Drawing.ColorTranslator.FromHtml(s.HistogramBarColor);
+                    var histSeries = new HistogramSeries
+                    {
+                        YAxisKey = "axesY1",
+                        FillColor = OxyColor.FromArgb(barColor.A, barColor.R, barColor.G, barColor.B)
+                    };
                     for (int i = 0; i < columnsCount; i++)
                     {
                         float binMin = i * columnsWidth + minVal;
                         histSeries.Items.Add(new HistogramItem(binMin, binMin + columnsWidth, (float)pointses[i] / band.Count, pointses[i]));
-                        lineSeries.Points.Add(new DataPoint(binMin, (float)asseses[i] / band.Count));
                     }
-
-                    var plot = new PlotModel();
-                    plot.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Minimum = minVal, Maximum = maxVal });
-                    plot.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Minimum = 0, Key = "axesY1" });
-                    plot.Axes.Add(new LinearAxis { Position = AxisPosition.Right, Minimum = 0, Maximum = 1d, Key = "axesY2" });
-
-                    histSeries.YAxisKey = "axesY1";
-                    lineSeries.YAxisKey = "axesY2";
-                    lineSeries.Color = OxyColor.FromRgb(255, 0, 0);
-
                     plot.Series.Add(histSeries);
-                    plot.Series.Add(lineSeries);
+
+                    if (s.HistogramShowCumulative)
+                    {
+                        var lineColor = System.Drawing.ColorTranslator.FromHtml(s.HistogramLineColor);
+                        var lineSeries = new LineSeries
+                        {
+                            YAxisKey = "axesY2",
+                            Color = OxyColor.FromArgb(lineColor.A, lineColor.R, lineColor.G, lineColor.B),
+                            Title = "Cumulative"
+                        };
+                        for (int i = 0; i < columnsCount; i++)
+                        {
+                            float binMin = i * columnsWidth + minVal;
+                            lineSeries.Points.Add(new DataPoint(binMin, (float)asseses[i] / band.Count));
+                        }
+                        plot.Series.Add(lineSeries);
+                    }
 
                     _histogramPlotView.Model = plot;
                 });
@@ -1641,21 +1697,6 @@ namespace modified_structure_analysis.Forms
 
             plotView.Model.ResetAllAxes();
             plotView.Refresh();
-        }
-
-        private int StargesDivisionRule(int v)
-        {
-            return (int)(Math.Log(v) / Math.Log(2) + 1);
-        }
-
-        private int BrooksCarrutherDivisionRule(int v)
-        {
-            return (int)(5 * Math.Log(v));
-        }
-
-        private int HeinholdHeideDivisionRule(int v)
-        {
-            return (int)(Math.Sqrt(v));
         }
 
         private void Classify_Click(object sender, EventArgs e)

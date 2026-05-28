@@ -415,8 +415,9 @@ public partial class ClassAnalysisForm : Form
             series.Points.Add(new ScatterPoint(x, y));
 
         var model = new PlotModel();
-        model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = xTitle });
-        model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = yTitle });
+        var showLabels = Config.AppSettings.Instance.GraphShowAxisLabels;
+        model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = showLabels ? xTitle : null });
+        model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = showLabels ? yTitle : null });
         model.Series.Add(series);
 
         _scatterPlotView.Model = model;
@@ -692,13 +693,15 @@ public partial class ClassAnalysisForm : Form
         if (model == null)
         {
             model = new PlotModel();
-            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Normalized Value" });
-            model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Density", Minimum = 0 });
-            model.Legends.Add(new Legend
-            {
-                LegendPosition = LegendPosition.TopRight,
-                LegendPlacement = LegendPlacement.Inside
-            });
+            var gs = Config.AppSettings.Instance;
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = gs.GraphShowAxisLabels ? "Normalized Value" : null });
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = gs.GraphShowAxisLabels ? "Density" : null, Minimum = 0 });
+            if (gs.GraphShowLegend)
+                model.Legends.Add(new Legend
+                {
+                    LegendPosition = LegendPosition.TopRight,
+                    LegendPlacement = LegendPlacement.Inside
+                });
             _kdePlotView.Model = model;
         }
 
