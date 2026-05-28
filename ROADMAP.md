@@ -1,238 +1,98 @@
-# План доработки Modified Structure Analysis
+# Roadmap
 
-## Версия 0.1
-- [x] Базовый функционал WinForms + OxyPlot
-- [x] Загрузка TSV файлов
-- [x] RGB композиция
-- [x] Гистограммы
-- [x] Корреляционная матрица
-- [x] Классификация по ядерной плотности
+## v1.0.0 — Released
 
----
+### Core Application
+- Windows Forms desktop application with OxyPlot charting
+- Multi-format raster import (GeoTIFF, ERDAS IMAGINE, CSV/TXT with column mapping)
+- Multi-channel image support with auto-detection by filename mask
+- RGB false-color composite with configurable band mapping
+- Interactive viewport with pan, zoom, scroll wheel, arrow keys, interpolation modes
+- Linked viewport synchronization for side-by-side comparison
 
-## Версия 0.2 — Базовая стабилизация и исправления
+### Statistics & Visualization
+- Histogram with configurable bin rules: Sturges, Brooks-Carruther, Heinhold-Heide, Custom
+- Cumulative frequency overlay, configurable bar/line colors
+- Kernel Density Estimation (KDE) with 10 kernel functions
+  - Single-band, Product, Multivariate modes
+  - Z-score variants for each mode
+- Scatter plots with band-to-band comparison
+- Correlation matrix across all bands
+- Profile tool (horizontal/vertical cross-sections)
 
-### Этап 1: Исправление критических проблем
-- [x] 1.1 Использование `LockBits` вместо `SetPixel` для рендеринга изображений
-- [x] 1.2 Вынесение классификации в BackgroundWorker (async/await)
-- [x] 1.3 Добавление ProgressBar в классификацию
-- [x] 1.4 Обработка исключений при парсинге float в ReadTextFile
-- [x] 1.5 Вынесение ядерных функций в отдельный класс KernelFunctions.cs с выбором типа ядра
+### Classification Engine
+- Two-stage classification (primary → secondary)
+- Two modes: **RulePerClass** (first matching rule wins) and **DirectCheck** (bitmask)
+- Density operand types: raw channel value, z-score, single/product/multivariate KDE
+- Z-score variants for second-stage per-class analysis
+- NaN/NoData pixel detection and skip
+- Random subsampling for global multivariate KDE
+- Density caching via `ConcurrentDictionary`
+- HSV palette generation for arbitrary class counts
+- Second-stage palette derived from first-stage colors
 
-### Этап 2: Корректная загрузка данных с координатами
-- [x] 2.1 Убрать жёсткое требование порядка пикселей
-- [x] 2.2 Использовать X,Y координаты для правильного позиционирования данных
-- [x] 2.3 Добавить параметр разрешения (resolution) в UI (TextTableColumnSelector)
-- [x] 2.4 Поддержка нерегулярной сетки (интерполяция на регулярную, усреднение при совпадении позиций)
-- [x] 2.5 Сохранение GeoTransform с координатами и размерами пикселя
+### Bandwidth Optimization
+- **Silverman's Rule of Thumb** — `0.951889 · σ · n^{-1/5}`
+- **Least-Squares Cross-Validation (LSCV)** — grid search minimizing MISE
+- **Direct Plug-In (Sheather–Jones)** — two-stage estimation via 4th derivative
+- **Leave-One-Out Likelihood** — maximizes cross-validated log-likelihood, respects per-band kernel type
+- Automatic of subsampling to 2000 samples for all iterative methods
 
----
+### Geospatial & Export
+- Classification export: GeoTIFF (with RAT, LZW compression, CRS), PNG, PNG + world file (.pgw)
+- Graph export: PNG, JPEG (configurable quality), SVG, PDF
+- Statistics export: CSV, TXT, JSON
+- Customizable export dimensions, DPI, and title
 
-## Версия 0.3 — Расширение исследований и аналитики
+### Settings & Localization
+- JSON-persisted settings in `%LOCALAPPDATA%/ModifiedStructureAnalysis/settings.json`
+- Settings dialog with tabs: General, Histogram, Classification
+- Default kernel type, bandwidth method, histogram bin rule, colors
+- Viewport interpolation mode (NearestNeighbor, Bilinear, Bicubic, HighQualityBilinear, HighQualityBicubic)
+- Default RGB band indices with `Math.Clamp`
+- Language selection from installed satellite assemblies
+- ~65 localized resource strings for English and Russian
+- Language applied at startup before any form is created
 
-### Этап 3: Расширение раздела "Exploration"
-- [x] 3.1 Scatter Plot — выбор каналов X/Y
-- [x] 3.2 Profile — выбор канала, ось (горизонтальная/вертикальная), позиция
-- [x] 3.3 KDE — Add/Clear, режимы: Single, Product (band*prev), Sum (band+prev)
-- [x] 3.4 Матрица корреляции (уже была)
-- [x] 3.5 Сравнение нескольких каналов на одном графике (KDE)
-
-### Этап 4: Настройки отображения графиков
-- [x] 4.1 Настройка осей (min/max, логарифмическая шкала)
-- [x] 4.2 Настройка легенды (позиция, видимость)
-- [x] 4.3 Настройка цветов и маркеров
-- [x] 4.4 Настройка сетки
-
----
-
-## Версия 0.4 — Импорт/Экспорт
-
-### Этап 5: Поддержка новых форматов (импорт)
-- [x] 5.1 GeoTIFF (.tif/.tiff) — через GDAL
-- [x] 5.2 ERDAS IMAGINE (.img)
-- [ ] 5.3 Excel (.xlsx)
-- [x] 5.4 CSV с настройкой разделителя
-- [ ] 5.5 DBF (dBase) для старых ГИС форматов
-
-### Этап 6: Многоканальные изображения (Landsat и др.)
-- [x] 6.1 Открытие нескольких одноканальных растров как отдельных Band
-- [x] 6.2 Автоматическое определение каналов по маске (Landsat_B*.tif)
-- [x] 6.3 Пакетное открытие файлов (с проверкой GeoTransform и Projection)
-
-### Этап 7: Экспорт графиков
-- [x] 7.1 Экспорт в PNG/JPEG с настройкой разрешения (DPI) — `PlotExportService.ExportToPng/Jpeg`
-- [x] 7.2 Экспорт в SVG (векторный) — `PlotExportService.ExportToSvg` (через `OxyPlot.SvgExporter`)
-- [x] 7.3 Экспорт в PDF — `PlotExportService.ExportToPdf` (через `OxyPlot.PdfExporter`)
-- [x] 7.4 Настройка размера при экспорте — `GraphExportOptions` (Width, Height, Dpi, Quality)
-
-### Этап 8: Экспорт классификации
-- [x] 8.1 Сохранение в GeoTIFF с геопривязкой — `ClassificationExporter.ExportToGeoTiff` (GDAL, LZW, проекция)
-- [x] 8.2 Сохранение проекции (CRS) из исходных данных — параметр `projectionWkt` из GeoTransform
-- [x] 8.3 Экспорт в PNG с world-файлом — `ClassificationExporter.ExportToPngWithWorldFile` (.pgw)
-- [x] 8.4 Экспорт статистики классов (CSV/TXT/JSON) — `ClassificationExporter.ExportStats`
+### Code Quality
+- Namespace organization: `Models`, `Services`, `Engine`, `Config`, `Forms`
+- Interface-based density abstraction (`IDensitySource`) with 3 implementations
+- Background worker for statistics and bandwidth computation
+- Bandwidth automatically recalculated when settings or kernel type changes
+- Status bar messages for long operations
+- LockBits-based bitmap rendering (no SetPixel)
+- GdalConfigured geotransform and projection support
+- MinVer-based automatic versioning from git tags
 
 ---
 
-## Версия 0.5 — Классификация и правила
+## Future Plans
 
-### Этап 9: Настраиваемое решающее правило
-- [x] 9.1 UI для выбора типа правила:
-  - [x] 9.1.1 Максимум плотности: p(x₁) > p(x₂) > p₃
-  - [x] 9.1.2 Пороговое: p(x₁) > threshold
-  - [x] 9.1.3 Комбинированное: p(x₁) > p(x₂) * p(x₃) * k
-- [x] 9.2 Настройка цветов классов (UI выбора цвета)
-- [ ] 9.3 Сохранение/загрузка конфигурации классификации
-- [x] 9.4 Добавление новых классов (не только RGB)
+### v1.1
+- [ ] Project file (.msaproj) — save/load full workspace state (bands, rules, settings)
+- [ ] MRU (Most Recently Used) file list
+- [ ] Toolbar with icons
+- [ ] File drag & drop support
+- [ ] Context menu on band ListBox
+- [ ] Info panel with data summary
+- [ ] Hotkeys and keyboard shortcuts
+- [ ] About dialog with version, authors, license info
+- [ ] Help / User manual
 
-### Этап 9.5: Исправление классификации (перенесено в v0.6)
-- [x] 9.5.1 NaN/NoData пиксели не классифицируются (DirectCheck) — возврат `null` в `EvaluatePixel`
-- [x] 9.5.2 PerClass палитра — HSV-палитра для RulePerClass (вместо `null` Palette)
-- [x] 9.5.3 PopulatePaletteTab работает и для PerClass режима
+### v1.2
+- [ ] Save/load classification configuration
+- [ ] UI reorganization: fix control layout, sizing, tab organization
+- [ ] Excel (.xlsx) import
+- [ ] DBF import for legacy GIS formats
+- [ ] Improved visual style and color scheme
 
-### Этап 9.6: Первичная классификация (First tab) — режим прямой проверки
-- [x] 9.6.0 Расширение системы операндов (ChannelValue, ChannelZScore)
-- [x] 9.6.1 Автоматическая генерация правил: N каналов → N правил (z >= 0)
-- [x] 9.6.2 Двоичный режим оценки: N правил = N бит → класс = 0..2^N-1
-- [x] 9.6.3 HSV-палитра для 2^N классов
-- [x] 9.6.4 Кэширование z-score для каждого пикселя
-- [x] 9.6.5 Переключатель режимов: «Правила по классам» / «Прямая проверка»
-- [x] 9.6.6 Раздельные наборы правил для First/Second (две вкладки)
-- [x] 9.6.7 Перенос событий dataGridView1, тулбаров, Compare, Classify в Designer.cs
-- [x] 9.6.8 Исправление: `ClassificationResult(int, int, Color[])` — забыт `Array.Fill(ClassIndices, UndefinedClassIndex)`
-
-### Этап 9.7: Вторичная классификация (Second tab) — KDE внутри классов первого этапа
-- [x] 9.7.0 Добавление операндов KDE z-score (ZScoreSingle, ZScoreProduct, ZScoreMultivariate)
-- [x] 9.7.1 `ClassStatistics` — per-class статистика для каждого канала:
-  - [x] Count, Sum, Min, Max, Mean, Sigma, Variance, Skewness, Kurtosis
-  - [x] То же для z-оценок + KernelC / NormalizeKernelC
-  - [x] `PixelIndices[]` для перебора пикселей класса
-- [x] 9.7.2 `RunSecondStage()` — итоговый класс = firstClass * ruleCount + secondClass
-- [x] 9.7.3 Передача zScoreCache из First stage во Second
-- [x] 9.7.4 Палитра Second stage на основе оригинальных цветов (с одним правилом — точная копия)
-- [x] 9.7.5 ConditionEditor: фильтрация band-листа для ZScore* типов (скрыть каналы без статистики)
-- [x] 9.7.6 **Regular density (Single/Product/Multivariate) для Second stage** — считают KDE внутри классов First stage (как ZScore*), используют per-class NormalizeKernelC и PixelIndices
-
-### Этап 9.8: Структурный рефакторинг (папки + namespace + разделение ответственности)
-- [x] 9.8.0 Разделение файлов по папкам: `Models/`, `Engine/`, `Services/`, `Config/`, `Forms/`
-- [x] 9.8.1 Разделение пространств имён: `Models`, `Engine`, `Services`, `Config`, `Forms`
-- [x] 9.8.2 **Band.cs** — stripped to pure data model: удалены `CalculateStatistics()` → `BandStatisticsComputer`, `GetKernelDensityEstimate()` → `BandKdeEstimator`
-- [x] 9.8.3 **ClassificationResult.cs** — stripped: удалены `GetPixelColor()`, `ToBitmap()` → `ResultRenderer`; исправлен баг с `Array.Fill(UndefinedClassIndex)` в palette-конструкторе
-- [x] 9.8.4 **IDensitySource** — интерфейс + 3 реализации: GlobalDensitySource, PerClassRegularDensitySource, ZScoreDensitySource
-- [x] 9.8.5 Устранить дублирование методов плотностей: `GetSingleDensity` / `GetZScoreSingleDensity` → один `GetSingleDensity(bandIndex, pixelIndex, IDensitySource)`; Product и Multivariate аналогично
-- [x] 9.8.6 Слить 6 кэшей в 2: `_singleDensityCache[(band, classId, valueIndex)]` + `_multivariateDensityCache[(classId, bandIndices, pixelIndex)]`; продукт без кэша (пересчёт из single — бесплатно)
-- [x] 9.8.7 Свести `backgroundWorker_DoWork` + `RunFirstStageWork` + `RunSecondStageWork` → один `RunClassificationWork()` с параметром `isSecondStage`
-
-### Этап 9.9: Переход от нормализованных значений к абсолютным для KDE
-- [x] 9.9.1 **Движок классификации** — `GetSingleDensity` / `GetMultivariateDensity` работают с raw-значениями через `IDensitySource.GetValue()`
-- [x] 9.9.2 **Кэш** — дискретизация по `(value − min) / (max − min) * steps`, работает для любого диапазона raw-значений
-- [x] 9.9.3 **Band.KernelC** — движок использует `KernelC` напрямую; `NormalizeKernelC` сохранён только для KDE-графиков
-- [x] 9.9.4 **Multivariate KDE** — пересчитана под raw-значения (нормализация через `productBandwidths` из raw `KernelC`)
-- [x] 9.9.5 **Проверка** — сборка успешна; KDE-графики оставлены на нормализованных значениях для наглядности (визуализация, не влияет на движок)
-
----
-
-## Версия 0.6 — Проект и персистентность
-
-### Этап 10: Формат проекта
-- [ ] 10.1 Сохранение состояния в .msaproy файл (JSON)
-- [ ] 10.2 Загрузка проекта
-- [ ] 10.3 Недавние файлы (MRU list)
-
-### Этап 11: Внедрение DI и рефакторинг
-- [ ] 11.1 Внедрение Microsoft.Extensions.DependencyInjection
-- [ ] 11.2 Выделение сервисов (FileService, AnalysisService, ExportService)
-- [ ] 11.3 Использование паттерна MVVM для сложных форм
-- [ ] 11.4 Добавление логирования (ILogger)
-
----
-
-## Версия 0.7 — Улучшение UX
-
-### Этап 12: UI/UX улучшения
-- [ ] 12.1 Панель инструментов с иконками
-- [ ] 12.2 Drag&Drop файлов
-- [ ] 12.3 Контекстное меню на ListBox каналов
-- [ ] 12.4 Информационная панель (сводка по данным)
-- [ ] 12.5 Горячие клавиши
-
----
-
-## Версия 0.8 — Исправление UI
-
-### Этап 13: Исправление интерфейса
-- [ ] 13.1 Реорганизация меню и панелей инструментов
-- [ ] 13.2 Исправление расположения элементов на вкладках
-- [ ] 13.3 Добавление нормальных диалогов настроек графиков
-- [ ] 13.4 Исправление размеров окон и контролов
-
-### Этап 14: Дизайн и иконки
-- [ ] 14.1 Создание иконок для кнопок и меню
-- [ ] 14.2 Добавление иконки приложения (favicon, app icon)
-- [ ] 14.3 Улучшение визуального стиля (цветовая схема)
-
-### Этап 15: Локализация
-- [ ] 15.1 Добавление ресурсных файлов для строк (en, ru)
-- [ ] 15.2 Локализация всех элементов интерфейса
-- [ ] 15.3 Поддержка смены языка в настройках
-
-### Этап 16: About Box
-- [ ] 16.1 Создание окна "About" с информацией о приложении
-- [ ] 16.2 Добавление версии, авторов, лицензии
-- [ ] 16.3 Справка / Help
-
----
-
-## Версия 0.9 — Оптимизация памяти классификации
-
-### Этап 17: Снижение потребления памяти
-- [ ] 17.1 **Выгрузка сырых данных после расчёта статистик** — `clearRawData()` вызывает `UnloadPixelData()` на всех бандах; при классификации данные подгружаются лениво через `EnsurePixelValuesLoaded()` (экономия ~2.8 GB для 7×10000×10000)
-- [ ] 17.2 **Ограничение zScoreCache используемыми полосами** — кешировать z-score только для band, которые реально фигурируют в условиях правил, а не для всех
-- [ ] 17.3 **Тайлинг (обработка блоками)** — делить изображение на тайлы (1024×1024); для каждого тайла: подгрузить пиксели → zScoreCache (только для тайла) → классифицировать → результат
-- [ ] 17.4 **Замена int[] ClassIndices на short[]** — если max классов < 32768 (экономия ~200 MB)
-- [ ] 17.5 **Тайлинг Bitmap** — рендерить результат не целиком, а по тайлам
-- [ ] 17.6 **KD-tree для Multivariate KDE** — снижение O(n²) → O(n log n)
-- [ ] 17.7 **Сэмплинг для KDE** — использовать случайную подвыборку при большом количестве пикселей
-
----
-
-## Версия 0.10 — Настройки и оптимизация KDE
-
-### Этап 18: Диалог настроек приложения
-- [x] 18.1 Создание `SettingsForm` с вкладками:
-  - [x] 18.1.1 **General** — Default kernel function, bandwidth selection method
-  - [x] 18.1.2 **Histogram** — правило определения колонок (bins), стиль отображения
-  - [x] 18.1.3 **Classification** — порог undefined, режимы по умолчанию
-- [x] 18.2 Создание `AppSettings` класса (singleton, JSON persistence)
-- [x] 18.3 Интеграция настроек в `Band.cs`, `KernelFunctions.cs`, `BandStatisticsComputer.cs`
-- [x] 18.4 Пункт меню «Settings» / «Options» в MainForm → открытие `SettingsForm`
-
-### Этап 19: Оптимизация коэффициента размытости (bandwidth)
-- [x] 19.1 **Правило Сильвермана** (Silverman's rule of thumb) — уже есть как `GetDefaultBandwidth()`
-- [x] 19.2 **Least-Squares Cross-Validation (LSCV)** — минимизация MISE через скользящий контроль
-- [x] 19.3 **Direct Plug-In (Sheather–Jones)** — оценка производных плотности для оптимального h
-- [x] 19.4 **Адаптивный bandwidth (variable)** — разный h для разных участков распределения (Abramson's rule)
-- [x] 19.5 UI в `SettingsForm` для выбора метода + флаг «использовать оптимизацию (медленно)»
-
----
-
-## Версия 1.0 — Релиз
-
-- [ ] Финальное тестирование
-- [ ] Документация пользователя
-- [ ] Сборка релизной версии
-
----
-
-## Версионирование
-
-- [x] Добавить MinVer для автоматического версионирования
-- [x] Настроить CI/CD для сборки
-
----
-
-## Известные проблемы текущей версии
-
-- KDE-графики (визуализация) считаются на нормализованных [0,1] значениях — осознанное решение для наглядности; движок классификации использует raw-значения
-- Окно "About" / "Help" отсутствует
-- Локализация отсутствует
-- Потребление памяти при классификации больших сцен (>> 1 ГБ для Landsat) — запланировано в v0.9
+### v2.0
+- [ ] Memory optimization: lazy pixel data unloading
+- [ ] Tiled image processing (1024×1024 tiles) for large scenes
+- [ ] KD-tree acceleration for multivariate KDE
+- [ ] short[] class indices for reduced memory footprint
+- [ ] Tiled classification result rendering
+- [ ] Random sampling optimization for large KDE
+- [ ] Dependency Injection (Microsoft.Extensions.DependencyInjection)
+- [ ] Logging via ILogger
+- [ ] MVVM pattern for complex forms
