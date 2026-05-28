@@ -92,6 +92,7 @@
             Controls.Add(splitContainer1);
             Controls.Add(statusStrip1);
             MinimizeBox = false;
+            MinimumSize = new Size(400, 300);
             Name = "TwoImageViewForm";
             ShowIcon = false;
             ShowInTaskbar = false;

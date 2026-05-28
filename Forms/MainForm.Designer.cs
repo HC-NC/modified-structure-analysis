@@ -1534,6 +1534,7 @@ namespace modified_structure_analysis.Forms
             Controls.Add(_statusStrip);
             Controls.Add(_menuStrip);
             MainMenuStrip = _menuStrip;
+            MinimumSize = new Size(400, 300);
             Name = "MainForm";
             Text = "Main";
             Load += MainForm_Load;

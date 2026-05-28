@@ -330,8 +330,12 @@ namespace modified_structure_analysis.Forms
 
         private void Viewport_Resize(object sender, EventArgs e)
         {
-            if (_img == null)
+            if (_img == null || _oldWidth <= 0 || _oldHeight <= 0)
+            {
+                _oldWidth = pictureBox.Width;
+                _oldHeight = pictureBox.Height;
                 return;
+            }
 
             float oldZoom = _zoom;
 

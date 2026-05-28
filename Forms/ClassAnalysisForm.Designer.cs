@@ -35,6 +35,10 @@
             groupBox1 = new GroupBox();
             _classesListBox = new ListBox();
             toolStrip1 = new ToolStrip();
+            _exportToolStripDropDownButton = new ToolStripDropDownButton();
+            _allStatsToolStripMenuItem = new ToolStripMenuItem();
+            _pixelsToolStripMenuItem = new ToolStripMenuItem();
+            _plotToolStripMenuItem = new ToolStripMenuItem();
             tabControl1 = new TabControl();
             _statsTabPage = new TabPage();
             splitContainer2 = new SplitContainer();
@@ -73,10 +77,6 @@
             _saveFileDialog = new SaveFileDialog();
             _backgroundWorker = new System.ComponentModel.BackgroundWorker();
             _scatterWorker = new System.ComponentModel.BackgroundWorker();
-            _exportToolStripDropDownButton = new ToolStripDropDownButton();
-            _allStatsToolStripMenuItem = new ToolStripMenuItem();
-            _pixelsToolStripMenuItem = new ToolStripMenuItem();
-            _plotToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -178,6 +178,40 @@
             toolStrip1.Size = new Size(250, 34);
             toolStrip1.TabIndex = 1;
             toolStrip1.Text = "toolStrip1";
+            // 
+            // _exportToolStripDropDownButton
+            // 
+            _exportToolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _exportToolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { _allStatsToolStripMenuItem, _pixelsToolStripMenuItem, _plotToolStripMenuItem });
+            _exportToolStripDropDownButton.Image = (Image)resources.GetObject("_exportToolStripDropDownButton.Image");
+            _exportToolStripDropDownButton.ImageTransparentColor = Color.Magenta;
+            _exportToolStripDropDownButton.Name = "_exportToolStripDropDownButton";
+            _exportToolStripDropDownButton.Size = new Size(81, 29);
+            _exportToolStripDropDownButton.Text = "Export";
+            // 
+            // _allStatsToolStripMenuItem
+            // 
+            _allStatsToolStripMenuItem.Name = "_allStatsToolStripMenuItem";
+            _allStatsToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
+            _allStatsToolStripMenuItem.Size = new Size(270, 34);
+            _allStatsToolStripMenuItem.Text = "All Stats";
+            _allStatsToolStripMenuItem.Click += ExportToolStripButton_Click;
+            // 
+            // _pixelsToolStripMenuItem
+            // 
+            _pixelsToolStripMenuItem.Name = "_pixelsToolStripMenuItem";
+            _pixelsToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.P;
+            _pixelsToolStripMenuItem.Size = new Size(270, 34);
+            _pixelsToolStripMenuItem.Text = "Class Pixels";
+            _pixelsToolStripMenuItem.Click += ExportPixelsTable_Click;
+            // 
+            // _plotToolStripMenuItem
+            // 
+            _plotToolStripMenuItem.Name = "_plotToolStripMenuItem";
+            _plotToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.G;
+            _plotToolStripMenuItem.Size = new Size(270, 34);
+            _plotToolStripMenuItem.Text = "Active Plot";
+            _plotToolStripMenuItem.Click += ExportActivePlot_Click;
             // 
             // tabControl1
             // 
@@ -597,37 +631,6 @@
             _scatterWorker.DoWork += ScatterWorker_DoWork;
             _scatterWorker.ProgressChanged += ScatterWorker_ProgressChanged;
             _scatterWorker.RunWorkerCompleted += ScatterWorker_RunWorkerCompleted;
-            // 
-            // _exportToolStripDropDownButton
-            // 
-            _exportToolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            _exportToolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { _allStatsToolStripMenuItem, _pixelsToolStripMenuItem, _plotToolStripMenuItem });
-            _exportToolStripDropDownButton.Image = (Image)resources.GetObject("_exportToolStripDropDownButton.Image");
-            _exportToolStripDropDownButton.ImageTransparentColor = Color.Magenta;
-            _exportToolStripDropDownButton.Name = "_exportToolStripDropDownButton";
-            _exportToolStripDropDownButton.Size = new Size(81, 29);
-            _exportToolStripDropDownButton.Text = "Export";
-            // 
-            // _allStatsToolStripMenuItem
-            // 
-            _allStatsToolStripMenuItem.Name = "_allStatsToolStripMenuItem";
-            _allStatsToolStripMenuItem.Size = new Size(270, 34);
-            _allStatsToolStripMenuItem.Text = "All Stats";
-            _allStatsToolStripMenuItem.Click += ExportToolStripButton_Click;
-            // 
-            // _pixelsToolStripMenuItem
-            // 
-            _pixelsToolStripMenuItem.Name = "_pixelsToolStripMenuItem";
-            _pixelsToolStripMenuItem.Size = new Size(270, 34);
-            _pixelsToolStripMenuItem.Text = "Class Pixels";
-            _pixelsToolStripMenuItem.Click += ExportPixelsTable_Click;
-            // 
-            // _plotToolStripMenuItem
-            // 
-            _plotToolStripMenuItem.Name = "_plotToolStripMenuItem";
-            _plotToolStripMenuItem.Size = new Size(270, 34);
-            _plotToolStripMenuItem.Text = "Active Plot";
-            _plotToolStripMenuItem.Click += ExportActivePlot_Click;
             // 
             // ClassAnalysisForm
             // 
