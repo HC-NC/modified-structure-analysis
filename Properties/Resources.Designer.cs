@@ -61,12 +61,300 @@ namespace modified_structure_analysis.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Build scatter plot.
+        /// </summary>
+        internal static string _buildScatterButton_ToolTip {
+            get {
+                return ResourceManager.GetString("_buildScatterButton_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Clear KDE plot.
+        /// </summary>
+        internal static string _kdeClearButton_ToolTip {
+            get {
+                return ResourceManager.GetString("_kdeClearButton_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Multivariate KDE (product across bands).
+        /// </summary>
+        internal static string _kdeMultivariateButton_ToolTip {
+            get {
+                return ResourceManager.GetString("_kdeMultivariateButton_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Product of independent per-band KDEs.
+        /// </summary>
+        internal static string _kdeProductButton_ToolTip {
+            get {
+                return ResourceManager.GetString("_kdeProductButton_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Single-band KDE.
+        /// </summary>
+        internal static string _kdeSingleButton_ToolTip {
+            get {
+                return ResourceManager.GetString("_kdeSingleButton_ToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Add Condition.
+        /// </summary>
+        internal static string Add_Condition {
+            get {
+                return ResourceManager.GetString("Add_Condition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Add Rule.
+        /// </summary>
+        internal static string Add_Rule {
+            get {
+                return ResourceManager.GetString("Add Rule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Frequency.
+        /// </summary>
+        internal static string Axis_HistogramFrequency {
+            get {
+                return ResourceManager.GetString("Axis_HistogramFrequency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Value.
+        /// </summary>
+        internal static string Axis_HistogramValue {
+            get {
+                return ResourceManager.GetString("Axis_HistogramValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap blue_sqaure {
             get {
                 object obj = ResourceManager.GetObject("blue_sqaure", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Channel Value (v).
+        /// </summary>
+        internal static string ChannelValue {
+            get {
+                return ResourceManager.GetString("ChannelValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Channel corr. coefficient component (v).
+        /// </summary>
+        internal static string ChannelZScore {
+            get {
+                return ResourceManager.GetString("ChannelZScore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Class.
+        /// </summary>
+        internal static string Class {
+            get {
+                return ResourceManager.GetString("Class", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Current palette.
+        /// </summary>
+        internal static string Current_palette {
+            get {
+                return ResourceManager.GetString("Current palette", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Density.
+        /// </summary>
+        internal static string Density {
+            get {
+                return ResourceManager.GetString("Density", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Direct Plug-In (Sheather–Jones).
+        /// </summary>
+        internal static string Direct_Plug_In {
+            get {
+                return ResourceManager.GetString("Direct Plug-In", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Edit Condition.
+        /// </summary>
+        internal static string Edit_Condition {
+            get {
+                return ResourceManager.GetString("Edit_Condition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Edit Rule.
+        /// </summary>
+        internal static string Edit_Rule {
+            get {
+                return ResourceManager.GetString("Edit Rule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Export error: {0}.
+        /// </summary>
+        internal static string Error_Export {
+            get {
+                return ResourceManager.GetString("Error_Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на An error occurred: {0}.
+        /// </summary>
+        internal static string Error_Generic {
+            get {
+                return ResourceManager.GetString("Error_Generic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на KDE error: {0}.
+        /// </summary>
+        internal static string Error_Kde {
+            get {
+                return ResourceManager.GetString("Error_Kde", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Scatter error: {0}.
+        /// </summary>
+        internal static string Error_Scatter {
+            get {
+                return ResourceManager.GetString("Error_Scatter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Stats error: {0}.
+        /// </summary>
+        internal static string Error_Stats {
+            get {
+                return ResourceManager.GetString("Error_Stats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на CSV.
+        /// </summary>
+        internal static string Format_Csv {
+            get {
+                return ResourceManager.GetString("Format_Csv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на GeoTIFF.
+        /// </summary>
+        internal static string Format_GeoTiff {
+            get {
+                return ResourceManager.GetString("Format_GeoTiff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на JPEG.
+        /// </summary>
+        internal static string Format_Jpeg {
+            get {
+                return ResourceManager.GetString("Format_Jpeg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на JSON.
+        /// </summary>
+        internal static string Format_Json {
+            get {
+                return ResourceManager.GetString("Format_Json", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на PDF.
+        /// </summary>
+        internal static string Format_Pdf {
+            get {
+                return ResourceManager.GetString("Format_Pdf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на PNG.
+        /// </summary>
+        internal static string Format_Png {
+            get {
+                return ResourceManager.GetString("Format_Png", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на PNG + World file.
+        /// </summary>
+        internal static string Format_PngWorld {
+            get {
+                return ResourceManager.GetString("Format_PngWorld", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на SVG.
+        /// </summary>
+        internal static string Format_Svg {
+            get {
+                return ResourceManager.GetString("Format_Svg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на TXT.
+        /// </summary>
+        internal static string Format_Txt {
+            get {
+                return ResourceManager.GetString("Format_Txt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Grayscale palette.
+        /// </summary>
+        internal static string Grayscale_palette {
+            get {
+                return ResourceManager.GetString("Grayscale palette", resourceCulture);
             }
         }
         
@@ -81,12 +369,687 @@ namespace modified_structure_analysis.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на HSV palette.
+        /// </summary>
+        internal static string HSV_palette {
+            get {
+                return ResourceManager.GetString("HSV palette", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Class {0}.
+        /// </summary>
+        internal static string Label_ClassFormat {
+            get {
+                return ResourceManager.GetString("Label_ClassFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Classification.
+        /// </summary>
+        internal static string Label_Classification {
+            get {
+                return ResourceManager.GetString("Label_Classification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на No conditions.
+        /// </summary>
+        internal static string Label_NoConditions {
+            get {
+                return ResourceManager.GetString("Label_NoConditions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на No rule select.
+        /// </summary>
+        internal static string Label_NoRuleSelect {
+            get {
+                return ResourceManager.GetString("Label_NoRuleSelect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Second stage.
+        /// </summary>
+        internal static string Label_SecondStage {
+            get {
+                return ResourceManager.GetString("Label_SecondStage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Undefined.
+        /// </summary>
+        internal static string Label_Undefined {
+            get {
+                return ResourceManager.GetString("Label_Undefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Least-Squares Cross-Validation.
+        /// </summary>
+        internal static string Least_Squares_Cross_Validation {
+            get {
+                return ResourceManager.GetString("Least-Squares Cross-Validation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Leave-One-Out Likelihood (classification).
+        /// </summary>
+        internal static string Leave_One_Out_Likelihood {
+            get {
+                return ResourceManager.GetString("Leave-One-Out Likelihood", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Loading.
+        /// </summary>
+        internal static string Loading {
+            get {
+                return ResourceManager.GetString("Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Analysis.
+        /// </summary>
+        internal static string Msg_Analysis {
+            get {
+                return ResourceManager.GetString("Msg_Analysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Operation was canceled.
+        /// </summary>
+        internal static string Msg_Canceled {
+            get {
+                return ResourceManager.GetString("Msg_Canceled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Classification is in progress! Wait..
+        /// </summary>
+        internal static string Msg_ClassInProgress {
+            get {
+                return ResourceManager.GetString("Msg_ClassInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Classification will be interrupted!.
+        /// </summary>
+        internal static string Msg_ClassInterrupt {
+            get {
+                return ResourceManager.GetString("Msg_ClassInterrupt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Class statistics not available..
+        /// </summary>
+        internal static string Msg_ClassStatsNotAvailable {
+            get {
+                return ResourceManager.GetString("Msg_ClassStatsNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Confirm Delete.
+        /// </summary>
+        internal static string Msg_ConfirmDelete {
+            get {
+                return ResourceManager.GetString("Msg_ConfirmDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Are you sure you want to delete rule #{0}?.
+        /// </summary>
+        internal static string Msg_ConfirmDeleteRule {
+            get {
+                return ResourceManager.GetString("Msg_ConfirmDeleteRule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Error.
+        /// </summary>
+        internal static string Msg_Error {
+            get {
+                return ResourceManager.GetString("Msg_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Export.
+        /// </summary>
+        internal static string Msg_Export {
+            get {
+                return ResourceManager.GetString("Msg_Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Export completed successfully..
+        /// </summary>
+        internal static string Msg_ExportComplete {
+            get {
+                return ResourceManager.GetString("Msg_ExportComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Export Graph.
+        /// </summary>
+        internal static string Msg_ExportGraph {
+            get {
+                return ResourceManager.GetString("Msg_ExportGraph", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Info.
+        /// </summary>
+        internal static string Msg_Info {
+            get {
+                return ResourceManager.GetString("Msg_Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Cannot mix text files with image files. Please open them separately..
+        /// </summary>
+        internal static string Msg_MixedFiles {
+            get {
+                return ResourceManager.GetString("Msg_MixedFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Please specify a file path..
+        /// </summary>
+        internal static string Msg_NeedFilePath {
+            get {
+                return ResourceManager.GetString("Msg_NeedFilePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Please run primary classification first..
+        /// </summary>
+        internal static string Msg_NeedPrimaryClass {
+            get {
+                return ResourceManager.GetString("Msg_NeedPrimaryClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на No bands loaded..
+        /// </summary>
+        internal static string Msg_NoBandsLoaded {
+            get {
+                return ResourceManager.GetString("Msg_NoBandsLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на No classification result available. Run classification first..
+        /// </summary>
+        internal static string Msg_NoClassResult {
+            get {
+                return ResourceManager.GetString("Msg_NoClassResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на No plot available in the active tab..
+        /// </summary>
+        internal static string Msg_NoPlot {
+            get {
+                return ResourceManager.GetString("Msg_NoPlot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на No classification rules defined. Please add rules first..
+        /// </summary>
+        internal static string Msg_NoRules {
+            get {
+                return ResourceManager.GetString("Msg_NoRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на No valid data found in file..
+        /// </summary>
+        internal static string Msg_NoValidData {
+            get {
+                return ResourceManager.GetString("Msg_NoValidData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Pixel table exported successfully..
+        /// </summary>
+        internal static string Msg_PixelExportComplete {
+            get {
+                return ResourceManager.GetString("Msg_PixelExportComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Please select a rule to clone..
+        /// </summary>
+        internal static string Msg_SelectRuleToClone {
+            get {
+                return ResourceManager.GetString("Msg_SelectRuleToClone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Please select a rule to delete..
+        /// </summary>
+        internal static string Msg_SelectRuleToDelete {
+            get {
+                return ResourceManager.GetString("Msg_SelectRuleToDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Please select a rule to edit..
+        /// </summary>
+        internal static string Msg_SelectRuleToEdit {
+            get {
+                return ResourceManager.GetString("Msg_SelectRuleToEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Please select a rule to move..
+        /// </summary>
+        internal static string Msg_SelectRuleToMove {
+            get {
+                return ResourceManager.GetString("Msg_SelectRuleToMove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Statistics exported successfully..
+        /// </summary>
+        internal static string Msg_StatsExportComplete {
+            get {
+                return ResourceManager.GetString("Msg_StatsExportComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Validation Error.
+        /// </summary>
+        internal static string Msg_ValidationError {
+            get {
+                return ResourceManager.GetString("Msg_ValidationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Warning.
+        /// </summary>
+        internal static string Msg_Warning {
+            get {
+                return ResourceManager.GetString("Msg_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Multivar.
+        /// </summary>
+        internal static string Multivar {
+            get {
+                return ResourceManager.GetString("Multivar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Multivariate density estimation (p).
+        /// </summary>
+        internal static string Multivariate {
+            get {
+                return ResourceManager.GetString("Multivariate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Name.
+        /// </summary>
+        internal static string Name {
+            get {
+                return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Normalized Value.
+        /// </summary>
+        internal static string Normalized_Value {
+            get {
+                return ResourceManager.GetString("Normalized_Value", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на not available.
+        /// </summary>
+        internal static string not_available {
+            get {
+                return ResourceManager.GetString("not available", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Open file.
+        /// </summary>
+        internal static string Open_file {
+            get {
+                return ResourceManager.GetString("Open file", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на pixels.
+        /// </summary>
+        internal static string pixels {
+            get {
+                return ResourceManager.GetString("pixels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Product.
+        /// </summary>
+        internal static string Product {
+            get {
+                return ResourceManager.GetString("Product", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Product of density estimates (Π).
+        /// </summary>
+        internal static string ProductDensity {
+            get {
+                return ResourceManager.GetString("ProductDensity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Computing correlation....
+        /// </summary>
+        internal static string Progress_Correlation {
+            get {
+                return ResourceManager.GetString("Progress_Correlation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на KDE: band {0}/{1}.
+        /// </summary>
+        internal static string Progress_Kde {
+            get {
+                return ResourceManager.GetString("Progress_Kde", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Multivariate KDE: {0}%.
+        /// </summary>
+        internal static string Progress_KdeMultivariate {
+            get {
+                return ResourceManager.GetString("Progress_KdeMultivariate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на KDE: {0}%.
+        /// </summary>
+        internal static string Progress_KdeProduct {
+            get {
+                return ResourceManager.GetString("Progress_KdeProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Rendering bitmap....
+        /// </summary>
+        internal static string Progress_Rendering {
+            get {
+                return ResourceManager.GetString("Progress_Rendering", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Compute scatter.
+        /// </summary>
+        internal static string Progress_Scatter {
+            get {
+                return ResourceManager.GetString("Progress_Scatter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Compute scatter {0}%.
+        /// </summary>
+        internal static string Progress_ScatterPercent {
+            get {
+                return ResourceManager.GetString("Progress_ScatterPercent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Starting {0}....
+        /// </summary>
+        internal static string Progress_Starting {
+            get {
+                return ResourceManager.GetString("Progress_Starting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Statistics: band {0}/{1}.
+        /// </summary>
+        internal static string Progress_Stats {
+            get {
+                return ResourceManager.GetString("Progress_Stats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap red_sqaure {
             get {
                 object obj = ResourceManager.GetObject("red_sqaure", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Rule of Thumb (fast).
+        /// </summary>
+        internal static string Rule_of_Thumb {
+            get {
+                return ResourceManager.GetString("Rule of Thumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Cumulative.
+        /// </summary>
+        internal static string Series_Cumulative {
+            get {
+                return ResourceManager.GetString("Series_Cumulative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на KDE.
+        /// </summary>
+        internal static string Series_Kde {
+            get {
+                return ResourceManager.GetString("Series_Kde", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на (showing {0} of {1}).
+        /// </summary>
+        internal static string ShowingSuffix {
+            get {
+                return ResourceManager.GetString("ShowingSuffix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Density assessment (p).
+        /// </summary>
+        internal static string Single {
+            get {
+                return ResourceManager.GetString("Single", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Bandwidth recalculated for &quot;{0}&quot;.
+        /// </summary>
+        internal static string Status_BandwidthRecalculated {
+            get {
+                return ResourceManager.GetString("Status_BandwidthRecalculated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Classification was canceled.
+        /// </summary>
+        internal static string Status_ClassCanceled {
+            get {
+                return ResourceManager.GetString("Status_ClassCanceled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Classification complete — {0} undefined pixels.
+        /// </summary>
+        internal static string Status_ClassComplete {
+            get {
+                return ResourceManager.GetString("Status_ClassComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Computing statistics and bandwidth....
+        /// </summary>
+        internal static string Status_ComputingStats {
+            get {
+                return ResourceManager.GetString("Status_ComputingStats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на KDE ready.
+        /// </summary>
+        internal static string Status_KdeReady {
+            get {
+                return ResourceManager.GetString("Status_KdeReady", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Ready.
+        /// </summary>
+        internal static string Status_Ready {
+            get {
+                return ResourceManager.GetString("Status_Ready", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Recalculating bandwidth....
+        /// </summary>
+        internal static string Status_RecalculatingBandwidth {
+            get {
+                return ResourceManager.GetString("Status_RecalculatingBandwidth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Recalculating bandwidth for &quot;{0}&quot;....
+        /// </summary>
+        internal static string Status_RecalculatingBandwidthFor {
+            get {
+                return ResourceManager.GetString("Status_RecalculatingBandwidthFor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Scatter completed: {0} points.
+        /// </summary>
+        internal static string Status_ScatterComplete {
+            get {
+                return ResourceManager.GetString("Status_ScatterComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на View class analysis.
+        /// </summary>
+        internal static string Tooltip_ViewClassAnalysis {
+            get {
+                return ResourceManager.GetString("Tooltip_ViewClassAnalysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Type.
+        /// </summary>
+        internal static string Type {
+            get {
+                return ResourceManager.GetString("Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Multivariate density estimation (zs_p).
+        /// </summary>
+        internal static string ZScoreMultivariate {
+            get {
+                return ResourceManager.GetString("ZScoreMultivariate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Product of density estimates (zs_Π).
+        /// </summary>
+        internal static string ZScoreProduct {
+            get {
+                return ResourceManager.GetString("ZScoreProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Density assessment (zs_p).
+        /// </summary>
+        internal static string ZScoreSingle {
+            get {
+                return ResourceManager.GetString("ZScoreSingle", resourceCulture);
             }
         }
     }

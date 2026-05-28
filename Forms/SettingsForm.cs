@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using modified_structure_analysis.Config;
+using modified_structure_analysis.Properties;
 using modified_structure_analysis.Services;
 
 namespace modified_structure_analysis.Forms;
@@ -22,10 +23,10 @@ public partial class SettingsForm : Form
         _bandwidthMethodCombo.Items.Clear();
         _bandwidthMethodCombo.Items.AddRange(new object[]
         {
-            "Rule of Thumb (fast)",
-            "Least-Squares Cross-Validation",
-            "Direct Plug-In (Sheather–Jones)",
-            "Leave-One-Out Likelihood (classification)"
+            Resources.Rule_of_Thumb,
+            Resources.Least_Squares_Cross_Validation,
+            Resources.Direct_Plug_In,
+            Resources.Leave_One_Out_Likelihood
         });
         int bwIdx = (int)_settings.BandwidthMethod;
         _bandwidthMethodCombo.SelectedIndex = bwIdx >= 0 && bwIdx < _bandwidthMethodCombo.Items.Count ? bwIdx : 0;
@@ -59,7 +60,7 @@ public partial class SettingsForm : Form
 
     private void FillLanguageCombo()
     {
-        var languages = new List<string> { "" };
+        var languages = new List<string>();
         var exeDir = AppDomain.CurrentDomain.BaseDirectory;
         foreach (var dir in Directory.GetDirectories(exeDir))
         {
@@ -72,8 +73,6 @@ public partial class SettingsForm : Form
             }
             catch { }
         }
-        languages.Add("en-US");
-        languages.Add("ru-RU");
 
         _languageCombo.Items.Clear();
         foreach (var lang in languages.Distinct().OrderBy(x => x))

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BandSelectionForm));
             listBox1 = new ListBox();
             flowLayoutPanel1 = new FlowLayoutPanel();
             cancelButton = new Button();
@@ -37,64 +38,45 @@
             // 
             // listBox1
             // 
-            listBox1.Dock = DockStyle.Fill;
+            resources.ApplyResources(listBox1, "listBox1");
             listBox1.FormattingEnabled = true;
-            listBox1.Location = new Point(0, 0);
             listBox1.Name = "listBox1";
             listBox1.SelectionMode = SelectionMode.MultiExtended;
-            listBox1.Size = new Size(378, 244);
-            listBox1.TabIndex = 0;
             // 
             // flowLayoutPanel1
             // 
-            flowLayoutPanel1.AutoSize = true;
+            resources.ApplyResources(flowLayoutPanel1, "flowLayoutPanel1");
             flowLayoutPanel1.Controls.Add(cancelButton);
             flowLayoutPanel1.Controls.Add(okButton);
-            flowLayoutPanel1.Dock = DockStyle.Bottom;
-            flowLayoutPanel1.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanel1.Location = new Point(0, 190);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Padding = new Padding(4);
-            flowLayoutPanel1.Size = new Size(378, 54);
-            flowLayoutPanel1.TabIndex = 1;
             // 
             // cancelButton
             // 
             cancelButton.DialogResult = DialogResult.Cancel;
-            cancelButton.Location = new Point(255, 7);
+            resources.ApplyResources(cancelButton, "cancelButton");
             cancelButton.Name = "cancelButton";
-            cancelButton.Size = new Size(112, 40);
-            cancelButton.TabIndex = 3;
-            cancelButton.Text = "Cancel";
             cancelButton.UseVisualStyleBackColor = true;
             cancelButton.Click += cancelButton_Click;
             // 
             // okButton
             // 
             okButton.DialogResult = DialogResult.OK;
-            okButton.Location = new Point(137, 7);
+            resources.ApplyResources(okButton, "okButton");
             okButton.Name = "okButton";
-            okButton.Size = new Size(112, 40);
-            okButton.TabIndex = 2;
-            okButton.Text = "OK";
             okButton.UseVisualStyleBackColor = true;
             okButton.Click += okButton_Click;
             // 
             // BandSelectionForm
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            resources.ApplyResources(this, "$this");
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(378, 244);
             Controls.Add(flowLayoutPanel1);
             Controls.Add(listBox1);
             MaximizeBox = false;
             MinimizeBox = false;
-            MinimumSize = new Size(300, 300);
             Name = "BandSelectionForm";
             ShowIcon = false;
             ShowInTaskbar = false;
-            StartPosition = FormStartPosition.CenterParent;
-            Text = "BandSelectionForm";
             TopMost = true;
             Load += BandSelectionForm_Load;
             flowLayoutPanel1.ResumeLayout(false);

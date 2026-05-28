@@ -1,4 +1,5 @@
 ﻿using modified_structure_analysis.Models;
+using modified_structure_analysis.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +20,7 @@ namespace modified_structure_analysis.Forms
         {
             InitializeComponent();
 
-            _formatCombo.Items.AddRange(new[] { "PNG", "JPEG", "SVG", "PDF" });
+            _formatCombo.Items.AddRange(new[] { Resources.Format_Png, Resources.Format_Jpeg, Resources.Format_Svg, Resources.Format_Pdf });
             _formatCombo.SelectedIndex = 0;
         }
 
@@ -49,7 +50,7 @@ namespace modified_structure_analysis.Forms
         {
             if (string.IsNullOrWhiteSpace(_pathTextBox.Text))
             {
-                MessageBox.Show("Please specify a file path.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_NeedFilePath, Resources.Msg_ValidationError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 DialogResult = DialogResult.None;
                 return;
             }

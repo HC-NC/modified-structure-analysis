@@ -1,4 +1,5 @@
 ﻿using modified_structure_analysis.Models;
+using modified_structure_analysis.Properties;
 
 namespace modified_structure_analysis.Forms
 {
@@ -25,7 +26,7 @@ namespace modified_structure_analysis.Forms
             _rule = existingRule ?? new ClassificationRule();
             _oldRule = (ClassificationRule)_rule.Clone();
 
-            Text = _isEdit ? "Edit Rule" : "Add Rule";
+            Text = _isEdit ? Resources.Edit_Rule : Resources.Add_Rule;
         }
 
         private void RuleEditorForm_Load(object sender, EventArgs e)

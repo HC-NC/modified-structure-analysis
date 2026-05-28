@@ -28,123 +28,94 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TextTableColumnSelector));
             dataGridView1 = new DataGridView();
-            panel1 = new Panel();
             cancelButton = new Button();
             acceptButton = new Button();
             panel2 = new Panel();
             resolutionNumericUpDown = new NumericUpDown();
             label1 = new Label();
+            flowLayoutPanel1 = new FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            panel1.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)resolutionNumericUpDown).BeginInit();
+            flowLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // dataGridView1
             // 
+            resources.ApplyResources(dataGridView1, "dataGridView1");
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 0);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersVisible = false;
-            dataGridView1.RowHeadersWidth = 62;
-            dataGridView1.Size = new Size(378, 195);
-            dataGridView1.TabIndex = 0;
-            // 
-            // panel1
-            // 
-            panel1.Controls.Add(cancelButton);
-            panel1.Controls.Add(acceptButton);
-            panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 195);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(378, 49);
-            panel1.TabIndex = 1;
             // 
             // cancelButton
             // 
-            cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            resources.ApplyResources(cancelButton, "cancelButton");
             cancelButton.DialogResult = DialogResult.Cancel;
-            cancelButton.Location = new Point(136, 6);
             cancelButton.Name = "cancelButton";
-            cancelButton.Size = new Size(112, 34);
-            cancelButton.TabIndex = 1;
-            cancelButton.Text = "Cancel";
             cancelButton.UseVisualStyleBackColor = true;
             // 
             // acceptButton
             // 
-            acceptButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            resources.ApplyResources(acceptButton, "acceptButton");
             acceptButton.DialogResult = DialogResult.OK;
-            acceptButton.Location = new Point(254, 6);
             acceptButton.Name = "acceptButton";
-            acceptButton.Size = new Size(112, 34);
-            acceptButton.TabIndex = 0;
-            acceptButton.Text = "Accept";
             acceptButton.UseVisualStyleBackColor = true;
             acceptButton.Click += acceptButton_Click;
             // 
             // panel2
             // 
-            panel2.AutoSize = true;
+            resources.ApplyResources(panel2, "panel2");
             panel2.Controls.Add(resolutionNumericUpDown);
             panel2.Controls.Add(label1);
-            panel2.Dock = DockStyle.Bottom;
-            panel2.Location = new Point(0, 158);
             panel2.Name = "panel2";
-            panel2.Size = new Size(378, 37);
-            panel2.TabIndex = 2;
             // 
             // resolutionNumericUpDown
             // 
-            resolutionNumericUpDown.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            resources.ApplyResources(resolutionNumericUpDown, "resolutionNumericUpDown");
             resolutionNumericUpDown.DecimalPlaces = 3;
-            resolutionNumericUpDown.Location = new Point(136, 3);
             resolutionNumericUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             resolutionNumericUpDown.Name = "resolutionNumericUpDown";
-            resolutionNumericUpDown.Size = new Size(230, 31);
-            resolutionNumericUpDown.TabIndex = 1;
             resolutionNumericUpDown.Value = new decimal(new int[] { 30, 0, 0, 0 });
             // 
             // label1
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(12, 5);
+            resources.ApplyResources(label1, "label1");
             label1.Name = "label1";
-            label1.Size = new Size(95, 25);
-            label1.TabIndex = 0;
-            label1.Text = "Resolution";
+            // 
+            // flowLayoutPanel1
+            // 
+            resources.ApplyResources(flowLayoutPanel1, "flowLayoutPanel1");
+            flowLayoutPanel1.Controls.Add(cancelButton);
+            flowLayoutPanel1.Controls.Add(acceptButton);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
             // 
             // TextTableColumnSelector
             // 
             AcceptButton = acceptButton;
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            resources.ApplyResources(this, "$this");
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = cancelButton;
-            ClientSize = new Size(378, 244);
-            Controls.Add(panel2);
             Controls.Add(dataGridView1);
-            Controls.Add(panel1);
+            Controls.Add(panel2);
+            Controls.Add(flowLayoutPanel1);
             MaximizeBox = false;
             MinimizeBox = false;
-            MinimumSize = new Size(400, 300);
             Name = "TextTableColumnSelector";
             ShowIcon = false;
             ShowInTaskbar = false;
-            StartPosition = FormStartPosition.CenterParent;
-            Text = "TextTableColumnSelector";
             TopMost = true;
             Load += FormLoad;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)resolutionNumericUpDown).EndInit();
+            flowLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -152,11 +123,11 @@
         #endregion
 
         private DataGridView dataGridView1;
-        private Panel panel1;
         private Button cancelButton;
         private Button acceptButton;
         private Panel panel2;
         private NumericUpDown resolutionNumericUpDown;
         private Label label1;
+        private FlowLayoutPanel flowLayoutPanel1;
     }
 }

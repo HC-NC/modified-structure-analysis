@@ -1,3 +1,4 @@
+using modified_structure_analysis.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,13 +19,13 @@ namespace modified_structure_analysis.Forms
 
             DataGridViewTextBoxColumn nameColumn = new DataGridViewTextBoxColumn();
             nameColumn.Name = "NameColumn";
-            nameColumn.HeaderText = "Name";
+            nameColumn.HeaderText = Resources.Name;
 
             dataGridView1.Columns.Add(nameColumn);
 
             DataGridViewComboBoxColumn typeColumn = new DataGridViewComboBoxColumn();
             typeColumn.Name = "TypeColumn";
-            typeColumn.HeaderText = "Type";
+            typeColumn.HeaderText = Resources.Type;
             typeColumn.Items.AddRange(Enum.GetNames(typeof(FieldType)));
 
             dataGridView1.Columns.Add(typeColumn);

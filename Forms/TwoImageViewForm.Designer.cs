@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TwoImageViewForm));
             splitContainer1 = new SplitContainer();
             viewport1 = new Viewport();
             viewport2 = new Viewport();
@@ -40,64 +41,48 @@
             // 
             // splitContainer1
             // 
+            resources.ApplyResources(splitContainer1, "splitContainer1");
             splitContainer1.BackColor = SystemColors.ControlDark;
-            splitContainer1.Dock = DockStyle.Fill;
-            splitContainer1.IsSplitterFixed = true;
-            splitContainer1.Location = new Point(0, 0);
             splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
+            resources.ApplyResources(splitContainer1.Panel1, "splitContainer1.Panel1");
             splitContainer1.Panel1.Controls.Add(viewport1);
             // 
             // splitContainer1.Panel2
             // 
+            resources.ApplyResources(splitContainer1.Panel2, "splitContainer1.Panel2");
             splitContainer1.Panel2.Controls.Add(viewport2);
-            splitContainer1.Size = new Size(1258, 562);
-            splitContainer1.SplitterDistance = 629;
-            splitContainer1.TabIndex = 0;
             // 
             // viewport1
             // 
+            resources.ApplyResources(viewport1, "viewport1");
             viewport1.BackColor = SystemColors.Control;
-            viewport1.Dock = DockStyle.Fill;
-            viewport1.Location = new Point(0, 0);
             viewport1.Name = "viewport1";
-            viewport1.Size = new Size(629, 562);
-            viewport1.TabIndex = 0;
             // 
             // viewport2
             // 
+            resources.ApplyResources(viewport2, "viewport2");
             viewport2.BackColor = SystemColors.Control;
-            viewport2.Dock = DockStyle.Fill;
-            viewport2.Location = new Point(0, 0);
             viewport2.Name = "viewport2";
-            viewport2.Size = new Size(625, 562);
-            viewport2.TabIndex = 0;
             // 
             // statusStrip1
             // 
+            resources.ApplyResources(statusStrip1, "statusStrip1");
             statusStrip1.ImageScalingSize = new Size(24, 24);
-            statusStrip1.Location = new Point(0, 562);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(1258, 22);
-            statusStrip1.TabIndex = 1;
-            statusStrip1.Text = "statusStrip1";
             // 
             // TwoImageViewForm
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            resources.ApplyResources(this, "$this");
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1258, 584);
             Controls.Add(splitContainer1);
             Controls.Add(statusStrip1);
             MinimizeBox = false;
-            MinimumSize = new Size(400, 300);
             Name = "TwoImageViewForm";
             ShowIcon = false;
             ShowInTaskbar = false;
-            StartPosition = FormStartPosition.CenterParent;
-            Text = "TwoImageViewForm";
             TopMost = true;
             FormClosing += TwoImageViewForm_FormClosing;
             Load += TwoImageViewForm_Load;

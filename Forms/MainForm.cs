@@ -49,7 +49,7 @@ namespace modified_structure_analysis.Forms
             _openFileDialog.Filter = "All|*.tif;*.tiff;*.img;*.csv;*.txt|GeoTIFF|*.tif;*.tiff|ERDAS|*.img|CSV|*.csv|Text file|*.txt";
             _openFileDialog.Multiselect = true;
 
-            _mainStatusLabel.Text = "Open file (Ctrl+O)";
+            _mainStatusLabel.Text = $"{Resources.Open_file} (Ctrl+O)";
             _mainProgressBar.Visible = false;
 
             _primaryClassificationDataGridView.CellToolTipTextNeeded += ClassificationGrid_CellToolTipTextNeeded;
@@ -93,8 +93,8 @@ namespace modified_structure_analysis.Forms
         {
             var s = AppSettings.Instance;
             _kdeModel = new PlotModel();
-            _kdeModel.Axes.Add(new LinearAxis { Key = "X", Position = AxisPosition.Bottom, Title = s.GraphShowAxisLabels ? "Normalized Value" : null, Minimum = 0d, Maximum = 1d });
-            _kdeModel.Axes.Add(new LinearAxis { Key = "Y", Position = AxisPosition.Left, Title = s.GraphShowAxisLabels ? "Density" : null, Minimum = 0d });
+            _kdeModel.Axes.Add(new LinearAxis { Key = "X", Position = AxisPosition.Bottom, Title = s.GraphShowAxisLabels ? Resources.Normalized_Value : null, Minimum = 0d, Maximum = 1d });
+            _kdeModel.Axes.Add(new LinearAxis { Key = "Y", Position = AxisPosition.Left, Title = s.GraphShowAxisLabels ? Resources.Density : null, Minimum = 0d });
             if (s.GraphShowLegend)
                 _kdeModel.Legends.Add(new Legend { LegendPosition = LegendPosition.TopRight });
             _kdePlotView.Model = _kdeModel;
@@ -220,7 +220,7 @@ namespace modified_structure_analysis.Forms
 			
             if (grid.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a rule to edit.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_SelectRuleToEdit, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -242,15 +242,15 @@ namespace modified_structure_analysis.Forms
 			
             if (grid.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a rule to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_SelectRuleToDelete, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             int selectedIndex = grid.SelectedRows[0].Index;
 
             var result = MessageBox.Show(
-                $"Are you sure you want to delete rule #{selectedIndex + 1}?",
-                "Confirm Delete",
+                string.Format(Resources.Msg_ConfirmDeleteRule, selectedIndex + 1),
+                Resources.Msg_ConfirmDelete,
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
@@ -282,7 +282,7 @@ namespace modified_structure_analysis.Forms
 			
             if (grid.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a rule to clone.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_SelectRuleToClone, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -310,7 +310,7 @@ namespace modified_structure_analysis.Forms
 			
             if (grid.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_SelectRuleToMove, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -341,7 +341,7 @@ namespace modified_structure_analysis.Forms
 			
             if (grid.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a rule to move.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_SelectRuleToMove, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -385,7 +385,7 @@ namespace modified_structure_analysis.Forms
                 int rowIdx = grid.Rows.Add();
                 var row = grid.Rows[rowIdx];
                 row.Cells[0].Value = CreateColorBitmap(result.Palette[i]);
-                row.Cells[1].Value = $"Class {i}";
+                row.Cells[1].Value = string.Format(Resources.Label_ClassFormat, i);
                 row.Cells[2].Value = stats.GetValueOrDefault(i, 0);
             }
 
@@ -395,7 +395,7 @@ namespace modified_structure_analysis.Forms
                 int rowIdx = grid.Rows.Add();
                 var row = grid.Rows[rowIdx];
                 row.Cells[0].Value = CreateColorBitmap(Color.Transparent);
-                row.Cells[1].Value = "Undefined";
+                row.Cells[1].Value = Resources.Label_Undefined;
                 row.Cells[2].Value = undefCount;
             }
         }
@@ -403,7 +403,7 @@ namespace modified_structure_analysis.Forms
         private void ClassificationGrid_CellToolTipTextNeeded(object? sender, DataGridViewCellToolTipTextNeededEventArgs e)
         {
             if (e.ColumnIndex == 3 && e.RowIndex >= 0)
-                e.ToolTipText = "View class analysis";
+                e.ToolTipText = Resources.Tooltip_ViewClassAnalysis;
         }
 
         private void ClassificationGrid_CellClick(object? sender, DataGridViewCellEventArgs e)
@@ -445,7 +445,7 @@ namespace modified_structure_analysis.Forms
 
                 if (stats == null)
                 {
-                    MessageBox.Show("Class statistics not available.", "Analysis", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(Resources.Msg_ClassStatsNotAvailable, Resources.Msg_Analysis, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -538,7 +538,7 @@ namespace modified_structure_analysis.Forms
                 float[][]? corrData = null;
                 if (total > 1)
                 {
-                    worker?.ReportProgress(0, "Computing correlation...");
+                    worker?.ReportProgress(0, Resources.Progress_Correlation);
                     corrData = CalcCorrelationData(bands);
                 }
 
@@ -546,7 +546,7 @@ namespace modified_structure_analysis.Forms
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"StatsWorker error: {ex.Message}", ex);
+                throw new InvalidOperationException(string.Format(Resources.Error_Stats, ex.Message), ex);
             }
         }
 
@@ -554,7 +554,7 @@ namespace modified_structure_analysis.Forms
         {
             if (e.Error != null)
             {
-                MessageBox.Show($"Stats error: {e.Error.Message}");
+                MessageBox.Show(string.Format(Resources.Error_Stats, e.Error.Message));
                 UpdateUI(false);
                 return;
             }
@@ -567,7 +567,7 @@ namespace modified_structure_analysis.Forms
                 UpdateCorrelationGrid(corrData);
             }
 
-            _mainStatusLabel.Text = "Ready";
+            _mainStatusLabel.Text = Resources.Status_Ready;
             UpdateUI(false);
         }
 
@@ -584,7 +584,7 @@ namespace modified_structure_analysis.Forms
             var points = new List<(double x, double y)>(ScatterMaxPoints);
 
             int lastPct = 0;
-            worker?.ReportProgress(0, "Compute scatter");
+            worker?.ReportProgress(0, Resources.Progress_Scatter);
 
             for (int i = 0; i < totalPixels; i += step)
             {
@@ -599,7 +599,7 @@ namespace modified_structure_analysis.Forms
 
                 if (pct != lastPct)
                 {
-                    worker?.ReportProgress(pct, $"Compute scatter {pct}%");
+                    worker?.ReportProgress(pct, string.Format(Resources.Progress_ScatterPercent, pct));
                     lastPct = pct;
                 }
             }
@@ -617,7 +617,7 @@ namespace modified_structure_analysis.Forms
         {
             if (e.Error != null)
             {
-                MessageBox.Show($"Scatter error: {e.Error.Message}");
+                MessageBox.Show(string.Format(Resources.Error_Scatter, e.Error.Message));
                 UpdateUI(false);
                 return;
             }
@@ -636,7 +636,7 @@ namespace modified_structure_analysis.Forms
             model.Series.Add(series);
 
             _scatterPlotView.Model = model;
-            _mainStatusLabel.Text = $"Scatter completed: {rawPoints.Count} points";
+            _mainStatusLabel.Text = string.Format(Resources.Status_ScatterComplete, rawPoints.Count);
             UpdateUI(false);
         }
 
@@ -673,7 +673,7 @@ namespace modified_structure_analysis.Forms
 
                         bandDensity /= validCount * band.NormalizeKernelC;
                         points.Add(new DataPoint(x, bandDensity));
-                        worker?.ReportProgress((bi * barCount + xi) * 100 / (bands.Count * barCount), $"KDE: band {bi + 1}/{bands.Count}");
+                        worker?.ReportProgress((bi * barCount + xi) * 100 / (bands.Count * barCount), string.Format(Resources.Progress_Kde, bi + 1, bands.Count));
                     }
                     results.Add((band, points));
                 }
@@ -711,7 +711,7 @@ namespace modified_structure_analysis.Forms
                     allPoints.Add(new DataPoint(x, density));
 
                     int pct = (int)(x * 100);
-                    worker?.ReportProgress(pct, $"Multivariate KDE: {pct}%");
+                    worker?.ReportProgress(pct, string.Format(Resources.Progress_KdeMultivariate, pct));
                 }
 
                 e.Result = (mode, multiTitle, new List<(Band? band, List<DataPoint> points)> { (null, allPoints) });
@@ -764,7 +764,7 @@ namespace modified_structure_analysis.Forms
         {
             if (e.Error != null)
             {
-                MessageBox.Show($"KDE error: {e.Error.Message}");
+                MessageBox.Show(string.Format(Resources.Error_Kde, e.Error.Message));
                 UpdateUI(false);
                 return;
             }
@@ -777,7 +777,7 @@ namespace modified_structure_analysis.Forms
             {
                 var series = new FunctionSeries
                 {
-                    Title = !string.IsNullOrEmpty(title) ? title : band?.Name ?? "KDE"
+                    Title = !string.IsNullOrEmpty(title) ? title : band?.Name ?? Resources.Series_Kde
                 };
                 series.Points.AddRange(points);
                 _kdeModel!.Series.Add(series);
@@ -785,7 +785,7 @@ namespace modified_structure_analysis.Forms
 
             _kdePlotView.Model = _kdeModel;
             PlotView_DoubleClick(_kdePlotView, e);
-            _mainStatusLabel.Text = "KDE ready";
+            _mainStatusLabel.Text = Resources.Status_KdeReady;
             UpdateUI(false);
         }
 
@@ -803,7 +803,7 @@ namespace modified_structure_analysis.Forms
 
             if (_bands.Count > 0 && AppSettings.Instance.BandwidthMethod != oldMethod && !_statsWorker.IsBusy)
             {
-                _mainStatusLabel.Text = "Recalculating bandwidth...";
+                _mainStatusLabel.Text = Resources.Status_RecalculatingBandwidth;
                 UpdateUI(true);
                 _statsWorker.RunWorkerAsync();
             }
@@ -819,13 +819,13 @@ namespace modified_structure_analysis.Forms
             var band = _bandPropertyGrid.SelectedObject as Band;
             if (band == null) return;
 
-            _mainStatusLabel.Text = $"Recalculating bandwidth for \"{band.Name}\"...";
+            _mainStatusLabel.Text = string.Format(Resources.Status_RecalculatingBandwidthFor, band.Name);
             Task.Run(() =>
             {
                 BandStatisticsComputer.Compute(band);
                 BeginInvoke(() =>
                 {
-                    _mainStatusLabel.Text = $"Bandwidth recalculated for \"{band.Name}\"";
+                    _mainStatusLabel.Text = string.Format(Resources.Status_BandwidthRecalculated, band.Name);
                 });
             });
         }
@@ -838,9 +838,9 @@ namespace modified_structure_analysis.Forms
             foreach (var axis in _kdeModel.Axes)
             {
                 if (axis.Key == "X")
-                    axis.Title = s.GraphShowAxisLabels ? "Normalized Value" : null;
+                    axis.Title = s.GraphShowAxisLabels ? Resources.Normalized_Value : null;
                 else if (axis.Key == "Y")
-                    axis.Title = s.GraphShowAxisLabels ? "Density" : null;
+                    axis.Title = s.GraphShowAxisLabels ? Resources.Density : null;
             }
 
             bool hasLegend = _kdeModel.Legends.Count > 0;
@@ -966,7 +966,7 @@ namespace modified_structure_analysis.Forms
 
             if (hasText && hasImage)
             {
-                MessageBox.Show("Cannot mix text files with image files. Please open them separately.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Resources.Msg_MixedFiles, Resources.Msg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -995,7 +995,7 @@ namespace modified_structure_analysis.Forms
                 UpdateImage(sender, e);
                 if (!_statsWorker.IsBusy)
                 {
-                    _mainStatusLabel.Text = "Computing statistics and bandwidth...";
+                    _mainStatusLabel.Text = Resources.Status_ComputingStats;
                     UpdateUI(true);
                     _statsWorker.RunWorkerAsync();
                 }
@@ -1066,7 +1066,7 @@ namespace modified_structure_analysis.Forms
         {
             if (e.Error != null)
             {
-                MessageBox.Show($"Error loading files: {e.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error loading files: {e.Error.Message}", Resources.Msg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 UpdateUI(false);
                 return;
             }
@@ -1074,7 +1074,7 @@ namespace modified_structure_analysis.Forms
             var result = (FileLoadResult)e.Result!;
 
             foreach (string msg in result.Messages)
-                MessageBox.Show(msg, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(msg, Resources.Msg_Info, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             if (result.Bands.Count == 0)
                 return;
@@ -1410,7 +1410,7 @@ namespace modified_structure_analysis.Forms
 
                 if (xIndex < 0 || yIndex < 0 || bandIndices.Count == 0)
                 {
-                    MessageBox.Show("Error: X, Y and at least one Band column are required.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Error: X, Y and at least one Band column are required.", Resources.Msg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -1444,7 +1444,7 @@ namespace modified_structure_analysis.Forms
 
             if (rawData.Count == 0)
             {
-                MessageBox.Show("No valid data found in file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Resources.Msg_NoValidData, Resources.Msg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -1459,7 +1459,7 @@ namespace modified_structure_analysis.Forms
 
             if (dataRangeX == 0 || dataRangeY == 0)
             {
-                MessageBox.Show("Error: Data has zero range in X or Y direction.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error: Data has zero range in X or Y direction.", Resources.Msg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -1572,14 +1572,14 @@ namespace modified_structure_analysis.Forms
                         Position = AxisPosition.Bottom,
                         Minimum = minVal,
                         Maximum = maxVal,
-                        Title = s.GraphShowAxisLabels ? "Value" : null
+                        Title = s.GraphShowAxisLabels ? Resources.Axis_HistogramValue : null
                     });
                     plot.Axes.Add(new LinearAxis
                     {
                         Position = AxisPosition.Left,
                         Minimum = 0,
                         Key = "axesY1",
-                        Title = s.GraphShowAxisLabels ? "Frequency" : null
+                        Title = s.GraphShowAxisLabels ? Resources.Axis_HistogramFrequency : null
                     });
                     plot.Axes.Add(new LinearAxis
                     {
@@ -1612,7 +1612,7 @@ namespace modified_structure_analysis.Forms
                         {
                             YAxisKey = "axesY2",
                             Color = OxyColor.FromArgb(lineColor.A, lineColor.R, lineColor.G, lineColor.B),
-                            Title = "Cumulative"
+                            Title = Resources.Series_Cumulative
                         };
                         for (int i = 0; i < columnsCount; i++)
                         {
@@ -1732,13 +1732,13 @@ namespace modified_structure_analysis.Forms
         {
             if (_classifyWorker.IsBusy)
             {
-                MessageBox.Show("Classification is in progress! Wait.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_ClassInProgress, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (_bands.Count == 0)
             {
-                MessageBox.Show("No bands loaded.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Resources.Msg_NoBandsLoaded, Resources.Msg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -1746,7 +1746,7 @@ namespace modified_structure_analysis.Forms
 
             if (isSecondary && (_primaryClassificationResult == null || _primaryClassificationEngine == null || _primaryClassificationClassStats == null))
             {
-                MessageBox.Show("Please run primary classification first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_NeedPrimaryClass, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1754,7 +1754,7 @@ namespace modified_structure_analysis.Forms
 
             if (rules.Count == 0)
             {
-                MessageBox.Show("No classification rules defined. Please add rules first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_NoRules, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1768,7 +1768,7 @@ namespace modified_structure_analysis.Forms
 
         private void AbortClassification_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Classification will be interrupted!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes)
+            if (MessageBox.Show(Resources.Msg_ClassInterrupt, Resources.Msg_Warning, MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes)
                 _classifyWorker.CancelAsync();
         }
 
@@ -1792,8 +1792,8 @@ namespace modified_structure_analysis.Forms
         {
             int totalPixels = _width * _height;
             DateTime startTime = DateTime.Now;
-            string stageName = isSecondStage ? "Second stage" : "Classification";
-            worker.ReportProgress(0, $"Starting {stageName}...");
+            string stageName = isSecondStage ? Resources.Label_SecondStage : Resources.Label_Classification;
+            worker.ReportProgress(0, string.Format(Resources.Progress_Starting, stageName));
 
             var engine = new ClassificationEngine(_bands, rules);
             engine.Mode = isSecondStage ? ClassificationMode.RulePerClass : mode;
@@ -1878,7 +1878,7 @@ namespace modified_structure_analysis.Forms
                 worker.ReportProgress(progress, $"{stageName}: {finalCount}/{totalPixels} ({progress}%) ETA: {remainingStr} ({elapsedStr})");
             });
 
-            worker.ReportProgress(99, "Rendering bitmap...");
+            worker.ReportProgress(99, Resources.Progress_Rendering);
 
             Bitmap bitmap = RenderClassificationBitmap(classificationResult);
 
@@ -1946,12 +1946,12 @@ namespace modified_structure_analysis.Forms
         {
             if (e.Cancelled)
             {
-                MessageBox.Show("Operation was canceled");
-                _mainStatusLabel.Text = "Classification was canceled";
+                MessageBox.Show(Resources.Msg_Canceled);
+                _mainStatusLabel.Text = Resources.Status_ClassCanceled;
             }
             else if (e.Error != null)
             {
-                MessageBox.Show($"An error occurred: {e.Error.Message}");
+                MessageBox.Show(string.Format(Resources.Error_Generic, e.Error.Message));
                 _mainStatusLabel.Text = "Error classification";
             }
             else
@@ -1970,7 +1970,7 @@ namespace modified_structure_analysis.Forms
                     }
 
                     var stats = classificationResult.GetClassStatistics();
-                    string summary = $"Classification complete — {stats.GetValueOrDefault(-1, 0)} undefined pixels";
+                    string summary = string.Format(Resources.Status_ClassComplete, stats.GetValueOrDefault(-1, 0));
                     _mainStatusLabel.Text = summary;
                 }
             }
@@ -2001,7 +2001,7 @@ namespace modified_structure_analysis.Forms
             }
 
             if (grid.SelectedRows.Count == 0)
-                richText.Text = "No rule select";
+                richText.Text = Resources.Label_NoRuleSelect;
             else
                 richText.Text = GetRulePreview(rules[grid.Rows.IndexOf(grid.SelectedRows[0])]);
         }
@@ -2009,7 +2009,7 @@ namespace modified_structure_analysis.Forms
         private string GetRulePreview(ClassificationRule rule)
         {
             if (rule.Conditions.Count == 0)
-                return "No conditions";
+                return Resources.Label_NoConditions;
 
             var parts = rule.Conditions.Select(c => new ConditionDisplayItem(c, _bands).Display);
             return string.Join('\n', parts);
@@ -2084,7 +2084,7 @@ namespace modified_structure_analysis.Forms
 
             if (target == null || target.Model == null)
             {
-                MessageBox.Show("No plot available in the active tab.", "Export Graph",
+                MessageBox.Show(Resources.Msg_NoPlot, Resources.Msg_ExportGraph,
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -2127,8 +2127,8 @@ namespace modified_structure_analysis.Forms
 
             if (classificationResult == null)
             {
-                MessageBox.Show("No classification result available. Run classification first.",
-                    "Export", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_NoClassResult,
+                    Resources.Msg_Export, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2163,7 +2163,7 @@ namespace modified_structure_analysis.Forms
             if (dlg.ExportStatsChecked)
                 ClassificationExporter.ExportStats(result, dlg.StatsOptions);
 
-            MessageBox.Show("Export completed successfully.", "Export",
+            MessageBox.Show(Resources.Msg_ExportComplete, Resources.Msg_Export,
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 

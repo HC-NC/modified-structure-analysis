@@ -117,137 +117,110 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="listBox1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="listBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="_formatLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>117, 39</value>
   </data>
-  <data name="listBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>378, 244</value>
+  <data name="_formatLabel.Text" xml:space="preserve">
+    <value>Формат:</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="listBox1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="_formatCombo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>130, 7</value>
   </data>
-  <data name="&gt;&gt;listBox1.Name" xml:space="preserve">
-    <value>listBox1</value>
+  <data name="_formatCombo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 33</value>
   </data>
-  <data name="&gt;&gt;listBox1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="_widthLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>117, 37</value>
   </data>
-  <data name="&gt;&gt;listBox1.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="_widthLabel.Text" xml:space="preserve">
+    <value>Ширина:</value>
   </data>
-  <data name="&gt;&gt;listBox1.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="_widthUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>130, 46</value>
   </data>
-  <data name="flowLayoutPanel1.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="_widthUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 31</value>
   </data>
-  <data name="cancelButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>255, 7</value>
+  <data name="_heightLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>117, 37</value>
   </data>
-  <data name="cancelButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>112, 40</value>
+  <data name="_heightLabel.Text" xml:space="preserve">
+    <value>Высота:</value>
   </data>
-  <data name="cancelButton.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="_heightUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>130, 83</value>
   </data>
-  <data name="cancelButton.Text" xml:space="preserve">
-    <value>Cancel</value>
+  <data name="_heightUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 31</value>
   </data>
-  <data name="&gt;&gt;cancelButton.Name" xml:space="preserve">
-    <value>cancelButton</value>
+  <data name="_dpiLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>117, 37</value>
   </data>
-  <data name="&gt;&gt;cancelButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="_dpiUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>130, 120</value>
   </data>
-  <data name="&gt;&gt;cancelButton.Parent" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
+  <data name="_dpiUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 31</value>
   </data>
-  <data name="&gt;&gt;cancelButton.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="_qualityLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>117, 37</value>
   </data>
-  <data name="okButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>137, 7</value>
+  <data name="_qualityLabel.Text" xml:space="preserve">
+    <value>Качество:</value>
   </data>
-  <data name="okButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>112, 40</value>
+  <data name="_qualityUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>130, 157</value>
   </data>
-  <data name="okButton.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+  <data name="_qualityUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 31</value>
   </data>
-  <data name="okButton.Text" xml:space="preserve">
-    <value>OK</value>
+  <data name="_titleLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>117, 37</value>
   </data>
-  <data name="&gt;&gt;okButton.Name" xml:space="preserve">
-    <value>okButton</value>
+  <data name="_titleLabel.Text" xml:space="preserve">
+    <value>Заголовок:</value>
   </data>
-  <data name="&gt;&gt;okButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="_titleTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>130, 194</value>
   </data>
-  <data name="&gt;&gt;okButton.Parent" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
+  <data name="_titleTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 31</value>
   </data>
-  <data name="&gt;&gt;okButton.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="_grayscaleCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>130, 231</value>
   </data>
-  <data name="flowLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Bottom</value>
+  <data name="_grayscaleCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 30</value>
   </data>
-  <data name="flowLayoutPanel1.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
-    <value>RightToLeft</value>
+  <data name="_grayscaleCheckBox.Text" xml:space="preserve">
+    <value>Преобразовать в оттенки серого</value>
   </data>
-  <data name="flowLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 190</value>
+  <data name="_saveLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>117, 37</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="flowLayoutPanel1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <data name="_saveLabel.Text" xml:space="preserve">
+    <value>Сохранить в:</value>
   </data>
-  <data name="flowLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>378, 54</value>
+  <data name="_pathTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>130, 267</value>
   </data>
-  <data name="flowLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="_pathTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>175, 31</value>
   </data>
-  <data name="&gt;&gt;flowLayoutPanel1.Name" xml:space="preserve">
-    <value>flowLayoutPanel1</value>
+  <data name="_browseButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>311, 267</value>
   </data>
-  <data name="&gt;&gt;flowLayoutPanel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="_browseButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>120, 31</value>
   </data>
-  <data name="&gt;&gt;flowLayoutPanel1.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="_browseButton.Text" xml:space="preserve">
+    <value>Просмотр...</value>
   </data>
-  <data name="&gt;&gt;flowLayoutPanel1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>10, 25</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>378, 244</value>
-  </data>
-  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>300, 300</value>
-  </data>
-  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
-    <value>CenterParent</value>
+  <data name="_cancelButton.Text" xml:space="preserve">
+    <value>Отмена</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Select channel(s)</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>BandSelectionForm</value>
-  </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Экспорт графика</value>
   </data>
 </root>

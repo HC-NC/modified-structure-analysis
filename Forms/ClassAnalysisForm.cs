@@ -2,6 +2,7 @@
 using System.Data;
 using System.Text;
 using modified_structure_analysis.Models;
+using modified_structure_analysis.Properties;
 using modified_structure_analysis.Services;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -45,11 +46,11 @@ public partial class ClassAnalysisForm : Form
         InitializeComponent();
 
         _toolTip = new ToolTip();
-        _toolTip.SetToolTip(_buildScatterButton, "Build scatter plot");
-        _toolTip.SetToolTip(_kdeClearButton, "Clear KDE plot");
-        _toolTip.SetToolTip(_kdeSingleButton, "Single-band KDE");
-        _toolTip.SetToolTip(_kdeProductButton, "Product of independent per-band KDEs");
-        _toolTip.SetToolTip(_kdeMultivariateButton, "Multivariate KDE (product across bands)");
+        _toolTip.SetToolTip(_buildScatterButton, Resources._buildScatterButton_ToolTip);
+        _toolTip.SetToolTip(_kdeClearButton, Resources._kdeClearButton_ToolTip);
+        _toolTip.SetToolTip(_kdeSingleButton, Resources._kdeSingleButton_ToolTip);
+        _toolTip.SetToolTip(_kdeProductButton, Resources._kdeProductButton_ToolTip);
+        _toolTip.SetToolTip(_kdeMultivariateButton, Resources._kdeMultivariateButton_ToolTip);
 
         RebuildPixelsGridColumns(0);
 
@@ -68,7 +69,7 @@ public partial class ClassAnalysisForm : Form
         for (int i = 0; i < _classStats.Length; i++)
         {
             double pct = _totalPixels > 0 ? _classStats[i].PixelCount * 100.0 / _totalPixels : 0;
-            _classesListBox.Items.Add($"Class {i}  [{pct:F1}%]");
+            _classesListBox.Items.Add($"{Resources.Class} {i}  [{pct:F1}%]");
         }
 
         if (selectIndex >= 0 && selectIndex < _classesListBox.Items.Count)
@@ -83,7 +84,7 @@ public partial class ClassAnalysisForm : Form
 
         int totalClassPixels = stats.PixelCount;
         double pct = _totalPixels > 0 ? totalClassPixels * 100.0 / _totalPixels : 0;
-        _summaryToolStripStatusLabel.Text = $"Class {classIdx} — {totalClassPixels:N0} px ({pct:F1}%)";
+        _summaryToolStripStatusLabel.Text = $"{Resources.Class} {classIdx} — {totalClassPixels:N0} px ({pct:F1}%)";
 
         var bandSel = SaveListSelection(_bandsListBox);
         var kdeSel = SaveListSelection(_kdeListBox);
@@ -147,13 +148,13 @@ public partial class ClassAnalysisForm : Form
         dataGridView1.SuspendLayout();
         dataGridView1.Columns.Clear();
 
-        dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Index", ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
-        dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Column", ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
-        dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Row", ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
+        dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = _indexColumn.HeaderText, ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
+        dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = _colColumn.HeaderText, ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
+        dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = _colColumn.HeaderText, ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
         if (_geoTransform != null)
         {
-            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "MapX", ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
-            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "MapY", ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = _mapXColumn.HeaderText, ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = _mapYColumn.HeaderText, ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
         }
 
         for (int b = 0; b < _bands.Count; b++)
@@ -175,7 +176,7 @@ public partial class ClassAnalysisForm : Form
         int total = pixelIndices?.Length ?? 0;
         bool hasGeo = _geoTransform != null;
 
-        _summaryToolStripStatusLabel.Text = $"Loading pixels...";
+        _summaryToolStripStatusLabel.Text = $"{Resources.Loading} {Resources.pixels}...";
 
         if (total == 0)
         {
@@ -233,8 +234,8 @@ public partial class ClassAnalysisForm : Form
 
         dataGridView1.ResumeLayout();
 
-        string suffix = total > take ? $" (showing {take:N0} of {total:N0})" : "";
-        _summaryToolStripStatusLabel.Text = $"Class {classIdx} — {total:N0} px{suffix}";
+        string suffix = total > take ? string.Format(Resources.ShowingSuffix, take.ToString("N0"), total.ToString("N0")) : "";
+        _summaryToolStripStatusLabel.Text = $"{Resources.Class} {classIdx} — {total:N0} px {suffix}";
     }
 
     // ── KDE list ───────────────────────────────────────────────
@@ -400,7 +401,7 @@ public partial class ClassAnalysisForm : Form
 
         if (e.Error != null)
         {
-            MessageBox.Show($"Scatter error: {e.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(string.Format(Resources.Error_Scatter, e.Error.Message), Resources.Msg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
 
@@ -513,7 +514,7 @@ public partial class ClassAnalysisForm : Form
 
             var pts = new List<DataPoint>(KdeSteps);
             string shortTitle = isZ ? $"z({band.Name})" : band.Name;
-            string title = $"[Class {classIdx}] {shortTitle}";
+            string title = $"[{Resources.Class} {classIdx}] {shortTitle}";
 
             for (int xi = 0; xi < KdeSteps; xi++)
             {
@@ -590,7 +591,7 @@ public partial class ClassAnalysisForm : Form
 
             string detail = string.Join("+",
                 entries.Select(e => e.isZ ? $"z({_bands[e.bi].Name})" : _bands[e.bi].Name));
-            string mTitle = $"[Class {classIdx}] Multivar: {detail}";
+            string mTitle = $"[{Resources.Class} {classIdx}] {Resources.Multivar}: {detail}";
             e.Result = ("multivariate", mTitle,
                 new List<(string, List<DataPoint>)> { (mTitle, allPts) });
         }
@@ -640,7 +641,7 @@ public partial class ClassAnalysisForm : Form
 
             string detail = string.Join(isProduct ? "×" : "+",
                 entries.Select(e => e.isZ ? $"z({_bands[e.bi].Name})" : _bands[e.bi].Name));
-            string title = isProduct ? $"[Class {classIdx}] Product: {detail}" : "";
+            string title = isProduct ? $"[{Resources.Class} {classIdx}] {Resources.Product}: {detail}" : "";
             e.Result = (mode, title, new List<(string, List<DataPoint>)> { (title, allPts) });
         }
     }
@@ -682,7 +683,7 @@ public partial class ClassAnalysisForm : Form
 
         if (e.Error != null)
         {
-            MessageBox.Show($"KDE error: {e.Error.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(string.Format(Resources.Error_Kde, e.Error.Message), Resources.Msg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
 
@@ -694,8 +695,8 @@ public partial class ClassAnalysisForm : Form
         {
             model = new PlotModel();
             var gs = Config.AppSettings.Instance;
-            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = gs.GraphShowAxisLabels ? "Normalized Value" : null });
-            model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = gs.GraphShowAxisLabels ? "Density" : null, Minimum = 0 });
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = gs.GraphShowAxisLabels ? Resources.Normalized_Value : null });
+            model.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = gs.GraphShowAxisLabels ? Resources.Density : null, Minimum = 0 });
             if (gs.GraphShowLegend)
                 model.Legends.Add(new Legend
                 {
@@ -709,7 +710,7 @@ public partial class ClassAnalysisForm : Form
         {
             var series = new LineSeries
             {
-                Title = !string.IsNullOrEmpty(seriesTitle) ? seriesTitle : "KDE"
+                Title = !string.IsNullOrEmpty(seriesTitle) ? seriesTitle : Resources.Series_Kde
             };
             series.Points.AddRange(pts);
             model.Series.Add(series);
@@ -731,7 +732,7 @@ public partial class ClassAnalysisForm : Form
 
         if (target == null || target.Model == null)
         {
-            MessageBox.Show("No plot available in the active tab.", "Export Graph",
+            MessageBox.Show(Resources.Msg_NoPlot, Resources.Msg_ExportGraph,
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
@@ -796,11 +797,11 @@ public partial class ClassAnalysisForm : Form
             }
 
             File.WriteAllText(_saveFileDialog.FileName, sb.ToString());
-            MessageBox.Show("Pixel table exported successfully.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(Resources.Msg_PixelExportComplete, Resources.Msg_Export, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Export error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(string.Format(Resources.Error_Export, ex.Message), Resources.Msg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -820,7 +821,7 @@ public partial class ClassAnalysisForm : Form
             var sb = new StringBuilder();
             var ci = System.Globalization.CultureInfo.InvariantCulture;
 
-            sb.Append("Class"); sb.Append(delim);
+            sb.Append(Resources.Class); sb.Append(delim);
             sb.Append("Band"); sb.Append(delim);
             sb.Append("Count"); sb.Append(delim);
             sb.Append("Sum"); sb.Append(delim);
@@ -883,11 +884,11 @@ public partial class ClassAnalysisForm : Form
             }
 
             File.WriteAllText(_saveFileDialog.FileName, sb.ToString());
-            MessageBox.Show("Statistics exported successfully.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(Resources.Msg_StatsExportComplete, Resources.Msg_Export, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Export error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(string.Format(Resources.Error_Export, ex.Message), Resources.Msg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using modified_structure_analysis.Models;
+using modified_structure_analysis.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,12 +28,12 @@ namespace modified_structure_analysis.Forms
 
             InitializeComponent();
 
-            _formatCombo.Items.AddRange(new[] { "GeoTIFF", "PNG", "PNG + World file" });
+            _formatCombo.Items.AddRange(new[] { Resources.Format_GeoTiff, Resources.Format_Png, Resources.Format_PngWorld });
             _formatCombo.SelectedIndex = 0;
-            _projectionTextBox.Text = _projectionWkt ?? "(not available)";
-            _paletteCombo.Items.AddRange(new[] { "Current palette", "HSV palette", "Grayscale palette" });
+            _projectionTextBox.Text = _projectionWkt ?? $"({Resources.not_available})";
+            _paletteCombo.Items.AddRange(new[] { Resources.Current_palette, Resources.HSV_palette, Resources.Grayscale_palette });
             _paletteCombo.SelectedIndex = 0;
-            _statsFormatCombo.Items.AddRange(new[] { "CSV", "TXT", "JSON" });
+            _statsFormatCombo.Items.AddRange(new[] { Resources.Format_Csv, Resources.Format_Txt, Resources.Format_Json });
             _statsFormatCombo.SelectedIndex = 0;
         }
 
@@ -54,7 +55,7 @@ namespace modified_structure_analysis.Forms
         {
             if (string.IsNullOrWhiteSpace(_pathTextBox.Text))
             {
-                MessageBox.Show("Please specify a file path.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_NeedFilePath, Resources.Msg_ValidationError, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 DialogResult = DialogResult.None;
                 return;
             }
@@ -72,7 +73,7 @@ namespace modified_structure_analysis.Forms
                     _ => ClassificationExportFormat.GeoTiff
                 },
                 IncludeGeoTransform = _geoCheckBox.Checked,
-                ProjectionWkt = _projectionTextBox.Text != "(not available)" ? _projectionTextBox.Text : null
+                ProjectionWkt = _projectionTextBox.Text != $"({Resources.not_available})" ? _projectionTextBox.Text : null
             };
 
             UseHsvPalette = _paletteCombo.SelectedIndex == 1;

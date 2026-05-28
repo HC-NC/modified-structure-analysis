@@ -2,6 +2,7 @@
 using System.Linq;
 
 using modified_structure_analysis.Models;
+using modified_structure_analysis.Properties;
 
 namespace modified_structure_analysis.Forms
 {
@@ -45,7 +46,7 @@ namespace modified_structure_analysis.Forms
 
             InitializeComponent();
 
-            Text = _condition == null ? "Add Condition" : "Edit Condition";
+            Text = _condition == null ? Resources.Add_Condition : Resources.Edit_Condition;
 
             PopulateDensityTypes();
         }
@@ -69,24 +70,24 @@ namespace modified_structure_analysis.Forms
             if (_isSecondStage)
             {
                 items = [
-                    (DensityType.ChannelValue, "ChannelValue (v)"),
-                    (DensityType.ChannelZScore, "ChannelZScore (z)"),
-                    (DensityType.Single, "Single (p)"),
-                    (DensityType.Product, "Product (Π)"),
-                    (DensityType.Multivariate, "Multivariate (p)"),
-                    (DensityType.ZScoreSingle, "ZScore Single (zs_p)"),
-                    (DensityType.ZScoreProduct, "ZScore Product (zs_Π)"),
-                    (DensityType.ZScoreMultivariate, "ZScore Multivariate (zs_p)")
+                    (DensityType.ChannelValue, Resources.ChannelValue),
+                    (DensityType.ChannelZScore, Resources.ChannelZScore),
+                    (DensityType.Single, Resources.Single),
+                    (DensityType.Product, Resources.ProductDensity),
+                    (DensityType.Multivariate, Resources.Multivariate),
+                    (DensityType.ZScoreSingle, Resources.ZScoreSingle),
+                    (DensityType.ZScoreProduct, Resources.ZScoreProduct),
+                    (DensityType.ZScoreMultivariate, Resources.ZScoreMultivariate)
                 ];
             }
             else
             {
                 items = [
-                    (DensityType.ChannelValue, "ChannelValue (v)"),
-                    (DensityType.ChannelZScore, "ChannelZScore (z)"),
-                    (DensityType.Single, "Single (p)"),
-                    (DensityType.Product, "Product (Π)"),
-                    (DensityType.Multivariate, "Multivariate (p)")
+                    (DensityType.ChannelValue, Resources.ChannelValue),
+                    (DensityType.ChannelZScore, Resources.ChannelZScore),
+                    (DensityType.Single, Resources.Single),
+                    (DensityType.Product, Resources.ProductDensity),
+                    (DensityType.Multivariate, Resources.Multivariate)
                 ];
             }
 
@@ -250,7 +251,7 @@ namespace modified_structure_analysis.Forms
             if (_condition.RightSide.IsConstant)
             {
                 _rightConstantRadio.Checked = true;
-                _rightConstantTextBox.Text = _condition.RightSide.ConstantValue?.ToString() ?? "0.5";
+                _rightConstantTextBox.Text = _condition.RightSide.ConstantValue?.ToString() ?? "0";
             }
             else
             {

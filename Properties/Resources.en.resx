@@ -123,10 +123,6 @@
   <data name="Add_Condition" xml:space="preserve">
     <value>Add Condition</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="blue_sqaure" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\blue_sqaure.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="ChannelValue" xml:space="preserve">
     <value>Channel Value (v)</value>
   </data>
@@ -153,9 +149,6 @@
   </data>
   <data name="Grayscale palette" xml:space="preserve">
     <value>Grayscale palette</value>
-  </data>
-  <data name="green_sqaure" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\green_sqaure.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="HSV palette" xml:space="preserve">
     <value>HSV palette</value>
@@ -196,9 +189,6 @@
   <data name="ProductDensity" xml:space="preserve">
     <value>Product of density estimates (Π)</value>
   </data>
-  <data name="red_sqaure" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\red_sqaure.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Rule of Thumb" xml:space="preserve">
     <value>Rule of Thumb (fast)</value>
   </data>
@@ -227,7 +217,7 @@
     <value>Clear KDE plot</value>
   </data>
   <data name="_kdeMultivariateButton_ToolTip" xml:space="preserve">
-    <value>Multivariate KDE (product across bands)</value>
+    <value>Multivariate KDE </value>
   </data>
   <data name="_kdeProductButton_ToolTip" xml:space="preserve">
     <value>Product of independent per-band KDEs</value>
@@ -408,33 +398,6 @@
   </data>
   <data name="Tooltip_ViewClassAnalysis" xml:space="preserve">
     <value>View class analysis</value>
-  </data>
-  <data name="Format_GeoTiff" xml:space="preserve">
-    <value>GeoTIFF</value>
-  </data>
-  <data name="Format_Png" xml:space="preserve">
-    <value>PNG</value>
-  </data>
-  <data name="Format_PngWorld" xml:space="preserve">
-    <value>PNG + World file</value>
-  </data>
-  <data name="Format_Jpeg" xml:space="preserve">
-    <value>JPEG</value>
-  </data>
-  <data name="Format_Svg" xml:space="preserve">
-    <value>SVG</value>
-  </data>
-  <data name="Format_Pdf" xml:space="preserve">
-    <value>PDF</value>
-  </data>
-  <data name="Format_Csv" xml:space="preserve">
-    <value>CSV</value>
-  </data>
-  <data name="Format_Txt" xml:space="preserve">
-    <value>TXT</value>
-  </data>
-  <data name="Format_Json" xml:space="preserve">
-    <value>JSON</value>
   </data>
   <data name="Status_RecalculatingBandwidthFor" xml:space="preserve">
     <value>Recalculating bandwidth for "{0}"...</value>
