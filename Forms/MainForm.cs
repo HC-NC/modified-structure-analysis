@@ -51,6 +51,41 @@ namespace modified_structure_analysis.Forms
 
             _mainStatusLabel.Text = "Open file (Ctrl+O)";
             _mainProgressBar.Visible = false;
+
+            _primaryClassificationDataGridView.CellToolTipTextNeeded += ClassificationGrid_CellToolTipTextNeeded;
+            _secondaryClassificationDataGridView.CellToolTipTextNeeded += ClassificationGrid_CellToolTipTextNeeded;
+
+            WireViewportNavButtons();
+        }
+
+        private void WireViewportNavButtons()
+        {
+            WireNavGroup(_dataViewport,
+                _dataUpToolStripButton, _dataDownToolStripButton,
+                _dataLeftToolStripButton, _dataRightToolStripButton,
+                _dataZoomInToolStripButton, _dataZoomOutToolStripButton);
+
+            WireNavGroup(_primaryClassificationViewport,
+                _primaryUpToolStripButton, _primaryDownToolStripButton,
+                _primaryLeftToolStripButton, _primaryRightToolStripButton,
+                _primaryZoomInToolStripButton, _primaryZoomOutToolStripButton);
+
+            WireNavGroup(_secondaryClassificationViewport,
+                _secondaryUpToolStripButton, _secondaryDownToolStripButton,
+                _secondaryLeftToolStripButton, _secondaryRightToolStripButton,
+                _secondaryZoomInToolStripButton, _secondaryZoomOutToolStripButton);
+        }
+
+        private static void WireNavGroup(Viewport vp, ToolStripButton up, ToolStripButton down,
+            ToolStripButton left, ToolStripButton right, ToolStripButton zoomIn, ToolStripButton zoomOut)
+        {
+            const float pan = 20f;
+            up.Click += (_, _) => vp.PanBy(0, pan);
+            down.Click += (_, _) => vp.PanBy(0, -pan);
+            left.Click += (_, _) => vp.PanBy(pan, 0);
+            right.Click += (_, _) => vp.PanBy(-pan, 0);
+            zoomIn.Click += (_, _) => vp.ZoomIn();
+            zoomOut.Click += (_, _) => vp.ZoomOut();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -360,6 +395,12 @@ namespace modified_structure_analysis.Forms
                 row.Cells[1].Value = "Undefined";
                 row.Cells[2].Value = undefCount;
             }
+        }
+
+        private void ClassificationGrid_CellToolTipTextNeeded(object? sender, DataGridViewCellToolTipTextNeededEventArgs e)
+        {
+            if (e.ColumnIndex == 3 && e.RowIndex >= 0)
+                e.ToolTipText = "View class analysis";
         }
 
         private void ClassificationGrid_CellClick(object? sender, DataGridViewCellEventArgs e)

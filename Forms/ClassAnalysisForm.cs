@@ -19,6 +19,7 @@ public partial class ClassAnalysisForm : Form
     private readonly GeoTransform? _geoTransform;
     private readonly ClassificationResult? _classificationResult;
     private readonly int _totalPixels;
+    private readonly ToolTip _toolTip;
 
     private const int MaxPixelsInGrid = 10_000;
     private const int KdeSteps = 101;
@@ -42,6 +43,13 @@ public partial class ClassAnalysisForm : Form
         _totalPixels = width * height;
 
         InitializeComponent();
+
+        _toolTip = new ToolTip();
+        _toolTip.SetToolTip(_buildScatterButton, "Build scatter plot");
+        _toolTip.SetToolTip(_kdeClearButton, "Clear KDE plot");
+        _toolTip.SetToolTip(_kdeSingleButton, "Single-band KDE");
+        _toolTip.SetToolTip(_kdeProductButton, "Product of independent per-band KDEs");
+        _toolTip.SetToolTip(_kdeMultivariateButton, "Multivariate KDE (product across bands)");
 
         RebuildPixelsGridColumns(0);
 

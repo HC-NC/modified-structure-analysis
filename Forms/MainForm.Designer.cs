@@ -60,6 +60,16 @@ namespace modified_structure_analysis.Forms
             _redToolStripDropDownButton = new ToolStripDropDownButton();
             _greenToolStripDropDownButton = new ToolStripDropDownButton();
             _blueToolStripDropDownButton = new ToolStripDropDownButton();
+            toolStripSeparator9 = new ToolStripSeparator();
+            toolStripLabel2 = new ToolStripLabel();
+            _dataUpToolStripButton = new ToolStripButton();
+            _dataDownToolStripButton = new ToolStripButton();
+            toolStripSeparator10 = new ToolStripSeparator();
+            _dataLeftToolStripButton = new ToolStripButton();
+            _dataRightToolStripButton = new ToolStripButton();
+            toolStripSeparator11 = new ToolStripSeparator();
+            _dataZoomInToolStripButton = new ToolStripButton();
+            _dataZoomOutToolStripButton = new ToolStripButton();
             _dataHistogramTabPage = new TabPage();
             _histogramPlotView = new OxyPlot.WindowsForms.PlotView();
             _explorationTabPage = new TabPage();
@@ -102,6 +112,16 @@ namespace modified_structure_analysis.Forms
             _primaryClassificationTabControl = new TabControl();
             _primaryClassificationViewportTabPage = new TabPage();
             _primaryClassificationViewport = new Viewport();
+            toolStrip1 = new ToolStrip();
+            toolStripLabel3 = new ToolStripLabel();
+            _primaryUpToolStripButton = new ToolStripButton();
+            _primaryDownToolStripButton = new ToolStripButton();
+            toolStripSeparator13 = new ToolStripSeparator();
+            _primaryLeftToolStripButton = new ToolStripButton();
+            _primaryRightToolStripButton = new ToolStripButton();
+            toolStripSeparator14 = new ToolStripSeparator();
+            _primaryZoomInToolStripButton = new ToolStripButton();
+            _primaryZoomOutToolStripButton = new ToolStripButton();
             _primaryClassificationTableTabPage = new TabPage();
             _primaryClassificationDataGridView = new DataGridView();
             _primaryClassificationColorCol = new DataGridViewImageColumn();
@@ -132,6 +152,16 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationTabControl = new TabControl();
             _secondaryClassificationViewportTabPage = new TabPage();
             _secondaryClassificationViewport = new Viewport();
+            toolStrip2 = new ToolStrip();
+            toolStripLabel4 = new ToolStripLabel();
+            _secondaryUpToolStripButton = new ToolStripButton();
+            _secondaryDownToolStripButton = new ToolStripButton();
+            toolStripSeparator12 = new ToolStripSeparator();
+            _secondaryLeftToolStripButton = new ToolStripButton();
+            _secondaryRightToolStripButton = new ToolStripButton();
+            toolStripSeparator15 = new ToolStripSeparator();
+            _secondaryZoomInToolStripButton = new ToolStripButton();
+            _secondaryZoomOutToolStripButton = new ToolStripButton();
             _secondaryClassificationTableTabPage = new TabPage();
             _secondaryClassificationDataGridView = new DataGridView();
             _secondaryClassificationColorCol = new DataGridViewImageColumn();
@@ -210,6 +240,7 @@ namespace modified_structure_analysis.Forms
             _primaryClassificationRuleToolStrip.SuspendLayout();
             _primaryClassificationTabControl.SuspendLayout();
             _primaryClassificationViewportTabPage.SuspendLayout();
+            toolStrip1.SuspendLayout();
             _primaryClassificationTableTabPage.SuspendLayout();
             ((ISupportInitialize)_primaryClassificationDataGridView).BeginInit();
             _primaryClassificationToolStrip.SuspendLayout();
@@ -226,6 +257,7 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationRuleToolStrip.SuspendLayout();
             _secondaryClassificationTabControl.SuspendLayout();
             _secondaryClassificationViewportTabPage.SuspendLayout();
+            toolStrip2.SuspendLayout();
             _secondaryClassificationTableTabPage.SuspendLayout();
             ((ISupportInitialize)_secondaryClassificationDataGridView).BeginInit();
             _secondaryClassificationToolStrip.SuspendLayout();
@@ -451,7 +483,7 @@ namespace modified_structure_analysis.Forms
             // 
             _dataViewportToolStrip.GripStyle = ToolStripGripStyle.Hidden;
             _dataViewportToolStrip.ImageScalingSize = new Size(24, 24);
-            _dataViewportToolStrip.Items.AddRange(new ToolStripItem[] { _redToolStripDropDownButton, _greenToolStripDropDownButton, _blueToolStripDropDownButton });
+            _dataViewportToolStrip.Items.AddRange(new ToolStripItem[] { _redToolStripDropDownButton, _greenToolStripDropDownButton, _blueToolStripDropDownButton, toolStripSeparator9, toolStripLabel2, _dataUpToolStripButton, _dataDownToolStripButton, toolStripSeparator10, _dataLeftToolStripButton, _dataRightToolStripButton, toolStripSeparator11, _dataZoomInToolStripButton, _dataZoomOutToolStripButton });
             _dataViewportToolStrip.Location = new Point(3, 3);
             _dataViewportToolStrip.Name = "_dataViewportToolStrip";
             _dataViewportToolStrip.Size = new Size(846, 34);
@@ -483,6 +515,87 @@ namespace modified_structure_analysis.Forms
             _blueToolStripDropDownButton.Overflow = ToolStripItemOverflow.Never;
             _blueToolStripDropDownButton.Size = new Size(87, 29);
             _blueToolStripDropDownButton.Text = "Blue";
+            // 
+            // toolStripSeparator9
+            // 
+            toolStripSeparator9.Name = "toolStripSeparator9";
+            toolStripSeparator9.Size = new Size(6, 34);
+            // 
+            // toolStripLabel2
+            // 
+            toolStripLabel2.Name = "toolStripLabel2";
+            toolStripLabel2.Size = new Size(86, 29);
+            toolStripLabel2.Text = "Navigate:";
+            // 
+            // _dataUpToolStripButton
+            // 
+            _dataUpToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _dataUpToolStripButton.Image = (Image)resources.GetObject("_dataUpToolStripButton.Image");
+            _dataUpToolStripButton.ImageTransparentColor = Color.Magenta;
+            _dataUpToolStripButton.Name = "_dataUpToolStripButton";
+            _dataUpToolStripButton.Size = new Size(34, 29);
+            _dataUpToolStripButton.Text = "▲";
+            _dataUpToolStripButton.ToolTipText = "Pan up";
+            // 
+            // _dataDownToolStripButton
+            // 
+            _dataDownToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _dataDownToolStripButton.Image = (Image)resources.GetObject("_dataDownToolStripButton.Image");
+            _dataDownToolStripButton.ImageTransparentColor = Color.Magenta;
+            _dataDownToolStripButton.Name = "_dataDownToolStripButton";
+            _dataDownToolStripButton.Size = new Size(34, 29);
+            _dataDownToolStripButton.Text = "▼";
+            _dataDownToolStripButton.ToolTipText = "Pan down";
+            // 
+            // toolStripSeparator10
+            // 
+            toolStripSeparator10.Name = "toolStripSeparator10";
+            toolStripSeparator10.Size = new Size(6, 34);
+            // 
+            // _dataLeftToolStripButton
+            // 
+            _dataLeftToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _dataLeftToolStripButton.Image = (Image)resources.GetObject("_dataLeftToolStripButton.Image");
+            _dataLeftToolStripButton.ImageTransparentColor = Color.Magenta;
+            _dataLeftToolStripButton.Name = "_dataLeftToolStripButton";
+            _dataLeftToolStripButton.Size = new Size(34, 29);
+            _dataLeftToolStripButton.Text = "◀";
+            _dataLeftToolStripButton.ToolTipText = "Pan left";
+            // 
+            // _dataRightToolStripButton
+            // 
+            _dataRightToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _dataRightToolStripButton.Image = (Image)resources.GetObject("_dataRightToolStripButton.Image");
+            _dataRightToolStripButton.ImageTransparentColor = Color.Magenta;
+            _dataRightToolStripButton.Name = "_dataRightToolStripButton";
+            _dataRightToolStripButton.Size = new Size(34, 29);
+            _dataRightToolStripButton.Text = "▶";
+            _dataRightToolStripButton.ToolTipText = "Pan right";
+            // 
+            // toolStripSeparator11
+            // 
+            toolStripSeparator11.Name = "toolStripSeparator11";
+            toolStripSeparator11.Size = new Size(6, 34);
+            // 
+            // _dataZoomInToolStripButton
+            // 
+            _dataZoomInToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _dataZoomInToolStripButton.Image = (Image)resources.GetObject("_dataZoomInToolStripButton.Image");
+            _dataZoomInToolStripButton.ImageTransparentColor = Color.Magenta;
+            _dataZoomInToolStripButton.Name = "_dataZoomInToolStripButton";
+            _dataZoomInToolStripButton.Size = new Size(34, 29);
+            _dataZoomInToolStripButton.Text = "⊕";
+            _dataZoomInToolStripButton.ToolTipText = "Zoom in";
+            // 
+            // _dataZoomOutToolStripButton
+            // 
+            _dataZoomOutToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _dataZoomOutToolStripButton.Image = (Image)resources.GetObject("_dataZoomOutToolStripButton.Image");
+            _dataZoomOutToolStripButton.ImageTransparentColor = Color.Magenta;
+            _dataZoomOutToolStripButton.Name = "_dataZoomOutToolStripButton";
+            _dataZoomOutToolStripButton.Size = new Size(34, 29);
+            _dataZoomOutToolStripButton.Text = "⊖";
+            _dataZoomOutToolStripButton.ToolTipText = "Zoom out";
             // 
             // _dataHistogramTabPage
             // 
@@ -885,11 +998,12 @@ namespace modified_structure_analysis.Forms
             // dataGridViewButtonColumn1
             // 
             dataGridViewButtonColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewButtonColumn1.HeaderText = "Edit";
+            dataGridViewButtonColumn1.HeaderText = "⚙";
             dataGridViewButtonColumn1.MinimumWidth = 8;
             dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
             dataGridViewButtonColumn1.ReadOnly = true;
-            dataGridViewButtonColumn1.Text = "Edit";
+            dataGridViewButtonColumn1.Text = "⚙";
+            dataGridViewButtonColumn1.UseColumnTextForButtonValue = true;
             dataGridViewButtonColumn1.Width = 32;
             // 
             // _primaryClassificationRichTextBox
@@ -920,7 +1034,8 @@ namespace modified_structure_analysis.Forms
             _primaryClassificationAddRuleToolStripButton.ImageTransparentColor = Color.Magenta;
             _primaryClassificationAddRuleToolStripButton.Name = "_primaryClassificationAddRuleToolStripButton";
             _primaryClassificationAddRuleToolStripButton.Size = new Size(34, 29);
-            _primaryClassificationAddRuleToolStripButton.Text = "+";
+            _primaryClassificationAddRuleToolStripButton.Text = "➕";
+            _primaryClassificationAddRuleToolStripButton.ToolTipText = "Add rule";
             _primaryClassificationAddRuleToolStripButton.Click += AddClassificationRule;
             // 
             // _primaryClassificationDeleteRuleToolStripButton
@@ -929,7 +1044,8 @@ namespace modified_structure_analysis.Forms
             _primaryClassificationDeleteRuleToolStripButton.ImageTransparentColor = Color.Magenta;
             _primaryClassificationDeleteRuleToolStripButton.Name = "_primaryClassificationDeleteRuleToolStripButton";
             _primaryClassificationDeleteRuleToolStripButton.Size = new Size(34, 29);
-            _primaryClassificationDeleteRuleToolStripButton.Text = "-";
+            _primaryClassificationDeleteRuleToolStripButton.Text = "✖";
+            _primaryClassificationDeleteRuleToolStripButton.ToolTipText = "Delete rule";
             _primaryClassificationDeleteRuleToolStripButton.Click += DeleteClassificationRule;
             // 
             // toolStripSeparator7
@@ -943,7 +1059,8 @@ namespace modified_structure_analysis.Forms
             _primaryClassificationMoveRuleUpToolStripButton.ImageTransparentColor = Color.Magenta;
             _primaryClassificationMoveRuleUpToolStripButton.Name = "_primaryClassificationMoveRuleUpToolStripButton";
             _primaryClassificationMoveRuleUpToolStripButton.Size = new Size(34, 29);
-            _primaryClassificationMoveRuleUpToolStripButton.Text = "↑";
+            _primaryClassificationMoveRuleUpToolStripButton.Text = "▲";
+            _primaryClassificationMoveRuleUpToolStripButton.ToolTipText = "Move rule up";
             _primaryClassificationMoveRuleUpToolStripButton.Click += MoveRuleUp;
             // 
             // _primaryClassificationMoveRuleDownToolStripButton
@@ -952,7 +1069,8 @@ namespace modified_structure_analysis.Forms
             _primaryClassificationMoveRuleDownToolStripButton.ImageTransparentColor = Color.Magenta;
             _primaryClassificationMoveRuleDownToolStripButton.Name = "_primaryClassificationMoveRuleDownToolStripButton";
             _primaryClassificationMoveRuleDownToolStripButton.Size = new Size(34, 29);
-            _primaryClassificationMoveRuleDownToolStripButton.Text = "↓";
+            _primaryClassificationMoveRuleDownToolStripButton.Text = "▼";
+            _primaryClassificationMoveRuleDownToolStripButton.ToolTipText = "Move rule down";
             _primaryClassificationMoveRuleDownToolStripButton.Click += MoveRuleDown;
             // 
             // _primaryClassificationAutoGenerateToolStripButton
@@ -982,6 +1100,7 @@ namespace modified_structure_analysis.Forms
             // _primaryClassificationViewportTabPage
             // 
             _primaryClassificationViewportTabPage.Controls.Add(_primaryClassificationViewport);
+            _primaryClassificationViewportTabPage.Controls.Add(toolStrip1);
             _primaryClassificationViewportTabPage.Location = new Point(4, 4);
             _primaryClassificationViewportTabPage.Name = "_primaryClassificationViewportTabPage";
             _primaryClassificationViewportTabPage.Padding = new Padding(3);
@@ -993,10 +1112,96 @@ namespace modified_structure_analysis.Forms
             // _primaryClassificationViewport
             // 
             _primaryClassificationViewport.Dock = DockStyle.Fill;
-            _primaryClassificationViewport.Location = new Point(3, 3);
+            _primaryClassificationViewport.Location = new Point(3, 37);
             _primaryClassificationViewport.Name = "_primaryClassificationViewport";
-            _primaryClassificationViewport.Size = new Size(832, 478);
+            _primaryClassificationViewport.Size = new Size(832, 444);
             _primaryClassificationViewport.TabIndex = 0;
+            // 
+            // toolStrip1
+            // 
+            toolStrip1.GripStyle = ToolStripGripStyle.Hidden;
+            toolStrip1.ImageScalingSize = new Size(24, 24);
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripLabel3, _primaryUpToolStripButton, _primaryDownToolStripButton, toolStripSeparator13, _primaryLeftToolStripButton, _primaryRightToolStripButton, toolStripSeparator14, _primaryZoomInToolStripButton, _primaryZoomOutToolStripButton });
+            toolStrip1.Location = new Point(3, 3);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new Size(832, 34);
+            toolStrip1.TabIndex = 1;
+            // 
+            // toolStripLabel3
+            // 
+            toolStripLabel3.Name = "toolStripLabel3";
+            toolStripLabel3.Size = new Size(86, 29);
+            toolStripLabel3.Text = "Navigate:";
+            // 
+            // _primaryUpToolStripButton
+            // 
+            _primaryUpToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _primaryUpToolStripButton.Image = (Image)resources.GetObject("_primaryUpToolStripButton.Image");
+            _primaryUpToolStripButton.ImageTransparentColor = Color.Magenta;
+            _primaryUpToolStripButton.Name = "_primaryUpToolStripButton";
+            _primaryUpToolStripButton.Size = new Size(34, 29);
+            _primaryUpToolStripButton.Text = "▲";
+            _primaryUpToolStripButton.ToolTipText = "Pan up";
+            // 
+            // _primaryDownToolStripButton
+            // 
+            _primaryDownToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _primaryDownToolStripButton.Image = (Image)resources.GetObject("_primaryDownToolStripButton.Image");
+            _primaryDownToolStripButton.ImageTransparentColor = Color.Magenta;
+            _primaryDownToolStripButton.Name = "_primaryDownToolStripButton";
+            _primaryDownToolStripButton.Size = new Size(34, 29);
+            _primaryDownToolStripButton.Text = "▼";
+            _primaryDownToolStripButton.ToolTipText = "Pan down";
+            // 
+            // toolStripSeparator13
+            // 
+            toolStripSeparator13.Name = "toolStripSeparator13";
+            toolStripSeparator13.Size = new Size(6, 34);
+            // 
+            // _primaryLeftToolStripButton
+            // 
+            _primaryLeftToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _primaryLeftToolStripButton.Image = (Image)resources.GetObject("_primaryLeftToolStripButton.Image");
+            _primaryLeftToolStripButton.ImageTransparentColor = Color.Magenta;
+            _primaryLeftToolStripButton.Name = "_primaryLeftToolStripButton";
+            _primaryLeftToolStripButton.Size = new Size(34, 29);
+            _primaryLeftToolStripButton.Text = "◀";
+            _primaryLeftToolStripButton.ToolTipText = "Pan left";
+            // 
+            // _primaryRightToolStripButton
+            // 
+            _primaryRightToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _primaryRightToolStripButton.Image = (Image)resources.GetObject("_primaryRightToolStripButton.Image");
+            _primaryRightToolStripButton.ImageTransparentColor = Color.Magenta;
+            _primaryRightToolStripButton.Name = "_primaryRightToolStripButton";
+            _primaryRightToolStripButton.Size = new Size(34, 29);
+            _primaryRightToolStripButton.Text = "▶";
+            _primaryRightToolStripButton.ToolTipText = "Pan right";
+            // 
+            // toolStripSeparator14
+            // 
+            toolStripSeparator14.Name = "toolStripSeparator14";
+            toolStripSeparator14.Size = new Size(6, 34);
+            // 
+            // _primaryZoomInToolStripButton
+            // 
+            _primaryZoomInToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _primaryZoomInToolStripButton.Image = (Image)resources.GetObject("_primaryZoomInToolStripButton.Image");
+            _primaryZoomInToolStripButton.ImageTransparentColor = Color.Magenta;
+            _primaryZoomInToolStripButton.Name = "_primaryZoomInToolStripButton";
+            _primaryZoomInToolStripButton.Size = new Size(34, 29);
+            _primaryZoomInToolStripButton.Text = "⊕";
+            _primaryZoomInToolStripButton.ToolTipText = "Zoom in";
+            // 
+            // _primaryZoomOutToolStripButton
+            // 
+            _primaryZoomOutToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _primaryZoomOutToolStripButton.Image = (Image)resources.GetObject("_primaryZoomOutToolStripButton.Image");
+            _primaryZoomOutToolStripButton.ImageTransparentColor = Color.Magenta;
+            _primaryZoomOutToolStripButton.Name = "_primaryZoomOutToolStripButton";
+            _primaryZoomOutToolStripButton.Size = new Size(34, 29);
+            _primaryZoomOutToolStripButton.Text = "⊖";
+            _primaryZoomOutToolStripButton.ToolTipText = "Zoom out";
             // 
             // _primaryClassificationTableTabPage
             // 
@@ -1060,7 +1265,7 @@ namespace modified_structure_analysis.Forms
             _primaryClassificationEditCol.MinimumWidth = 8;
             _primaryClassificationEditCol.Name = "_primaryClassificationEditCol";
             _primaryClassificationEditCol.ReadOnly = true;
-            _primaryClassificationEditCol.Text = "More";
+            _primaryClassificationEditCol.Text = "→";
             _primaryClassificationEditCol.UseColumnTextForButtonValue = true;
             _primaryClassificationEditCol.Width = 8;
             // 
@@ -1121,8 +1326,9 @@ namespace modified_structure_analysis.Forms
             _primaryClassificationExportToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
             _primaryClassificationExportToolStripButton.ImageTransparentColor = Color.Magenta;
             _primaryClassificationExportToolStripButton.Name = "_primaryClassificationExportToolStripButton";
-            _primaryClassificationExportToolStripButton.Size = new Size(67, 29);
-            _primaryClassificationExportToolStripButton.Text = "Export";
+            _primaryClassificationExportToolStripButton.Size = new Size(41, 29);
+            _primaryClassificationExportToolStripButton.Text = "📤";
+            _primaryClassificationExportToolStripButton.ToolTipText = "Export classification";
             _primaryClassificationExportToolStripButton.Click += ExportClassification;
             // 
             // _secondaryClassificationTabPage
@@ -1210,11 +1416,12 @@ namespace modified_structure_analysis.Forms
             // EditColumn
             // 
             EditColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            EditColumn.HeaderText = "Edit";
+            EditColumn.HeaderText = "⚙";
             EditColumn.MinimumWidth = 8;
             EditColumn.Name = "EditColumn";
             EditColumn.ReadOnly = true;
-            EditColumn.Text = "Edit";
+            EditColumn.Text = "⚙";
+            EditColumn.UseColumnTextForButtonValue = true;
             EditColumn.Width = 32;
             // 
             // _secondaryClassificationRichTextBox
@@ -1245,7 +1452,8 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationAddRuleToolStripButton.ImageTransparentColor = Color.Magenta;
             _secondaryClassificationAddRuleToolStripButton.Name = "_secondaryClassificationAddRuleToolStripButton";
             _secondaryClassificationAddRuleToolStripButton.Size = new Size(34, 29);
-            _secondaryClassificationAddRuleToolStripButton.Text = "+";
+            _secondaryClassificationAddRuleToolStripButton.Text = "➕";
+            _secondaryClassificationAddRuleToolStripButton.ToolTipText = "Add rule";
             _secondaryClassificationAddRuleToolStripButton.Click += AddClassificationRule;
             // 
             // _secondaryClassificationDeleteRuleToolStripButton
@@ -1254,7 +1462,8 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationDeleteRuleToolStripButton.ImageTransparentColor = Color.Magenta;
             _secondaryClassificationDeleteRuleToolStripButton.Name = "_secondaryClassificationDeleteRuleToolStripButton";
             _secondaryClassificationDeleteRuleToolStripButton.Size = new Size(34, 29);
-            _secondaryClassificationDeleteRuleToolStripButton.Text = "-";
+            _secondaryClassificationDeleteRuleToolStripButton.Text = "✖";
+            _secondaryClassificationDeleteRuleToolStripButton.ToolTipText = "Delete rule";
             _secondaryClassificationDeleteRuleToolStripButton.Click += DeleteClassificationRule;
             // 
             // toolStripSeparator6
@@ -1268,7 +1477,8 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationMoveRuleUpToolStripButton.ImageTransparentColor = Color.Magenta;
             _secondaryClassificationMoveRuleUpToolStripButton.Name = "_secondaryClassificationMoveRuleUpToolStripButton";
             _secondaryClassificationMoveRuleUpToolStripButton.Size = new Size(34, 29);
-            _secondaryClassificationMoveRuleUpToolStripButton.Text = "↑";
+            _secondaryClassificationMoveRuleUpToolStripButton.Text = "▲";
+            _secondaryClassificationMoveRuleUpToolStripButton.ToolTipText = "Move rule up";
             _secondaryClassificationMoveRuleUpToolStripButton.Click += MoveRuleUp;
             // 
             // _secondaryClassificationMoveRuleDownToolStripButton
@@ -1277,7 +1487,8 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationMoveRuleDownToolStripButton.ImageTransparentColor = Color.Magenta;
             _secondaryClassificationMoveRuleDownToolStripButton.Name = "_secondaryClassificationMoveRuleDownToolStripButton";
             _secondaryClassificationMoveRuleDownToolStripButton.Size = new Size(34, 29);
-            _secondaryClassificationMoveRuleDownToolStripButton.Text = "↓";
+            _secondaryClassificationMoveRuleDownToolStripButton.Text = "▼";
+            _secondaryClassificationMoveRuleDownToolStripButton.ToolTipText = "Move rule down";
             _secondaryClassificationMoveRuleDownToolStripButton.Click += MoveRuleDown;
             // 
             // _secondaryClassificationTabControl
@@ -1297,6 +1508,7 @@ namespace modified_structure_analysis.Forms
             // _secondaryClassificationViewportTabPage
             // 
             _secondaryClassificationViewportTabPage.Controls.Add(_secondaryClassificationViewport);
+            _secondaryClassificationViewportTabPage.Controls.Add(toolStrip2);
             _secondaryClassificationViewportTabPage.Location = new Point(4, 4);
             _secondaryClassificationViewportTabPage.Name = "_secondaryClassificationViewportTabPage";
             _secondaryClassificationViewportTabPage.Padding = new Padding(3);
@@ -1308,10 +1520,96 @@ namespace modified_structure_analysis.Forms
             // _secondaryClassificationViewport
             // 
             _secondaryClassificationViewport.Dock = DockStyle.Fill;
-            _secondaryClassificationViewport.Location = new Point(3, 3);
+            _secondaryClassificationViewport.Location = new Point(3, 37);
             _secondaryClassificationViewport.Name = "_secondaryClassificationViewport";
-            _secondaryClassificationViewport.Size = new Size(832, 478);
+            _secondaryClassificationViewport.Size = new Size(832, 444);
             _secondaryClassificationViewport.TabIndex = 0;
+            // 
+            // toolStrip2
+            // 
+            toolStrip2.GripStyle = ToolStripGripStyle.Hidden;
+            toolStrip2.ImageScalingSize = new Size(24, 24);
+            toolStrip2.Items.AddRange(new ToolStripItem[] { toolStripLabel4, _secondaryUpToolStripButton, _secondaryDownToolStripButton, toolStripSeparator12, _secondaryLeftToolStripButton, _secondaryRightToolStripButton, toolStripSeparator15, _secondaryZoomInToolStripButton, _secondaryZoomOutToolStripButton });
+            toolStrip2.Location = new Point(3, 3);
+            toolStrip2.Name = "toolStrip2";
+            toolStrip2.Size = new Size(832, 34);
+            toolStrip2.TabIndex = 2;
+            // 
+            // toolStripLabel4
+            // 
+            toolStripLabel4.Name = "toolStripLabel4";
+            toolStripLabel4.Size = new Size(86, 29);
+            toolStripLabel4.Text = "Navigate:";
+            // 
+            // _secondaryUpToolStripButton
+            // 
+            _secondaryUpToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _secondaryUpToolStripButton.Image = (Image)resources.GetObject("_secondaryUpToolStripButton.Image");
+            _secondaryUpToolStripButton.ImageTransparentColor = Color.Magenta;
+            _secondaryUpToolStripButton.Name = "_secondaryUpToolStripButton";
+            _secondaryUpToolStripButton.Size = new Size(34, 29);
+            _secondaryUpToolStripButton.Text = "▲";
+            _secondaryUpToolStripButton.ToolTipText = "Pan up";
+            // 
+            // _secondaryDownToolStripButton
+            // 
+            _secondaryDownToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _secondaryDownToolStripButton.Image = (Image)resources.GetObject("_secondaryDownToolStripButton.Image");
+            _secondaryDownToolStripButton.ImageTransparentColor = Color.Magenta;
+            _secondaryDownToolStripButton.Name = "_secondaryDownToolStripButton";
+            _secondaryDownToolStripButton.Size = new Size(34, 29);
+            _secondaryDownToolStripButton.Text = "▼";
+            _secondaryDownToolStripButton.ToolTipText = "Pan down";
+            // 
+            // toolStripSeparator12
+            // 
+            toolStripSeparator12.Name = "toolStripSeparator12";
+            toolStripSeparator12.Size = new Size(6, 34);
+            // 
+            // _secondaryLeftToolStripButton
+            // 
+            _secondaryLeftToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _secondaryLeftToolStripButton.Image = (Image)resources.GetObject("_secondaryLeftToolStripButton.Image");
+            _secondaryLeftToolStripButton.ImageTransparentColor = Color.Magenta;
+            _secondaryLeftToolStripButton.Name = "_secondaryLeftToolStripButton";
+            _secondaryLeftToolStripButton.Size = new Size(34, 29);
+            _secondaryLeftToolStripButton.Text = "◀";
+            _secondaryLeftToolStripButton.ToolTipText = "Pan left";
+            // 
+            // _secondaryRightToolStripButton
+            // 
+            _secondaryRightToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _secondaryRightToolStripButton.Image = (Image)resources.GetObject("_secondaryRightToolStripButton.Image");
+            _secondaryRightToolStripButton.ImageTransparentColor = Color.Magenta;
+            _secondaryRightToolStripButton.Name = "_secondaryRightToolStripButton";
+            _secondaryRightToolStripButton.Size = new Size(34, 29);
+            _secondaryRightToolStripButton.Text = "▶";
+            _secondaryRightToolStripButton.ToolTipText = "Pan right";
+            // 
+            // toolStripSeparator15
+            // 
+            toolStripSeparator15.Name = "toolStripSeparator15";
+            toolStripSeparator15.Size = new Size(6, 34);
+            // 
+            // _secondaryZoomInToolStripButton
+            // 
+            _secondaryZoomInToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _secondaryZoomInToolStripButton.Image = (Image)resources.GetObject("_secondaryZoomInToolStripButton.Image");
+            _secondaryZoomInToolStripButton.ImageTransparentColor = Color.Magenta;
+            _secondaryZoomInToolStripButton.Name = "_secondaryZoomInToolStripButton";
+            _secondaryZoomInToolStripButton.Size = new Size(34, 29);
+            _secondaryZoomInToolStripButton.Text = "⊕";
+            _secondaryZoomInToolStripButton.ToolTipText = "Zoom in";
+            // 
+            // _secondaryZoomOutToolStripButton
+            // 
+            _secondaryZoomOutToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _secondaryZoomOutToolStripButton.Image = (Image)resources.GetObject("_secondaryZoomOutToolStripButton.Image");
+            _secondaryZoomOutToolStripButton.ImageTransparentColor = Color.Magenta;
+            _secondaryZoomOutToolStripButton.Name = "_secondaryZoomOutToolStripButton";
+            _secondaryZoomOutToolStripButton.Size = new Size(34, 29);
+            _secondaryZoomOutToolStripButton.Text = "⊖";
+            _secondaryZoomOutToolStripButton.ToolTipText = "Zoom out";
             // 
             // _secondaryClassificationTableTabPage
             // 
@@ -1375,7 +1673,7 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationEditCol.MinimumWidth = 8;
             _secondaryClassificationEditCol.Name = "_secondaryClassificationEditCol";
             _secondaryClassificationEditCol.ReadOnly = true;
-            _secondaryClassificationEditCol.Text = "More";
+            _secondaryClassificationEditCol.Text = "→";
             _secondaryClassificationEditCol.UseColumnTextForButtonValue = true;
             _secondaryClassificationEditCol.Width = 8;
             // 
@@ -1420,8 +1718,9 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationExportToolStripButton.Image = (Image)resources.GetObject("_secondaryClassificationExportToolStripButton.Image");
             _secondaryClassificationExportToolStripButton.ImageTransparentColor = Color.Magenta;
             _secondaryClassificationExportToolStripButton.Name = "_secondaryClassificationExportToolStripButton";
-            _secondaryClassificationExportToolStripButton.Size = new Size(67, 29);
-            _secondaryClassificationExportToolStripButton.Text = "Export";
+            _secondaryClassificationExportToolStripButton.Size = new Size(41, 29);
+            _secondaryClassificationExportToolStripButton.Text = "📤";
+            _secondaryClassificationExportToolStripButton.ToolTipText = "Export classification";
             _secondaryClassificationExportToolStripButton.Click += ExportClassification;
             // 
             // _classificationAbortButton
@@ -1600,6 +1899,9 @@ namespace modified_structure_analysis.Forms
             _primaryClassificationRuleToolStrip.PerformLayout();
             _primaryClassificationTabControl.ResumeLayout(false);
             _primaryClassificationViewportTabPage.ResumeLayout(false);
+            _primaryClassificationViewportTabPage.PerformLayout();
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
             _primaryClassificationTableTabPage.ResumeLayout(false);
             ((ISupportInitialize)_primaryClassificationDataGridView).EndInit();
             _primaryClassificationToolStrip.ResumeLayout(false);
@@ -1620,6 +1922,9 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationRuleToolStrip.PerformLayout();
             _secondaryClassificationTabControl.ResumeLayout(false);
             _secondaryClassificationViewportTabPage.ResumeLayout(false);
+            _secondaryClassificationViewportTabPage.PerformLayout();
+            toolStrip2.ResumeLayout(false);
+            toolStrip2.PerformLayout();
             _secondaryClassificationTableTabPage.ResumeLayout(false);
             ((ISupportInitialize)_secondaryClassificationDataGridView).EndInit();
             _secondaryClassificationToolStrip.ResumeLayout(false);
@@ -1755,5 +2060,35 @@ namespace modified_structure_analysis.Forms
         private DataGridViewTextBoxColumn _secondaryClassificationNameCol;
         private DataGridViewTextBoxColumn _secondaryClassificationCountCol;
         private DataGridViewButtonColumn _secondaryClassificationEditCol;
+        private ToolStripSeparator toolStripSeparator9;
+        private ToolStripLabel toolStripLabel2;
+        private ToolStripButton _dataUpToolStripButton;
+        private ToolStripButton _dataDownToolStripButton;
+        private ToolStripButton _dataLeftToolStripButton;
+        private ToolStripButton _dataRightToolStripButton;
+        private ToolStripButton _dataZoomInToolStripButton;
+        private ToolStripButton _dataZoomOutToolStripButton;
+        private ToolStripSeparator toolStripSeparator10;
+        private ToolStripSeparator toolStripSeparator11;
+        private ToolStrip toolStrip1;
+        private ToolStripLabel toolStripLabel3;
+        private ToolStripButton _primaryUpToolStripButton;
+        private ToolStripButton _primaryDownToolStripButton;
+        private ToolStripSeparator toolStripSeparator13;
+        private ToolStripButton _primaryLeftToolStripButton;
+        private ToolStripButton _primaryRightToolStripButton;
+        private ToolStripSeparator toolStripSeparator14;
+        private ToolStripButton _primaryZoomInToolStripButton;
+        private ToolStripButton _primaryZoomOutToolStripButton;
+        private ToolStrip toolStrip2;
+        private ToolStripLabel toolStripLabel4;
+        private ToolStripButton _secondaryUpToolStripButton;
+        private ToolStripButton _secondaryDownToolStripButton;
+        private ToolStripSeparator toolStripSeparator12;
+        private ToolStripButton _secondaryLeftToolStripButton;
+        private ToolStripButton _secondaryRightToolStripButton;
+        private ToolStripSeparator toolStripSeparator15;
+        private ToolStripButton _secondaryZoomInToolStripButton;
+        private ToolStripButton _secondaryZoomOutToolStripButton;
     }
 }

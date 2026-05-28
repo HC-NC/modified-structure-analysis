@@ -187,7 +187,8 @@
             _exportToolStripDropDownButton.ImageTransparentColor = Color.Magenta;
             _exportToolStripDropDownButton.Name = "_exportToolStripDropDownButton";
             _exportToolStripDropDownButton.Size = new Size(81, 29);
-            _exportToolStripDropDownButton.Text = "Export";
+            _exportToolStripDropDownButton.Text = "📤";
+            _exportToolStripDropDownButton.ToolTipText = "Export";
             // 
             // _allStatsToolStripMenuItem
             // 
@@ -383,7 +384,7 @@
             _kdeClearButton.Name = "_kdeClearButton";
             _kdeClearButton.Size = new Size(300, 40);
             _kdeClearButton.TabIndex = 9;
-            _kdeClearButton.Text = "Clear";
+            _kdeClearButton.Text = "✕";
             _kdeClearButton.UseVisualStyleBackColor = true;
             _kdeClearButton.Click += KdeClearButton_Click;
             // 
@@ -506,7 +507,7 @@
             _buildScatterButton.Name = "_buildScatterButton";
             _buildScatterButton.Size = new Size(300, 40);
             _buildScatterButton.TabIndex = 2;
-            _buildScatterButton.Text = "Build";
+            _buildScatterButton.Text = "▶";
             _buildScatterButton.UseVisualStyleBackColor = true;
             _buildScatterButton.Click += BuildScatterButton_Click;
             // 
