@@ -1,27 +1,63 @@
 namespace modified_structure_analysis.Models;
 
+using System.ComponentModel;
 using Services;
 
 public class ClassBandStatistics
 {
+    [Category("Raw"), DisplayName("Count")]
     public int Count { get; set; }
+
+    [Category("Raw"), DisplayName("Sum")]
     public float Sum { get; set; }
+
+    [Category("Raw"), DisplayName("Minimum")]
     public float Minimum { get; set; }
+
+    [Category("Raw"), DisplayName("Maximum")]
     public float Maximum { get; set; }
+
+    [Category("Raw"), DisplayName("Mean")]
     public float Mean { get; set; }
+
+    [Category("Raw"), DisplayName("Sigma (σ)")]
     public float Sigma { get; set; }
+
+    [Category("Raw"), DisplayName("Variance (σ²)")]
     public float Variance { get; set; }
+
+    [Category("Raw"), DisplayName("Skewness")]
     public float Skewness { get; set; }
+
+    [Category("Raw"), DisplayName("Kurtosis")]
     public float Kurtosis { get; set; }
+
+    [Category("Raw"), DisplayName("KernelC (bandwidth)")]
     public float KernelC { get; set; }
+
+    [Category("Normalized"), DisplayName("Normalize KernelC")]
     public float NormalizeKernelC { get; set; }
 
+    [Browsable(false)]
     public float ZMin { get; set; }
+
+    [Browsable(false)]
     public float ZMax { get; set; }
+
+    [Browsable(false)]
     public float ZMean { get; set; }
+
+    [Browsable(false)]
     public float ZSigma { get; set; }
+
+    [Browsable(false)]
     public float ZKernelC { get; set; }
+
+    [Browsable(false)]
     public float ZNormalizeKernelC { get; set; }
+
+    [Browsable(false)]
+    public bool HasValidZStats => ZMin < ZMax && !float.IsInfinity(ZMin);
 }
 
 public class ClassStatistics

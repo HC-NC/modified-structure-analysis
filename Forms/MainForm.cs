@@ -394,7 +394,21 @@ namespace modified_structure_analysis.Forms
 
             if (e.ColumnIndex == 3)
             {
-                MessageBox.Show("Тут будет форма анализа");
+                var stats = grid.Equals(_primaryClassificationDataGridView)
+                    ? _primaryClassificationClassStats
+                    : null; // TODO: add secondary class stats
+
+                if (stats == null)
+                {
+                    MessageBox.Show("Class statistics not available.", "Analysis", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var form = new ClassAnalysisForm(
+                    stats, _bands, _width, _height,
+                    _bands.Count > 0 ? _bands[0].GeoTransform : null,
+                    result, e.RowIndex);
+                form.Show();
             }
         }
 

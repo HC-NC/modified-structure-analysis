@@ -89,6 +89,8 @@ namespace modified_structure_analysis.Forms
             _primaryClassificationSplitContainer = new SplitContainer();
             _primaryClassificationRuleSplitContainer = new SplitContainer();
             _primaryRuleDataGridView = new DataGridView();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
             _primaryClassificationRichTextBox = new RichTextBox();
             _primaryClassificationRuleToolStrip = new ToolStrip();
             _primaryClassificationAddRuleToolStripButton = new ToolStripButton();
@@ -102,6 +104,10 @@ namespace modified_structure_analysis.Forms
             _primaryClassificationViewport = new Viewport();
             _primaryClassificationTableTabPage = new TabPage();
             _primaryClassificationDataGridView = new DataGridView();
+            _primaryClassificationColorCol = new DataGridViewImageColumn();
+            _primaryClassificationNameCol = new DataGridViewTextBoxColumn();
+            _primaryClassificationCountCol = new DataGridViewTextBoxColumn();
+            _primaryClassificationEditCol = new DataGridViewButtonColumn();
             _primaryClassificationToolStrip = new ToolStrip();
             _primaryClassificationCompareToolStripButton = new ToolStripButton();
             _primaryClassificationClassifyToolStripButton = new ToolStripButton();
@@ -114,6 +120,8 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationSplitContainer = new SplitContainer();
             _secondaryClassificationRuleSplitContainer = new SplitContainer();
             _secondaryRuleDataGridView = new DataGridView();
+            NameColumn = new DataGridViewTextBoxColumn();
+            EditColumn = new DataGridViewButtonColumn();
             _secondaryClassificationRichTextBox = new RichTextBox();
             _secondaryClassificationRuleToolStrip = new ToolStrip();
             _secondaryClassificationAddRuleToolStripButton = new ToolStripButton();
@@ -126,6 +134,10 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationViewport = new Viewport();
             _secondaryClassificationTableTabPage = new TabPage();
             _secondaryClassificationDataGridView = new DataGridView();
+            _secondaryClassificationColorCol = new DataGridViewImageColumn();
+            _secondaryClassificationNameCol = new DataGridViewTextBoxColumn();
+            _secondaryClassificationCountCol = new DataGridViewTextBoxColumn();
+            _secondaryClassificationEditCol = new DataGridViewButtonColumn();
             _secondaryClassificationToolStrip = new ToolStrip();
             _secondaryClassificationCompareToolStripButton = new ToolStripButton();
             _secondaryClassificationClassifyToolStripButton = new ToolStripButton();
@@ -145,18 +157,6 @@ namespace modified_structure_analysis.Forms
             _kdeWorker = new BackgroundWorker();
             _scatterWorker = new BackgroundWorker();
             _loadWorker = new BackgroundWorker();
-            _secondaryClassificationColorCol = new DataGridViewImageColumn();
-            _secondaryClassificationNameCol = new DataGridViewTextBoxColumn();
-            _secondaryClassificationCountCol = new DataGridViewTextBoxColumn();
-            _secondaryClassificationEditCol = new DataGridViewButtonColumn();
-            NameColumn = new DataGridViewTextBoxColumn();
-            EditColumn = new DataGridViewButtonColumn();
-            _primaryClassificationColorCol = new DataGridViewImageColumn();
-            _primaryClassificationNameCol = new DataGridViewTextBoxColumn();
-            _primaryClassificationCountCol = new DataGridViewTextBoxColumn();
-            _primaryClassificationEditCol = new DataGridViewButtonColumn();
-            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
-            dataGridViewButtonColumn1 = new DataGridViewButtonColumn();
             _menuStrip.SuspendLayout();
             _statusStrip.SuspendLayout();
             _bandsDataGroupBox.SuspendLayout();
@@ -873,6 +873,25 @@ namespace modified_structure_analysis.Forms
             _primaryRuleDataGridView.RowPrePaint += DataGridView_RowPrePaint;
             _primaryRuleDataGridView.SelectionChanged += RuleDataGridView_SelectionChanged;
             // 
+            // dataGridViewTextBoxColumn1
+            // 
+            dataGridViewTextBoxColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewTextBoxColumn1.HeaderText = "Name";
+            dataGridViewTextBoxColumn1.MinimumWidth = 8;
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            dataGridViewTextBoxColumn1.ReadOnly = true;
+            dataGridViewTextBoxColumn1.SortMode = DataGridViewColumnSortMode.NotSortable;
+            // 
+            // dataGridViewButtonColumn1
+            // 
+            dataGridViewButtonColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridViewButtonColumn1.HeaderText = "Edit";
+            dataGridViewButtonColumn1.MinimumWidth = 8;
+            dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
+            dataGridViewButtonColumn1.ReadOnly = true;
+            dataGridViewButtonColumn1.Text = "Edit";
+            dataGridViewButtonColumn1.Width = 32;
+            // 
             // _primaryClassificationRichTextBox
             // 
             _primaryClassificationRichTextBox.BorderStyle = BorderStyle.FixedSingle;
@@ -1008,6 +1027,43 @@ namespace modified_structure_analysis.Forms
             _primaryClassificationDataGridView.TabIndex = 0;
             _primaryClassificationDataGridView.CellClick += ClassificationGrid_CellClick;
             // 
+            // _primaryClassificationColorCol
+            // 
+            _primaryClassificationColorCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+            _primaryClassificationColorCol.HeaderText = "Color";
+            _primaryClassificationColorCol.MinimumWidth = 8;
+            _primaryClassificationColorCol.Name = "_primaryClassificationColorCol";
+            _primaryClassificationColorCol.ReadOnly = true;
+            _primaryClassificationColorCol.Width = 61;
+            // 
+            // _primaryClassificationNameCol
+            // 
+            _primaryClassificationNameCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            _primaryClassificationNameCol.HeaderText = "Class";
+            _primaryClassificationNameCol.MinimumWidth = 8;
+            _primaryClassificationNameCol.Name = "_primaryClassificationNameCol";
+            _primaryClassificationNameCol.ReadOnly = true;
+            // 
+            // _primaryClassificationCountCol
+            // 
+            _primaryClassificationCountCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            _primaryClassificationCountCol.HeaderText = "Pixels";
+            _primaryClassificationCountCol.MinimumWidth = 8;
+            _primaryClassificationCountCol.Name = "_primaryClassificationCountCol";
+            _primaryClassificationCountCol.ReadOnly = true;
+            _primaryClassificationCountCol.Width = 91;
+            // 
+            // _primaryClassificationEditCol
+            // 
+            _primaryClassificationEditCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            _primaryClassificationEditCol.HeaderText = "";
+            _primaryClassificationEditCol.MinimumWidth = 8;
+            _primaryClassificationEditCol.Name = "_primaryClassificationEditCol";
+            _primaryClassificationEditCol.ReadOnly = true;
+            _primaryClassificationEditCol.Text = "More";
+            _primaryClassificationEditCol.UseColumnTextForButtonValue = true;
+            _primaryClassificationEditCol.Width = 8;
+            // 
             // _primaryClassificationToolStrip
             // 
             _primaryClassificationToolStrip.GripStyle = ToolStripGripStyle.Hidden;
@@ -1142,6 +1198,25 @@ namespace modified_structure_analysis.Forms
             _secondaryRuleDataGridView.RowPrePaint += DataGridView_RowPrePaint;
             _secondaryRuleDataGridView.SelectionChanged += RuleDataGridView_SelectionChanged;
             // 
+            // NameColumn
+            // 
+            NameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            NameColumn.HeaderText = "Name";
+            NameColumn.MinimumWidth = 8;
+            NameColumn.Name = "NameColumn";
+            NameColumn.ReadOnly = true;
+            NameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+            // 
+            // EditColumn
+            // 
+            EditColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            EditColumn.HeaderText = "Edit";
+            EditColumn.MinimumWidth = 8;
+            EditColumn.Name = "EditColumn";
+            EditColumn.ReadOnly = true;
+            EditColumn.Text = "Edit";
+            EditColumn.Width = 32;
+            // 
             // _secondaryClassificationRichTextBox
             // 
             _secondaryClassificationRichTextBox.BorderStyle = BorderStyle.FixedSingle;
@@ -1266,6 +1341,43 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationDataGridView.Size = new Size(832, 478);
             _secondaryClassificationDataGridView.TabIndex = 0;
             _secondaryClassificationDataGridView.CellClick += ClassificationGrid_CellClick;
+            // 
+            // _secondaryClassificationColorCol
+            // 
+            _secondaryClassificationColorCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
+            _secondaryClassificationColorCol.HeaderText = "Color";
+            _secondaryClassificationColorCol.MinimumWidth = 8;
+            _secondaryClassificationColorCol.Name = "_secondaryClassificationColorCol";
+            _secondaryClassificationColorCol.ReadOnly = true;
+            _secondaryClassificationColorCol.Width = 61;
+            // 
+            // _secondaryClassificationNameCol
+            // 
+            _secondaryClassificationNameCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            _secondaryClassificationNameCol.HeaderText = "Class";
+            _secondaryClassificationNameCol.MinimumWidth = 8;
+            _secondaryClassificationNameCol.Name = "_secondaryClassificationNameCol";
+            _secondaryClassificationNameCol.ReadOnly = true;
+            // 
+            // _secondaryClassificationCountCol
+            // 
+            _secondaryClassificationCountCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            _secondaryClassificationCountCol.HeaderText = "Pixels";
+            _secondaryClassificationCountCol.MinimumWidth = 8;
+            _secondaryClassificationCountCol.Name = "_secondaryClassificationCountCol";
+            _secondaryClassificationCountCol.ReadOnly = true;
+            _secondaryClassificationCountCol.Width = 91;
+            // 
+            // _secondaryClassificationEditCol
+            // 
+            _secondaryClassificationEditCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            _secondaryClassificationEditCol.HeaderText = "";
+            _secondaryClassificationEditCol.MinimumWidth = 8;
+            _secondaryClassificationEditCol.Name = "_secondaryClassificationEditCol";
+            _secondaryClassificationEditCol.ReadOnly = true;
+            _secondaryClassificationEditCol.Text = "More";
+            _secondaryClassificationEditCol.UseColumnTextForButtonValue = true;
+            _secondaryClassificationEditCol.Width = 8;
             // 
             // _secondaryClassificationToolStrip
             // 
@@ -1412,118 +1524,6 @@ namespace modified_structure_analysis.Forms
             _loadWorker.DoWork += LoadWorker_DoWork;
             _loadWorker.ProgressChanged += BackgroundWorker_ProgressChanged;
             _loadWorker.RunWorkerCompleted += LoadWorker_RunWorkerCompleted;
-            // 
-            // _secondaryClassificationColorCol
-            // 
-            _secondaryClassificationColorCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            _secondaryClassificationColorCol.HeaderText = "Color";
-            _secondaryClassificationColorCol.MinimumWidth = 8;
-            _secondaryClassificationColorCol.Name = "_secondaryClassificationColorCol";
-            _secondaryClassificationColorCol.ReadOnly = true;
-            _secondaryClassificationColorCol.Width = 61;
-            // 
-            // _secondaryClassificationNameCol
-            // 
-            _secondaryClassificationNameCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            _secondaryClassificationNameCol.HeaderText = "Class";
-            _secondaryClassificationNameCol.MinimumWidth = 8;
-            _secondaryClassificationNameCol.Name = "_secondaryClassificationNameCol";
-            _secondaryClassificationNameCol.ReadOnly = true;
-            // 
-            // _secondaryClassificationCountCol
-            // 
-            _secondaryClassificationCountCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            _secondaryClassificationCountCol.HeaderText = "Pixels";
-            _secondaryClassificationCountCol.MinimumWidth = 8;
-            _secondaryClassificationCountCol.Name = "_secondaryClassificationCountCol";
-            _secondaryClassificationCountCol.ReadOnly = true;
-            _secondaryClassificationCountCol.Width = 91;
-            // 
-            // _secondaryClassificationEditCol
-            // 
-            _secondaryClassificationEditCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            _secondaryClassificationEditCol.HeaderText = "";
-            _secondaryClassificationEditCol.MinimumWidth = 8;
-            _secondaryClassificationEditCol.Name = "_secondaryClassificationEditCol";
-            _secondaryClassificationEditCol.ReadOnly = true;
-            _secondaryClassificationEditCol.Text = "More";
-            _secondaryClassificationEditCol.UseColumnTextForButtonValue = true;
-            _secondaryClassificationEditCol.Width = 8;
-            // 
-            // NameColumn
-            // 
-            NameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            NameColumn.HeaderText = "Name";
-            NameColumn.MinimumWidth = 8;
-            NameColumn.Name = "NameColumn";
-            NameColumn.ReadOnly = true;
-            NameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-            // 
-            // EditColumn
-            // 
-            EditColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            EditColumn.HeaderText = "Edit";
-            EditColumn.MinimumWidth = 8;
-            EditColumn.Name = "EditColumn";
-            EditColumn.ReadOnly = true;
-            EditColumn.Text = "Edit";
-            EditColumn.Width = 32;
-            // 
-            // _primaryClassificationColorCol
-            // 
-            _primaryClassificationColorCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader;
-            _primaryClassificationColorCol.HeaderText = "Color";
-            _primaryClassificationColorCol.MinimumWidth = 8;
-            _primaryClassificationColorCol.Name = "_primaryClassificationColorCol";
-            _primaryClassificationColorCol.ReadOnly = true;
-            _primaryClassificationColorCol.Width = 61;
-            // 
-            // _primaryClassificationNameCol
-            // 
-            _primaryClassificationNameCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            _primaryClassificationNameCol.HeaderText = "Class";
-            _primaryClassificationNameCol.MinimumWidth = 8;
-            _primaryClassificationNameCol.Name = "_primaryClassificationNameCol";
-            _primaryClassificationNameCol.ReadOnly = true;
-            // 
-            // _primaryClassificationCountCol
-            // 
-            _primaryClassificationCountCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            _primaryClassificationCountCol.HeaderText = "Pixels";
-            _primaryClassificationCountCol.MinimumWidth = 8;
-            _primaryClassificationCountCol.Name = "_primaryClassificationCountCol";
-            _primaryClassificationCountCol.ReadOnly = true;
-            _primaryClassificationCountCol.Width = 91;
-            // 
-            // _primaryClassificationEditCol
-            // 
-            _primaryClassificationEditCol.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            _primaryClassificationEditCol.HeaderText = "";
-            _primaryClassificationEditCol.MinimumWidth = 8;
-            _primaryClassificationEditCol.Name = "_primaryClassificationEditCol";
-            _primaryClassificationEditCol.ReadOnly = true;
-            _primaryClassificationEditCol.Text = "More";
-            _primaryClassificationEditCol.UseColumnTextForButtonValue = true;
-            _primaryClassificationEditCol.Width = 8;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            dataGridViewTextBoxColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewTextBoxColumn1.HeaderText = "Name";
-            dataGridViewTextBoxColumn1.MinimumWidth = 8;
-            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            dataGridViewTextBoxColumn1.ReadOnly = true;
-            dataGridViewTextBoxColumn1.SortMode = DataGridViewColumnSortMode.NotSortable;
-            // 
-            // dataGridViewButtonColumn1
-            // 
-            dataGridViewButtonColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewButtonColumn1.HeaderText = "Edit";
-            dataGridViewButtonColumn1.MinimumWidth = 8;
-            dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
-            dataGridViewButtonColumn1.ReadOnly = true;
-            dataGridViewButtonColumn1.Text = "Edit";
-            dataGridViewButtonColumn1.Width = 32;
             // 
             // MainForm
             // 
