@@ -662,10 +662,9 @@ namespace modified_structure_analysis.Forms
                 string prodTitle = isProduct
                     ? $"Product: {string.Join("×", bands.Select(b => b.Name))}"
                     : "";
-                int barCount = 101;
-                for (int xi = 0; xi < barCount; xi++)
+
+                for (double x = 0; x < 1; x += 0.01)
                 {
-                    double x = xi / 100.0;
                     double result = isProduct ? 1.0 : 0.0;
 
                     foreach (var band in bands)
@@ -692,7 +691,9 @@ namespace modified_structure_analysis.Forms
                     }
 
                     allPoints.Add(new DataPoint(x, result));
-                    worker?.ReportProgress(xi * 100 / barCount, $"KDE: {xi}/{barCount}");
+
+                    int pct = (int)(x * 100);
+                    worker?.ReportProgress(pct, $"KDE: {pct}%");
                 }
 
                 e.Result = (mode, prodTitle, new List<(Band? band, List<DataPoint> points)> { (null, allPoints) });

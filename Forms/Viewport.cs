@@ -15,31 +15,85 @@ namespace modified_structure_analysis.Forms
         private Graphics _graphics;
         private Image _img;
         private Point _mouseDown;
-        private int _startx = 0; // offset of image when mouse was pressed
-        private int _starty = 0;
-        private int _imgx = 0; // current offset of image
-        private int _imgy = 0;
+        private float _startx = 0;
+        private float _starty = 0;
+        private float _imgx = 0;
+        private float _imgy = 0;
 
         private int _oldWidth;
         private int _oldHeight;
 
-        private bool _mousepressed = false; // true as long as left mousebutton is pressed
+        private bool _mousepressed = false;
         private bool _mouseOnPicture = false;
         private float _zoom = 1;
 
-        private Point? _externalCursorPos = null;
+        private PointF? _externalCursorPos = null;
 
         public Image Image => _img;
 
+        public float Zoom => _zoom;
+        public float OffsetX => _imgx;
+        public float OffsetY => _imgy;
+
         public event Action<float> Zooming;
-        public event Action<int, int> Moving;
-        public event Action<int, int> CursorMoved;
+        public event Action<float, float> Moving;
+        public event Action<float, float> CursorMoved;
 
         public Viewport()
         {
             InitializeComponent();
 
             _graphics = CreateGraphics();
+        }
+
+        public void ZoomIn()
+        {
+            if (_img == null) return;
+            float cx = pictureBox.Width * 0.5f / _zoom - _imgx;
+            float cy = pictureBox.Height * 0.5f / _zoom - _imgy;
+            float oldZoom = _zoom;
+            _zoom *= 1.1f;
+            _imgx = cx - pictureBox.Width * 0.5f / _zoom;
+            _imgy = cy - pictureBox.Height * 0.5f / _zoom;
+            Zooming?.Invoke(_zoom);
+            Moving?.Invoke(_imgx, _imgy);
+            pictureBox.Refresh();
+        }
+
+        public void ZoomOut()
+        {
+            if (_img == null) return;
+            float cx = pictureBox.Width * 0.5f / _zoom - _imgx;
+            float cy = pictureBox.Height * 0.5f / _zoom - _imgy;
+            float oldZoom = _zoom;
+            _zoom *= 0.9f;
+            _imgx = cx - pictureBox.Width * 0.5f / _zoom;
+            _imgy = cy - pictureBox.Height * 0.5f / _zoom;
+            Zooming?.Invoke(_zoom);
+            Moving?.Invoke(_imgx, _imgy);
+            pictureBox.Refresh();
+        }
+
+        public void ZoomToExtent()
+        {
+            if (_img == null) return;
+            ResetImage(this, EventArgs.Empty);
+        }
+
+        public void SetZoom(float zoom)
+        {
+            if (_img == null) return;
+            _zoom = Math.Max(0.01f, zoom);
+            Zooming?.Invoke(_zoom);
+            pictureBox.Refresh();
+        }
+
+        public void PanBy(float dx, float dy)
+        {
+            _imgx += dx / _zoom;
+            _imgy += dy / _zoom;
+            Moving?.Invoke(_imgx, _imgy);
+            pictureBox.Refresh();
         }
 
         private void Viewport_Load(object sender, EventArgs e)
@@ -69,8 +123,8 @@ namespace modified_structure_analysis.Forms
             //_zoom = ((float)pictureBox.Width / (float)_img.Width) *
             //(_img.HorizontalResolution / _graphics.DpiX);
 
-            _imgx = (int)(pictureBox.Width * 0.5f / _zoom - _img.Width * 0.5f);
-            _imgy = (int)(pictureBox.Height * 0.5f / _zoom - _img.Height * 0.5f);
+            _imgx = pictureBox.Width * 0.5f / _zoom - _img.Width * 0.5f;
+            _imgy = pictureBox.Height * 0.5f / _zoom - _img.Height * 0.5f;
 
             Zooming?.Invoke(_zoom);
             Moving?.Invoke(_imgx, _imgy);
@@ -92,31 +146,16 @@ namespace modified_structure_analysis.Forms
                 float drawX = _externalCursorPos.Value.X + _imgx;
                 float drawY = _externalCursorPos.Value.Y + _imgy;
 
-                float penWidthMain = 1.5f / _zoom;
-                float penWidthBorder = 3.5f / _zoom;
-
-                float radius = 8f / _zoom;
-                float lineLenght = 12f / _zoom;
+                float crosshairRadius = 2.5f;
 
                 var oldSmoothing = e.Graphics.SmoothingMode;
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-                using (Pen borderPen = new Pen(Color.Black, penWidthBorder))
+                using (Pen blackPen = new Pen(Color.Black, 1.5f / _zoom))
                 {
-                    e.Graphics.DrawEllipse(borderPen, drawX - radius, drawY - radius, radius * 2, radius * 2);
-                    e.Graphics.DrawLine(borderPen, drawX - lineLenght, drawY, drawX + lineLenght, drawY);
-                    e.Graphics.DrawLine(borderPen, drawX, drawY - lineLenght, drawX, drawY + lineLenght);
-                }
-
-                using (Pen mainPen = new Pen(Color.Lime, penWidthMain))
-                {
-                    e.Graphics.DrawEllipse(mainPen, drawX - radius, drawY - radius, radius * 2, radius * 2);
-                    e.Graphics.DrawLine(mainPen, drawX - lineLenght, drawY, drawX + lineLenght, drawY);
-                    e.Graphics.DrawLine(mainPen, drawX, drawY - lineLenght, drawX, drawY + lineLenght);
-
-                    float dotSize = 2f / _zoom;
-
-                    e.Graphics.FillEllipse(Brushes.Lime, drawX - dotSize / 2, drawY - dotSize / 2, dotSize, dotSize);
+                    float dotRadius = crosshairRadius / _zoom;
+                    e.Graphics.DrawEllipse(blackPen, drawX - dotRadius, drawY - dotRadius, dotRadius * 2, dotRadius * 2);
+                    e.Graphics.FillEllipse(Brushes.White, drawX - dotRadius, drawY - dotRadius, dotRadius * 2, dotRadius * 2);
                 }
 
                 e.Graphics.SmoothingMode = oldSmoothing;
@@ -173,9 +212,8 @@ namespace modified_structure_analysis.Forms
                 int deltaX = mousePosNow.X - _mouseDown.X;
                 int deltaY = mousePosNow.Y - _mouseDown.Y;
 
-                // calculate new offset of image based on the current zoom factor
-                _imgx = (int)(_startx + (deltaX / _zoom));
-                _imgy = (int)(_starty + (deltaY / _zoom));
+                _imgx = _startx + deltaX / _zoom;
+                _imgy = _starty + deltaY / _zoom;
 
                 Moving?.Invoke(_imgx, _imgy);
 
@@ -184,8 +222,8 @@ namespace modified_structure_analysis.Forms
 
             if (_img != null)
             {
-                int imgCursorX = (int)(e.X / _zoom) - _imgx;
-                int imgCursorY = (int)(e.Y / _zoom) - _imgy;
+                float imgCursorX = e.X / _zoom - _imgx;
+                float imgCursorY = e.Y / _zoom - _imgy;
 
                 if (imgCursorX >= 0 && imgCursorX <= _img.Width && imgCursorY >= 0 && imgCursorY <= _img.Height)
                     CursorMoved?.Invoke(imgCursorX, imgCursorY);
@@ -212,17 +250,14 @@ namespace modified_structure_analysis.Forms
 
                 Point pBoxLocation = PointToClient(pictureBox.Parent.PointToScreen(pictureBox.Location));
 
-                // Where location of the mouse in the pictureframe
                 int x = mousePosNow.X - pBoxLocation.X;
                 int y = mousePosNow.Y - pBoxLocation.Y;
 
-                // Where in the IMAGE is it now
-                int oldimagex = (int)(x / oldzoom);
-                int oldimagey = (int)(y / oldzoom);
+                float oldimagex = x / oldzoom;
+                float oldimagey = y / oldzoom;
 
-                // Where in the IMAGE will it be when the new zoom i made
-                int newimagex = (int)(x / _zoom);
-                int newimagey = (int)(y / _zoom);
+                float newimagex = x / _zoom;
+                float newimagey = y / _zoom;
 
                 // Where to move image to keep focus on one point
                 _imgx = newimagex - oldimagex + _imgx;
@@ -275,6 +310,16 @@ namespace modified_structure_analysis.Forms
                         _imgy += (int)(pictureBox.Height * 0.90F / _zoom);
                         pictureBox.Refresh();
                         break;
+
+                    case Keys.Add:
+                    case Keys.Oemplus when (keyData & Keys.Modifiers) is Keys.None or Keys.Control:
+                        ZoomIn();
+                        break;
+
+                    case Keys.Subtract:
+                    case Keys.OemMinus when (keyData & Keys.Modifiers) is Keys.None or Keys.Control:
+                        ZoomOut();
+                        break;
                 }
 
                 Moving?.Invoke(_imgx, _imgy);
@@ -311,30 +356,9 @@ namespace modified_structure_analysis.Forms
             pictureBox.Refresh();
         }
 
-        public void OnLinkZoom(float zoom)
+        public void UpdateExternalCursor(float imageX, float imageY)
         {
-            if (_img == null)
-                return;
-
-            _zoom = zoom;
-
-            pictureBox.Refresh();
-        }
-
-        public void OnLinkMove(int x, int y)
-        {
-            if (_img == null)
-                return;
-
-            _imgx = x;
-            _imgy = y;
-
-            pictureBox.Refresh();
-        }
-
-        public void UpdateExternalCursor(int imageX, int imageY)
-        {
-            _externalCursorPos = new Point(imageX, imageY);
+            _externalCursorPos = new PointF(imageX, imageY);
             pictureBox.Refresh();
         }
 
@@ -345,6 +369,21 @@ namespace modified_structure_analysis.Forms
                 _externalCursorPos = null;
                 pictureBox.Refresh();
             }
+        }
+
+        public void OnLinkZoom(float zoom)
+        {
+            if (_img == null) return;
+            _zoom = zoom;
+            pictureBox.Refresh();
+        }
+
+        public void OnLinkMove(float x, float y)
+        {
+            if (_img == null) return;
+            _imgx = x;
+            _imgy = y;
+            pictureBox.Refresh();
         }
     }
 }

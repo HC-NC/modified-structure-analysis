@@ -46,19 +46,19 @@ namespace modified_structure_analysis.Forms
             viewport2.CursorMoved += OnCursorMovedViewport2;
         }
 
-        private void OnCursorMovedViewport1(int x, int y)
+        private void OnCursorMovedViewport1(float x, float y)
         {
             OnCursorMoved(x, y, viewport2);
         }
 
-        private void OnCursorMovedViewport2(int x, int y)
+        private void OnCursorMovedViewport2(float x, float y)
         {
             OnCursorMoved(x, y, viewport1);
         }
 
-        private void OnCursorMoved(int x, int y, Viewport viewport)
+        private void OnCursorMoved(float x, float y, Viewport viewport)
         {
-            if (x == -1 && y == -1) viewport.ClearExternalCursor();
+            if (x < 0 && y < 0) viewport.ClearExternalCursor();
             else viewport.UpdateExternalCursor(x, y);
         }
     }
