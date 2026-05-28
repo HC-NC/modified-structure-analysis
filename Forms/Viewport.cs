@@ -50,12 +50,13 @@ namespace modified_structure_analysis.Forms
         public void ZoomIn()
         {
             if (_img == null) return;
-            float cx = pictureBox.Width * 0.5f / _zoom - _imgx;
-            float cy = pictureBox.Height * 0.5f / _zoom - _imgy;
             float oldZoom = _zoom;
-            _zoom *= 1.1f;
-            _imgx = cx - pictureBox.Width * 0.5f / _zoom;
-            _imgy = cy - pictureBox.Height * 0.5f / _zoom;
+            float newZoom = _zoom * 1.1f;
+            float cx = pictureBox.Width * 0.5f;
+            float cy = pictureBox.Height * 0.5f;
+            _imgx += cx * (1f / newZoom - 1f / oldZoom);
+            _imgy += cy * (1f / newZoom - 1f / oldZoom);
+            _zoom = newZoom;
             Zooming?.Invoke(_zoom);
             Moving?.Invoke(_imgx, _imgy);
             pictureBox.Refresh();
@@ -64,12 +65,13 @@ namespace modified_structure_analysis.Forms
         public void ZoomOut()
         {
             if (_img == null) return;
-            float cx = pictureBox.Width * 0.5f / _zoom - _imgx;
-            float cy = pictureBox.Height * 0.5f / _zoom - _imgy;
             float oldZoom = _zoom;
-            _zoom *= 0.9f;
-            _imgx = cx - pictureBox.Width * 0.5f / _zoom;
-            _imgy = cy - pictureBox.Height * 0.5f / _zoom;
+            float newZoom = _zoom * 0.9f;
+            float cx = pictureBox.Width * 0.5f;
+            float cy = pictureBox.Height * 0.5f;
+            _imgx += cx * (1f / newZoom - 1f / oldZoom);
+            _imgy += cy * (1f / newZoom - 1f / oldZoom);
+            _zoom = newZoom;
             Zooming?.Invoke(_zoom);
             Moving?.Invoke(_imgx, _imgy);
             pictureBox.Refresh();
