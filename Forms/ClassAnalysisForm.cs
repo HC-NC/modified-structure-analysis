@@ -58,7 +58,10 @@ public partial class ClassAnalysisForm : Form
     {
         _classesListBox.Items.Clear();
         for (int i = 0; i < _classStats.Length; i++)
-            _classesListBox.Items.Add($"Class {i}");
+        {
+            double pct = _totalPixels > 0 ? _classStats[i].PixelCount * 100.0 / _totalPixels : 0;
+            _classesListBox.Items.Add($"Class {i}  [{pct:F1}%]");
+        }
 
         if (selectIndex >= 0 && selectIndex < _classesListBox.Items.Count)
             _classesListBox.SelectedIndex = selectIndex;
@@ -228,17 +231,12 @@ public partial class ClassAnalysisForm : Form
 
     // ── KDE list ───────────────────────────────────────────────
 
-    private void PopulateKdeList(int classIdx, List<string>? restore = null)
+    private void PopulateKdeList(int _classIdx, List<string>? restore = null)
     {
         _kdeListBox.Items.Clear();
-        var stats = _classStats[classIdx];
 
         for (int b = 0; b < _bands.Count; b++)
             _kdeListBox.Items.Add(_bands[b].Name);
-
-        for (int b = 0; b < _bands.Count; b++)
-            if (stats.Bands?[b]?.HasValidZStats == true)
-                _kdeListBox.Items.Add($"z({_bands[b].Name})");
 
         if (restore != null)
             RestoreListSelection(_kdeListBox, restore);
@@ -493,7 +491,12 @@ public partial class ClassAnalysisForm : Form
             else
             {
                 min = 0; max = 1; kernelC = bs.NormalizeKernelC;
-                getValue = px => band.GetNormalizedValue(px);
+                float cr = bs.Maximum - bs.Minimum;
+                getValue = px =>
+                {
+                    float v = band.GetValue(px);
+                    return !float.IsNaN(v) && cr > 0 ? (v - bs.Minimum) / cr : float.NaN;
+                };
             }
 
             float range = max - min;
@@ -648,7 +651,14 @@ public partial class ClassAnalysisForm : Form
         }
         else
         {
-            return px => band.GetNormalizedValue(px);
+            var bs = stats.Bands![entry.bi];
+            float range = bs.Maximum - bs.Minimum;
+            float minVal = bs.Minimum;
+            return px =>
+            {
+                float v = band.GetValue(px);
+                return !float.IsNaN(v) && range > 0 ? (v - minVal) / range : float.NaN;
+            };
         }
     }
 

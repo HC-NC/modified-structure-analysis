@@ -38,6 +38,7 @@ namespace modified_structure_analysis.Forms
         private ClassificationResult? _primaryClassificationResult;
 		private ClassificationResult? _secondaryClassificationResult;
         private ClassStatistics[]? _primaryClassificationClassStats;
+        private ClassStatistics[]? _secondaryClassificationClassStats;
 
         private PlotModel _kdeModel;
 
@@ -396,7 +397,7 @@ namespace modified_structure_analysis.Forms
             {
                 var stats = grid.Equals(_primaryClassificationDataGridView)
                     ? _primaryClassificationClassStats
-                    : null; // TODO: add secondary class stats
+                    : _secondaryClassificationClassStats;
 
                 if (stats == null)
                 {
@@ -1764,10 +1765,17 @@ namespace modified_structure_analysis.Forms
 
             Bitmap bitmap = RenderClassificationBitmap(classificationResult);
 
-            if (isSecondStage)
+			if (isSecondStage)
             {
 				_secondaryClassificationResult = classificationResult;
-				
+
+                if (engine.ZScoreCache != null)
+                {
+                    _secondaryClassificationClassStats = ClassStatistics.ComputeFromResult(
+                        classificationResult, _bands, engine.ZScoreCache,
+                        engine.CachedPixelCount, _width, _height);
+                }
+
                 e.Result = (bitmap, classificationResult, ClassificationMode.RulePerClass, true);
             }
             else
