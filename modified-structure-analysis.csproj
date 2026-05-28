@@ -13,10 +13,16 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
 		<MinVerTagPrefix>v</MinVerTagPrefix>
+
+		<ApplicationIcon>Resources\favicon.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <None Remove="nul" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Resources\favicon.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
