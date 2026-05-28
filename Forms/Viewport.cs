@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
+using modified_structure_analysis.Config;
 
 namespace modified_structure_analysis.Forms
 {
@@ -132,12 +133,25 @@ namespace modified_structure_analysis.Forms
             pictureBox.Refresh();
         }
 
+        private static InterpolationMode GetInterpolationMode(ViewportInterpolation mode)
+        {
+            return mode switch
+            {
+                ViewportInterpolation.NearestNeighbor => InterpolationMode.NearestNeighbor,
+                ViewportInterpolation.Bilinear => InterpolationMode.Bilinear,
+                ViewportInterpolation.Bicubic => InterpolationMode.Bicubic,
+                ViewportInterpolation.HighQualityBilinear => InterpolationMode.HighQualityBilinear,
+                ViewportInterpolation.HighQualityBicubic => InterpolationMode.HighQualityBicubic,
+                _ => InterpolationMode.NearestNeighbor
+            };
+        }
+
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
             if (_img == null)
                 return;
 
-            e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+            e.Graphics.InterpolationMode = GetInterpolationMode(AppSettings.Instance.Interpolation);
             e.Graphics.ScaleTransform(_zoom, _zoom);
             e.Graphics.DrawImage(_img, _imgx, _imgy);
 

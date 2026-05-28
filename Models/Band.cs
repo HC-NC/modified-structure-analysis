@@ -36,7 +36,7 @@ public class Band
     private float _kurtosis;
     private float _kernelC;
     private float _normalizeKernelC;
-    private KernelType _kernelType = KernelType.Epanechnikov;
+    private KernelType _kernelType = Config.AppSettings.Instance.DefaultKernelType;
 
     [DisplayName("Name")]
     [Description("Band name")]

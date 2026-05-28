@@ -40,6 +40,8 @@ namespace modified_structure_analysis.Forms
             _exportClassificationToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             _exitToolStripMenuItem = new ToolStripMenuItem();
+            _toolsToolStripMenuItem = new ToolStripMenuItem();
+            _settingsToolStripMenuItem = new ToolStripMenuItem();
             _openFileDialog = new OpenFileDialog();
             _saveFileDialog = new SaveFileDialog();
             _statusStrip = new StatusStrip();
@@ -267,7 +269,7 @@ namespace modified_structure_analysis.Forms
             // _menuStrip
             // 
             _menuStrip.ImageScalingSize = new Size(24, 24);
-            _menuStrip.Items.AddRange(new ToolStripItem[] { _fileToolStripMenuItem });
+            _menuStrip.Items.AddRange(new ToolStripItem[] { _fileToolStripMenuItem, _toolsToolStripMenuItem });
             _menuStrip.Location = new Point(0, 0);
             _menuStrip.Name = "_menuStrip";
             _menuStrip.Size = new Size(1178, 33);
@@ -317,6 +319,20 @@ namespace modified_structure_analysis.Forms
             _exitToolStripMenuItem.Size = new Size(345, 34);
             _exitToolStripMenuItem.Text = "Exit";
             _exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
+            // 
+            // _toolsToolStripMenuItem
+            // 
+            _toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _settingsToolStripMenuItem });
+            _toolsToolStripMenuItem.Name = "_toolsToolStripMenuItem";
+            _toolsToolStripMenuItem.Size = new Size(64, 29);
+            _toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // _settingsToolStripMenuItem
+            // 
+            _settingsToolStripMenuItem.Name = "_settingsToolStripMenuItem";
+            _settingsToolStripMenuItem.Size = new Size(270, 34);
+            _settingsToolStripMenuItem.Text = "Settings…";
+            _settingsToolStripMenuItem.Click += SettingsToolStripMenuItem_Click;
             // 
             // _statusStrip
             // 
@@ -2090,5 +2106,7 @@ namespace modified_structure_analysis.Forms
         private ToolStripSeparator toolStripSeparator15;
         private ToolStripButton _secondaryZoomInToolStripButton;
         private ToolStripButton _secondaryZoomOutToolStripButton;
+        private ToolStripMenuItem _toolsToolStripMenuItem;
+        private ToolStripMenuItem _settingsToolStripMenuItem;
     }
 }

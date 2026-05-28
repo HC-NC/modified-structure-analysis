@@ -195,6 +195,26 @@
 
 ---
 
+## Версия 0.10 — Настройки и оптимизация KDE
+
+### Этап 18: Диалог настроек приложения
+- [ ] 18.1 Создание `SettingsForm` с вкладками:
+  - [ ] 18.1.1 **General** — Default kernel function, bandwidth selection method
+  - [ ] 18.1.2 **Histogram** — правило определения колонок (bins), стиль отображения
+  - [ ] 18.1.3 **Classification** — порог undefined, режимы по умолчанию
+- [ ] 18.2 Создание `AppSettings` класса (singleton, JSON persistence)
+- [ ] 18.3 Интеграция настроек в `Band.cs`, `KernelFunctions.cs`, `BandStatisticsComputer.cs`
+- [ ] 18.4 Пункт меню «Settings» / «Options» в MainForm → открытие `SettingsForm`
+
+### Этап 19: Оптимизация коэффициента размытости (bandwidth)
+- [ ] 19.1 **Правило Сильвермана** (Silverman's rule of thumb) — уже есть как `GetDefaultBandwidth()`
+- [ ] 19.2 **Least-Squares Cross-Validation (LSCV)** — минимизация MISE через скользящий контроль
+- [ ] 19.3 **Direct Plug-In (Sheather–Jones)** — оценка производных плотности для оптимального h
+- [ ] 19.4 **Адаптивный bandwidth (variable)** — разный h для разных участков распределения (Abramson's rule)
+- [ ] 19.5 UI в `SettingsForm` для выбора метода + флаг «использовать оптимизацию (медленно)»
+
+---
+
 ## Версия 1.0 — Релиз
 
 - [ ] Финальное тестирование

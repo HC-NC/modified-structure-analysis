@@ -790,6 +790,12 @@ namespace modified_structure_analysis.Forms
             Application.Exit();
         }
 
+        private void SettingsToolStripMenuItem_Click(object? sender, EventArgs e)
+        {
+            using var form = new Forms.SettingsForm();
+            form.ShowDialog(this);
+        }
+
         private void UpdateBandsList()
         {
             _bandListBox.Items.Clear();
@@ -1475,7 +1481,7 @@ namespace modified_structure_analysis.Forms
             if (band == null || band.OriginalWidth * band.OriginalHeight == 0)
                 return;
 
-            int columnsCount = BrooksCarrutherDivisionRule(band.Count);
+            int columnsCount = Config.AppSettings.Instance.GetHistogramBinCount(band.Count);
             float minVal = band.Minimum;
             float maxVal = band.Maximum;
             float range = maxVal - minVal;
