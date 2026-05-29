@@ -400,7 +400,7 @@
             _scatterPlotView.ZoomHorizontalCursor = Cursors.SizeWE;
             _scatterPlotView.ZoomRectangleCursor = Cursors.SizeNWSE;
             _scatterPlotView.ZoomVerticalCursor = Cursors.SizeNS;
-            _scatterPlotView.Click += ResetPlotAxes;
+            _scatterPlotView.DoubleClick += ResetPlotAxes;
             // 
             // _pixelsTabPage
             // 

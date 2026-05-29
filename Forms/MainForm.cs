@@ -595,7 +595,7 @@ namespace modified_structure_analysis.Forms
                     points.Add((vx, vy));
                 }
 
-                int pct = i * 100 / totalPixels;
+                int pct = (int)(i * 100 / (long)totalPixels);
 
                 if (pct != lastPct)
                 {
@@ -1722,10 +1722,12 @@ namespace modified_structure_analysis.Forms
 
         private void PlotView_DoubleClick(object sender, EventArgs e)
         {
-            PlotView plotView = (PlotView)sender;
-
-            plotView.Model.ResetAllAxes();
-            plotView.Refresh();
+            if (sender is OxyPlot.WindowsForms.PlotView pv && pv.Model != null)
+            {
+                foreach (var axis in pv.Model.Axes)
+                    axis.Reset();
+                pv.InvalidatePlot(true);
+            }
         }
 
         private void Classify_Click(object sender, EventArgs e)
