@@ -532,7 +532,7 @@ namespace modified_structure_analysis.Forms
                 {
                     BandStatisticsComputer.Compute(bands[i]);
                     int pct = (i + 1) * 100 / total;
-                    worker?.ReportProgress(pct, $"Statistics: band {i + 1}/{total}");
+                    worker?.ReportProgress(pct, $"{Resources.Statistics}: {Resources.band} {i + 1}/{total}");
                 }
 
                 float[][]? corrData = null;
@@ -1878,9 +1878,9 @@ namespace modified_structure_analysis.Forms
                 worker.ReportProgress(progress, $"{stageName}: {finalCount}/{totalPixels} ({progress}%) ETA: {remainingStr} ({elapsedStr})");
             });
 
-            worker.ReportProgress(99, Resources.Progress_Rendering);
-
             Bitmap bitmap = RenderClassificationBitmap(classificationResult);
+
+            worker.ReportProgress(99, Resources.Progress_ComputeClassStats);
 
 			if (isSecondStage)
             {

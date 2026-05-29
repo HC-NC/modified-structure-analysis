@@ -41,7 +41,7 @@ public sealed class AppSettings
     // ── General ────────────────────────────────────────────────
     public KernelType DefaultKernelType { get; set; } = KernelType.Epanechnikov;
     public BandwidthMethod BandwidthMethod { get; set; } = BandwidthMethod.RuleOfThumb;
-    public string Language { get; set; } = CultureInfo.CurrentCulture.Name;
+    public string Language { get; set; } = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
     // ── Histogram ──────────────────────────────────────────────
     public HistogramBinsRule HistogramBinsRule { get; set; } = HistogramBinsRule.BrooksCarruther;

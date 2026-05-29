@@ -131,7 +131,7 @@
     <value>Channel Value (v)</value>
   </data>
   <data name="ChannelZScore" xml:space="preserve">
-    <value>Channel corr. coefficient component (v)</value>
+    <value>Channel corr. coefficient component (z)</value>
   </data>
   <data name="Class" xml:space="preserve">
     <value>Class</value>
@@ -447,5 +447,14 @@
   </data>
   <data name="Label_Classification" xml:space="preserve">
     <value>Classification</value>
+  </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+  <data name="band" xml:space="preserve">
+    <value>band</value>
+  </data>
+  <data name="Progress_ComputeClassStats" xml:space="preserve">
+    <value>Calculating class statistics...</value>
   </data>
 </root>

@@ -127,7 +127,7 @@
     <value>Значение канала (v)</value>
   </data>
   <data name="ChannelZScore" xml:space="preserve">
-    <value>Компонента коэф. кор. канала (v)</value>
+    <value>Компонента коэф. кор. канала (z)</value>
   </data>
   <data name="Class" xml:space="preserve">
     <value>Класс</value>
@@ -410,5 +410,14 @@
   </data>
   <data name="Label_Classification" xml:space="preserve">
     <value>Классификация</value>
+  </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Статистика</value>
+  </data>
+  <data name="band" xml:space="preserve">
+    <value>Канал</value>
+  </data>
+  <data name="Progress_ComputeClassStats" xml:space="preserve">
+    <value>Вычисление статистики классов...</value>
   </data>
 </root>

@@ -142,6 +142,15 @@ namespace modified_structure_analysis.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на band.
+        /// </summary>
+        internal static string band {
+            get {
+                return ResourceManager.GetString("band", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap blue_sqaure {
@@ -161,7 +170,7 @@ namespace modified_structure_analysis.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Channel corr. coefficient component (v).
+        ///   Ищет локализованную строку, похожую на Channel corr. coefficient component (z).
         /// </summary>
         internal static string ChannelZScore {
             get {
@@ -792,6 +801,15 @@ namespace modified_structure_analysis.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Calculating class statistics....
+        /// </summary>
+        internal static string Progress_ComputeClassStats {
+            get {
+                return ResourceManager.GetString("Progress_ComputeClassStats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Computing correlation....
         /// </summary>
         internal static string Progress_Correlation {
@@ -924,6 +942,15 @@ namespace modified_structure_analysis.Properties {
         internal static string Single {
             get {
                 return ResourceManager.GetString("Single", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Statistics.
+        /// </summary>
+        internal static string Statistics {
+            get {
+                return ResourceManager.GetString("Statistics", resourceCulture);
             }
         }
         

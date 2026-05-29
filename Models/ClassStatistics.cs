@@ -98,7 +98,7 @@ public class ClassStatistics
 
         ClassStatistics[] stats = new ClassStatistics[totalClasses];
 
-        for (int cls = 0; cls < totalClasses; cls++)
+        Parallel.For(0, totalClasses, (cls, state) =>
         {
             int pixelCount = classCounts[cls];
             ClassBandStatistics[] bandStats = new ClassBandStatistics[bands.Count];
@@ -228,7 +228,7 @@ public class ClassStatistics
                 PixelIndices = classPixels[cls].ToArray(),
                 Bands = bandStats
             };
-        }
+        });
 
         return stats;
     }
