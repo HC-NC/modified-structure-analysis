@@ -123,96 +123,13 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_formatCombo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>130, 7</value>
+    <value>108, 7</value>
   </data>
   <data name="_formatCombo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>321, 33</value>
+    <value>343, 33</value>
   </data>
-  <data name="_geoCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>130, 46</value>
-  </data>
-  <data name="_geoCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>321, 29</value>
-  </data>
-  <data name="_geoCheckBox.Text" xml:space="preserve">
-    <value>Включить геопривязку</value>
-  </data>
-  <data name="_projectionTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>130, 81</value>
-  </data>
-  <data name="_projectionTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>321, 31</value>
-  </data>
-  <data name="_pathTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>130, 157</value>
-  </data>
-  <data name="_pathTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>195, 31</value>
-  </data>
-  <data name="_paletteCombo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>130, 118</value>
-  </data>
-  <data name="_paletteCombo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>321, 33</value>
-  </data>
-  <data name="_exportStatsCheckBox.Text" xml:space="preserve">
-    <value>Экспорт вместе с классификацией</value>
-  </data>
-  <data name="_statsFormatCombo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>89, 40</value>
-  </data>
-  <data name="_statsFormatCombo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>346, 33</value>
-  </data>
-  <data name="_formatLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>117, 39</value>
-  </data>
-  <data name="_formatLabel.Text" xml:space="preserve">
-    <value>Формат:</value>
-  </data>
-  <data name="_projectionLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>117, 37</value>
-  </data>
-  <data name="_projectionLabel.Text" xml:space="preserve">
-    <value>Проекция:</value>
-  </data>
-  <data name="_paletteLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>117, 39</value>
-  </data>
-  <data name="_paletteLabel.Text" xml:space="preserve">
-    <value>Палитра:</value>
-  </data>
-  <data name="_saveLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>117, 37</value>
-  </data>
-  <data name="_saveLabel.Text" xml:space="preserve">
-    <value>Сохранить в:</value>
-  </data>
-  <data name="_browseButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>331, 157</value>
-  </data>
-  <data name="_browseButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 31</value>
-  </data>
-  <data name="_browseButton.Text" xml:space="preserve">
-    <value>Просмотр...</value>
-  </data>
-  <data name="_statsGroup.Text" xml:space="preserve">
-    <value>Статистика</value>
-  </data>
-  <data name="_statsFormatLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>80, 39</value>
-  </data>
-  <data name="_statsFormatLabel.Text" xml:space="preserve">
-    <value>Формат:</value>
-  </data>
-  <data name="_cancelButton.Text" xml:space="preserve">
-    <value>Отмена</value>
-  </data>
-  <data name="_okButton.Text" xml:space="preserve">
-    <value>Экспорт</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>Экспорт классификации</value>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="_formatCombo.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
   </data>
 </root>

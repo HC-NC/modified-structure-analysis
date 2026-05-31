@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using modified_structure_analysis.Services;
 
 namespace modified_structure_analysis.Models;
@@ -18,7 +17,6 @@ public class Band
     private List<float>? _values;
     private Dictionary<(int x, int y), float>? _spatialData;
     private float[]? _pixelValues;
-    private float[]? _normalizedPixelValues;
     private float _noDataValue = float.NaN;
     private double _gdalNoDataValue;
     private bool _hasGdalNoData;
@@ -177,9 +175,6 @@ public class Band
         _pixelValues = new float[_originalWidth * _originalHeight];
         gdalBand.ReadRaster(0, 0, _originalWidth, _originalHeight, _pixelValues, _originalWidth, _originalHeight, 0, 0);
 
-        _normalizedPixelValues = new float[_originalWidth * _originalHeight];
-        Array.Fill(_normalizedPixelValues, float.NaN);
-
         for (int idx = 0; idx < _pixelValues.Length; idx++)
         {
             float v = _pixelValues[idx];
@@ -224,7 +219,6 @@ public class Band
     public void UnloadPixelData()
     {
         _pixelValues = null;
-        _normalizedPixelValues = null;
     }
 
     public void SetPixelValue(int x, int y, float value)
@@ -240,8 +234,6 @@ public class Band
             if (_originalWidth <= 0 || _originalHeight <= 0) return;
             _pixelValues = new float[_originalWidth * _originalHeight];
             Array.Fill(_pixelValues, _noDataValue);
-            _normalizedPixelValues = new float[_originalWidth * _originalHeight];
-            Array.Fill(_normalizedPixelValues, float.NaN);
         }
 
         if (index < 0 || index >= _pixelValues.Length) return;
@@ -281,32 +273,18 @@ public class Band
         return _pixelValues[i];
     }
 
-    public float GetNormalizedValue(int i)
-    {
-        if (_pixelValues == null && CanReload)
-            EnsurePixelValuesLoaded();
-
-        if (_pixelValues == null || i < 0 || i >= _pixelValues.Length)
-            return 0;
-
-        if (float.IsNaN(_pixelValues[i]))
-            return 0;
-
-        if (_normalizedPixelValues != null && float.IsNaN(_normalizedPixelValues[i]) && _maximum != _minimum)
-        {
-            _normalizedPixelValues[i] = (_pixelValues[i] - _minimum) / (_maximum - _minimum);
-        }
-        return _normalizedPixelValues?[i] ?? 0;
-    }
-
     public override string ToString()
     {
         return Name;
     }
 
-    public float Normalize(float v)
+    public float GetNormalizedValue(int i)
     {
-        return (v - _minimum) / (_maximum - _minimum);
+        if (_minimum > _maximum)
+            return 0;
+
+
+        return (GetValue(i) - _minimum) / (_maximum - _minimum);
     }
 
     public float GetZScore(int pixelIndex)

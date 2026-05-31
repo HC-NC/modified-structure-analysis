@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 
 using modified_structure_analysis.Models;
@@ -318,7 +319,7 @@ namespace modified_structure_analysis.Forms
 
             if (_rightConstantRadio.Checked)
             {
-                if (!double.TryParse(_rightConstantTextBox.Text, out double val))
+                if (!TryParseDouble(_rightConstantTextBox.Text, out double val))
                     val = 0.0;
                 ResultCondition.RightSide.ConstantValue = val;
             }
@@ -353,8 +354,15 @@ namespace modified_structure_analysis.Forms
 
         private void _rightConstantTextBox_Validating(object sender, CancelEventArgs e)
         {
-            if (!double.TryParse(_rightConstantTextBox.Text, out double v))
+            if (!TryParseDouble(_rightConstantTextBox.Text, out double v))
                 _rightConstantTextBox.Undo();
+        }
+
+        private static bool TryParseDouble(string s, out double result)
+        {
+            if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out result))
+                return true;
+            return double.TryParse(s, NumberStyles.Float, new CultureInfo("ru-RU"), out result);
         }
     }
 }

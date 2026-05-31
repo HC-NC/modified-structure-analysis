@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using GdalBand = OSGeo.GDAL.Band;
+using System.Globalization;
 
 namespace modified_structure_analysis.Forms
 {
@@ -1242,7 +1243,7 @@ namespace modified_structure_analysis.Forms
                         if (values.Length <= Math.Max(xIndex, Math.Max(yIndex, bandIndices.Max())))
                             continue;
 
-                        if (!double.TryParse(values[xIndex], out double x) || !double.TryParse(values[yIndex], out double y))
+                if (!TryParseDouble(values[xIndex], out double x) || !TryParseDouble(values[yIndex], out double y))
                             continue;
 
                         minX = Math.Min(minX, x);
@@ -1253,7 +1254,7 @@ namespace modified_structure_analysis.Forms
                         Dictionary<string, float> bandValues = new();
                         foreach (int bandIdx in bandIndices)
                         {
-                            if (float.TryParse(values[bandIdx], out float v))
+                            if (TryParseFloat(values[bandIdx], out float v))
                                 bandValues[hd[bandIdx]] = v;
                         }
 
@@ -1414,7 +1415,7 @@ namespace modified_structure_analysis.Forms
                     return;
                 }
 
-                if (!double.TryParse(values[xIndex], out double x) || !double.TryParse(values[yIndex], out double y))
+                if (!TryParseDouble(values[xIndex], out double x) || !TryParseDouble(values[yIndex], out double y))
                 {
                     MessageBox.Show($"Warning: Cannot parse coordinates at line {lineNumber}. Skipping.", "Parse Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     continue;
@@ -1429,7 +1430,7 @@ namespace modified_structure_analysis.Forms
 
                 foreach (int bandIdx in bandIndices)
                 {
-                    if (!float.TryParse(values[bandIdx], out float v))
+                    if (!TryParseFloat(values[bandIdx], out float v))
                     {
                         MessageBox.Show($"Warning: Cannot parse value '{values[bandIdx]}' at line {lineNumber}, column {bandIdx + 1}. Skipping.", "Parse Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         continue;
@@ -2173,6 +2174,20 @@ namespace modified_structure_analysis.Forms
         {
             if (sender is DataGridView dataGridView)
                 dataGridView.Rows[e.RowIndex].HeaderCell.Value = (e.RowIndex + 1).ToString();
+        }
+
+        private static bool TryParseDouble(string s, out double result)
+        {
+            if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out result))
+                return true;
+            return double.TryParse(s, NumberStyles.Float, new CultureInfo("ru-RU"), out result);
+        }
+
+        private static bool TryParseFloat(string s, out float result)
+        {
+            if (float.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out result))
+                return true;
+            return float.TryParse(s, NumberStyles.Float, new CultureInfo("ru-RU"), out result);
         }
     }
 }

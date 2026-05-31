@@ -117,183 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="&gt;&gt;_formatCombo.Name" xml:space="preserve">
-    <value>_formatCombo</value>
-  </data>
-  <data name="&gt;&gt;_formatCombo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_formatCombo.Parent" xml:space="preserve">
-    <value>_mainLayout</value>
-  </data>
-  <data name="&gt;&gt;_formatCombo.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="_geoCheckBox.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="_geoCheckBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="_geoCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 46</value>
-  </data>
-  <data name="_geoCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>343, 29</value>
-  </data>
-  <data name="_geoCheckBox.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="_geoCheckBox.Text" xml:space="preserve">
-    <value>Include georeferencing</value>
-  </data>
-  <data name="&gt;&gt;_geoCheckBox.Name" xml:space="preserve">
-    <value>_geoCheckBox</value>
-  </data>
-  <data name="&gt;&gt;_geoCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_geoCheckBox.Parent" xml:space="preserve">
-    <value>_mainLayout</value>
-  </data>
-  <data name="&gt;&gt;_geoCheckBox.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="_projectionTextBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="_projectionTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 81</value>
-  </data>
-  <data name="_projectionTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>343, 31</value>
-  </data>
-  <data name="_projectionTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;_projectionTextBox.Name" xml:space="preserve">
-    <value>_projectionTextBox</value>
-  </data>
-  <data name="&gt;&gt;_projectionTextBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_projectionTextBox.Parent" xml:space="preserve">
-    <value>_mainLayout</value>
-  </data>
-  <data name="&gt;&gt;_projectionTextBox.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="_pathTextBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="_pathTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 157</value>
-  </data>
-  <data name="_pathTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>237, 31</value>
-  </data>
-  <data name="_pathTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;_pathTextBox.Name" xml:space="preserve">
-    <value>_pathTextBox</value>
-  </data>
-  <data name="&gt;&gt;_pathTextBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_pathTextBox.Parent" xml:space="preserve">
-    <value>_mainLayout</value>
-  </data>
-  <data name="&gt;&gt;_pathTextBox.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="_paletteCombo.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="_paletteCombo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 118</value>
-  </data>
-  <data name="_paletteCombo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>343, 33</value>
-  </data>
-  <data name="_paletteCombo.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;_paletteCombo.Name" xml:space="preserve">
-    <value>_paletteCombo</value>
-  </data>
-  <data name="&gt;&gt;_paletteCombo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_paletteCombo.Parent" xml:space="preserve">
-    <value>_mainLayout</value>
-  </data>
-  <data name="&gt;&gt;_paletteCombo.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="_exportStatsCheckBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="_exportStatsCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
-  </data>
-  <data name="_exportStatsCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>432, 31</value>
-  </data>
-  <data name="_exportStatsCheckBox.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="_exportStatsCheckBox.Text" xml:space="preserve">
-    <value>Export alongside classification</value>
-  </data>
-  <data name="&gt;&gt;_exportStatsCheckBox.Name" xml:space="preserve">
-    <value>_exportStatsCheckBox</value>
-  </data>
-  <data name="&gt;&gt;_exportStatsCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_exportStatsCheckBox.Parent" xml:space="preserve">
-    <value>_statsLayout</value>
-  </data>
-  <data name="&gt;&gt;_exportStatsCheckBox.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="_statsFormatCombo.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="_statsFormatCombo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>82, 40</value>
-  </data>
-  <data name="_statsFormatCombo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>353, 33</value>
-  </data>
-  <data name="_statsFormatCombo.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;_statsFormatCombo.Name" xml:space="preserve">
-    <value>_statsFormatCombo</value>
-  </data>
-  <data name="&gt;&gt;_statsFormatCombo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_statsFormatCombo.Parent" xml:space="preserve">
-    <value>_statsLayout</value>
-  </data>
-  <data name="&gt;&gt;_statsFormatCombo.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="_mainLayout.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="_formatLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="_formatLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="_formatLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>7, 4</value>
   </data>
@@ -320,6 +155,36 @@
   </data>
   <data name="&gt;&gt;_formatLabel.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="_geoCheckBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_geoCheckBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_geoCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>108, 46</value>
+  </data>
+  <data name="_geoCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>343, 29</value>
+  </data>
+  <data name="_geoCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="_geoCheckBox.Text" xml:space="preserve">
+    <value>Include georeferencing</value>
+  </data>
+  <data name="&gt;&gt;_geoCheckBox.Name" xml:space="preserve">
+    <value>_geoCheckBox</value>
+  </data>
+  <data name="&gt;&gt;_geoCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_geoCheckBox.Parent" xml:space="preserve">
+    <value>_mainLayout</value>
+  </data>
+  <data name="&gt;&gt;_geoCheckBox.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="_projectionLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -354,6 +219,30 @@
   <data name="&gt;&gt;_projectionLabel.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
+  <data name="_projectionTextBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_projectionTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>108, 81</value>
+  </data>
+  <data name="_projectionTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>343, 31</value>
+  </data>
+  <data name="_projectionTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;_projectionTextBox.Name" xml:space="preserve">
+    <value>_projectionTextBox</value>
+  </data>
+  <data name="&gt;&gt;_projectionTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_projectionTextBox.Parent" xml:space="preserve">
+    <value>_mainLayout</value>
+  </data>
+  <data name="&gt;&gt;_projectionTextBox.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
   <data name="_paletteLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -386,6 +275,30 @@
   </data>
   <data name="&gt;&gt;_paletteLabel.ZOrder" xml:space="preserve">
     <value>5</value>
+  </data>
+  <data name="_paletteCombo.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_paletteCombo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>108, 118</value>
+  </data>
+  <data name="_paletteCombo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>343, 33</value>
+  </data>
+  <data name="_paletteCombo.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;_paletteCombo.Name" xml:space="preserve">
+    <value>_paletteCombo</value>
+  </data>
+  <data name="&gt;&gt;_paletteCombo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_paletteCombo.Parent" xml:space="preserve">
+    <value>_mainLayout</value>
+  </data>
+  <data name="&gt;&gt;_paletteCombo.ZOrder" xml:space="preserve">
+    <value>6</value>
   </data>
   <data name="_saveLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -420,6 +333,30 @@
   <data name="&gt;&gt;_saveLabel.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
+  <data name="_pathTextBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_pathTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>108, 157</value>
+  </data>
+  <data name="_pathTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>237, 31</value>
+  </data>
+  <data name="_pathTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;_pathTextBox.Name" xml:space="preserve">
+    <value>_pathTextBox</value>
+  </data>
+  <data name="&gt;&gt;_pathTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_pathTextBox.Parent" xml:space="preserve">
+    <value>_mainLayout</value>
+  </data>
+  <data name="&gt;&gt;_pathTextBox.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
   <data name="_browseButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
@@ -449,6 +386,105 @@
   </data>
   <data name="_statsGroup.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
+  </data>
+  <data name="_statsLayout.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_exportStatsCheckBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_exportStatsCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="_exportStatsCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>432, 31</value>
+  </data>
+  <data name="_exportStatsCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="_exportStatsCheckBox.Text" xml:space="preserve">
+    <value>Export alongside classification</value>
+  </data>
+  <data name="&gt;&gt;_exportStatsCheckBox.Name" xml:space="preserve">
+    <value>_exportStatsCheckBox</value>
+  </data>
+  <data name="&gt;&gt;_exportStatsCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_exportStatsCheckBox.Parent" xml:space="preserve">
+    <value>_statsLayout</value>
+  </data>
+  <data name="&gt;&gt;_exportStatsCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="_statsFormatLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="_statsFormatLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_statsFormatLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 37</value>
+  </data>
+  <data name="_statsFormatLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>73, 39</value>
+  </data>
+  <data name="_statsFormatLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="_statsFormatLabel.Text" xml:space="preserve">
+    <value>Format:</value>
+  </data>
+  <data name="_statsFormatLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;_statsFormatLabel.Name" xml:space="preserve">
+    <value>_statsFormatLabel</value>
+  </data>
+  <data name="&gt;&gt;_statsFormatLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_statsFormatLabel.Parent" xml:space="preserve">
+    <value>_statsLayout</value>
+  </data>
+  <data name="&gt;&gt;_statsFormatLabel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="_statsFormatCombo.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_statsFormatCombo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>82, 40</value>
+  </data>
+  <data name="_statsFormatCombo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>353, 33</value>
+  </data>
+  <data name="_statsFormatCombo.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;_statsFormatCombo.Name" xml:space="preserve">
+    <value>_statsFormatCombo</value>
+  </data>
+  <data name="&gt;&gt;_statsFormatCombo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_statsFormatCombo.Parent" xml:space="preserve">
+    <value>_statsLayout</value>
+  </data>
+  <data name="&gt;&gt;_statsFormatCombo.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="_statsLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="_statsLayout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 27</value>
+  </data>
+  <data name="_statsLayout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>438, 76</value>
+  </data>
+  <data name="_statsLayout.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
   <data name="&gt;&gt;_statsLayout.Name" xml:space="preserve">
     <value>_statsLayout</value>
@@ -495,6 +531,18 @@
   <data name="_buttonPanel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="_cancelButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>341, 3</value>
+  </data>
+  <data name="_cancelButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 40</value>
+  </data>
+  <data name="_cancelButton.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="_cancelButton.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="&gt;&gt;_cancelButton.Name" xml:space="preserve">
     <value>_cancelButton</value>
   </data>
@@ -506,6 +554,18 @@
   </data>
   <data name="&gt;&gt;_cancelButton.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="_okButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>235, 3</value>
+  </data>
+  <data name="_okButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 40</value>
+  </data>
+  <data name="_okButton.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="_okButton.Text" xml:space="preserve">
+    <value>Export</value>
   </data>
   <data name="&gt;&gt;_okButton.Name" xml:space="preserve">
     <value>_okButton</value>
@@ -577,151 +637,28 @@
   <data name="_mainLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_formatLabel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_formatCombo" Row="0" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="_geoCheckBox" Row="1" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="_projectionLabel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_projectionTextBox" Row="2" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="_paletteLabel" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_paletteCombo" Row="3" RowSpan="1" Column="1" ColumnSpan="2" /&gt;&lt;Control Name="_saveLabel" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_pathTextBox" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="_browseButton" Row="4" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="_statsGroup" Row="5" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="_buttonPanel" Row="6" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
-  <data name="_statsLayout.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="_formatCombo.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
-  <data name="&gt;&gt;_exportStatsCheckBox.Name" xml:space="preserve">
-    <value>_exportStatsCheckBox</value>
+  <data name="_formatCombo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>108, 7</value>
   </data>
-  <data name="&gt;&gt;_exportStatsCheckBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="_formatCombo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>343, 33</value>
   </data>
-  <data name="&gt;&gt;_exportStatsCheckBox.Parent" xml:space="preserve">
-    <value>_statsLayout</value>
-  </data>
-  <data name="&gt;&gt;_exportStatsCheckBox.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;_statsFormatLabel.Name" xml:space="preserve">
-    <value>_statsFormatLabel</value>
-  </data>
-  <data name="&gt;&gt;_statsFormatLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_statsFormatLabel.Parent" xml:space="preserve">
-    <value>_statsLayout</value>
-  </data>
-  <data name="&gt;&gt;_statsFormatLabel.ZOrder" xml:space="preserve">
+  <data name="_formatCombo.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;_statsFormatCombo.Name" xml:space="preserve">
-    <value>_statsFormatCombo</value>
+  <data name="&gt;&gt;_formatCombo.Name" xml:space="preserve">
+    <value>_formatCombo</value>
   </data>
-  <data name="&gt;&gt;_statsFormatCombo.Type" xml:space="preserve">
+  <data name="&gt;&gt;_formatCombo.Type" xml:space="preserve">
     <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;_statsFormatCombo.Parent" xml:space="preserve">
-    <value>_statsLayout</value>
+  <data name="&gt;&gt;_formatCombo.Parent" xml:space="preserve">
+    <value>_mainLayout</value>
   </data>
-  <data name="&gt;&gt;_statsFormatCombo.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="_statsLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="_statsLayout.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 27</value>
-  </data>
-  <data name="_statsLayout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>438, 76</value>
-  </data>
-  <data name="_statsLayout.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;_statsLayout.Name" xml:space="preserve">
-    <value>_statsLayout</value>
-  </data>
-  <data name="&gt;&gt;_statsLayout.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_statsLayout.Parent" xml:space="preserve">
-    <value>_statsGroup</value>
-  </data>
-  <data name="&gt;&gt;_statsLayout.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="_statsLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="_exportStatsCheckBox" Row="0" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="_statsFormatLabel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="_statsFormatCombo" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
-  </data>
-  <data name="_statsFormatLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="_statsFormatLabel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="_statsFormatLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 37</value>
-  </data>
-  <data name="_statsFormatLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>73, 39</value>
-  </data>
-  <data name="_statsFormatLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="_statsFormatLabel.Text" xml:space="preserve">
-    <value>Format:</value>
-  </data>
-  <data name="_statsFormatLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="&gt;&gt;_statsFormatLabel.Name" xml:space="preserve">
-    <value>_statsFormatLabel</value>
-  </data>
-  <data name="&gt;&gt;_statsFormatLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_statsFormatLabel.Parent" xml:space="preserve">
-    <value>_statsLayout</value>
-  </data>
-  <data name="&gt;&gt;_statsFormatLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="_cancelButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>341, 3</value>
-  </data>
-  <data name="_cancelButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 40</value>
-  </data>
-  <data name="_cancelButton.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="_cancelButton.Text" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="&gt;&gt;_cancelButton.Name" xml:space="preserve">
-    <value>_cancelButton</value>
-  </data>
-  <data name="&gt;&gt;_cancelButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_cancelButton.Parent" xml:space="preserve">
-    <value>_buttonPanel</value>
-  </data>
-  <data name="&gt;&gt;_cancelButton.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="_okButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>235, 3</value>
-  </data>
-  <data name="_okButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 40</value>
-  </data>
-  <data name="_okButton.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="_okButton.Text" xml:space="preserve">
-    <value>Export</value>
-  </data>
-  <data name="&gt;&gt;_okButton.Name" xml:space="preserve">
-    <value>_okButton</value>
-  </data>
-  <data name="&gt;&gt;_okButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_okButton.Parent" xml:space="preserve">
-    <value>_buttonPanel</value>
-  </data>
-  <data name="&gt;&gt;_okButton.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;_formatCombo.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

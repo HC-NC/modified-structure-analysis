@@ -54,6 +54,12 @@
             _buttonPanel.SuspendLayout();
             SuspendLayout();
             // 
+            // _formatCombo
+            // 
+            _mainLayout.SetColumnSpan(_formatCombo, 2);
+            resources.ApplyResources(_formatCombo, "_formatCombo");
+            _formatCombo.Name = "_formatCombo";
+            // 
             // _geoCheckBox
             // 
             resources.ApplyResources(_geoCheckBox, "_geoCheckBox");
