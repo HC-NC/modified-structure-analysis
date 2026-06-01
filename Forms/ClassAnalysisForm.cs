@@ -150,7 +150,7 @@ public partial class ClassAnalysisForm : Form
 
         dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = _indexColumn.HeaderText, ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells });
         dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = _colColumn.HeaderText, ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
-        dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = _colColumn.HeaderText, ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
+        dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = _rowColumn.HeaderText, ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
         if (_geoTransform != null)
         {
             dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = _mapXColumn.HeaderText, ReadOnly = true, AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill });
