@@ -32,6 +32,10 @@ Built with .NET 10.0, Windows Forms, OxyPlot, and GDAL.
 - 4 bandwidth selection methods: Rule of Thumb, Least-Squares Cross-Validation, Direct Plug-In (Sheather–Jones), Leave-One-Out Likelihood
 - NaN/NoData pixel handling
 - HSV auto-palette for arbitrary class counts
+- **Second-stage filter**: choose which first-stage classes proceed to second stage; excluded classes removed from result
+
+### Import Robustness
+- CSV/TXT import handles both dot (`.`) and comma (`,`) decimal separators automatically
 
 ### Geospatial Export
 - Classification as GeoTIFF with RAT (Raster Attribute Table), LZW compression, and embedded CRS
@@ -44,7 +48,10 @@ Built with .NET 10.0, Windows Forms, OxyPlot, and GDAL.
 
 ### Localization
 - English (default) and Russian interface
-- Language switchable in Settings
+- Language switchable in Settings (no restart required)
+
+### UI Polish
+- Application favicon on all windows
 
 ### Settings
 - JSON-persisted settings at `%LOCALAPPDATA%/ModifiedStructureAnalysis/settings.json`

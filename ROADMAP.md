@@ -54,6 +54,14 @@
 - ~65 localized resource strings for English and Russian
 - Language applied at startup before any form is created
 
+### User Interface
+- Application favicon on all forms (loaded from executable)
+- Second-stage class filter with select-all, color preview, and compact class indexing
+- Filtered classes physically excluded from result (no gaps in palette)
+
+### Data Robustness
+- Dual-culture `TryParse` for CSV/TXT import (supports both dot and comma decimal separators via `InvariantCulture` + `ru-RU` fallback)
+
 ### Code Quality
 - Namespace organization: `Models`, `Services`, `Engine`, `Config`, `Forms`
 - Interface-based density abstraction (`IDensitySource`) with 3 implementations

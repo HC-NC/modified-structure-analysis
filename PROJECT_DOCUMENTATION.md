@@ -63,7 +63,8 @@ Engine/
 └── ClassificationEngine.cs — Core classification: rule evaluation, density caching, two-stage pipeline
 
 Forms/
-├── MainForm.cs             — Main window: file loading, all plots, classification, export (2176 lines)
+├── MainForm.cs             — Main window: file loading, all plots, classification, export
+├── FilterForm.cs           — Second-stage class filter dialog (checkbox selection, color preview, Select All)
 ├── Viewport.cs             — Interactive image display: pan, zoom, interpolation, linked views
 ├── SettingsForm.cs         — Settings dialog (kernel, bandwidth, histogram, language, etc.)
 ├── ClassAnalysisForm.cs    — Per-class statistics, pixel table, KDE/scatter plots
@@ -331,12 +332,19 @@ ClassificationResult (first stage)
    └────────────┘
         │
         ▼
+   ┌────────────┐
+   │ Filter     │ ← optional: user selects which first-stage classes
+   │ classes    │    proceed to second stage via FilterForm
+   └─────┬──────┘
+         │ filtered class set → compact index mapping
+         ▼
    ┌────┴────┐
    │ Stage 2 │ (if second rules configured)
    └────┬────┘
         │
         ▼
-ClassificationResult (final: firstClass × ruleCount + secondClass)
+ClassificationResult (final: compactFirst × ruleCount + second)
+Palette contains only filtered-in classes (no gaps)
         │
         ▼
 Export: GeoTIFF / PNG / PNG+world / stats (CSV/TXT/JSON)
@@ -433,7 +441,15 @@ Core data model representing one spectral band:
 - **GDAL**: lazy pixel loading via `EnsurePixelValuesLoaded()` (reads only when classification needs it)
 - **Kernel type**: per-band `KernelType` (default: `AppSettings.Instance.DefaultKernelType`)
 
-### 7.2 ClassificationEngine (Engine/ClassificationEngine.cs)
+### 7.2 FilterForm (Forms/FilterForm.cs)
+
+Dialog for selecting which first-stage classes proceed to the second stage:
+- **DataGridView** with three columns: checkbox, color swatch (16×16 from palette), class name
+- **Select All** row pinned at top; toggles all class checkboxes using `_isUpdating` flag to prevent re-entrant `CellValueChanged` recursion
+- Returns `SelectedClassIndices` (int[]) — only these first-stage classes are included in the second-stage result
+- In `MainForm.RunClassificationWork`, filtered classes are remapped to compact indices via `firstToCompact[]` lookup, so the final palette contains **no gaps** (only classes that can actually appear)
+
+### 7.3 ClassificationEngine (Engine/ClassificationEngine.cs)
 
 Core logic (~578 lines):
 - **Density caching**: `ConcurrentDictionary` for single-band and multivariate densities (avoids redundant KDE computation)
@@ -441,7 +457,7 @@ Core logic (~578 lines):
 - **Multivariate KDE subsampling**: random sample of ~`sqrt(n) × 4` pixels for global density (avoids O(n²) per pixel)
 - **Progress reporting**: via `IProgress<int>` delegates passed through the call chain
 
-### 7.3 DensitySource (Services/DensitySource.cs)
+### 7.4 DensitySource (Services/DensitySource.cs)
 
 Interface `IDensitySource` abstracts where density values come from:
 
@@ -451,7 +467,7 @@ Interface `IDensitySource` abstracts where density values come from:
 
 The engine creates the appropriate source based on `DensityType` flags and stage context.
 
-### 7.4 Viewport (Forms/Viewport.cs)
+### 7.5 Viewport (Forms/Viewport.cs)
 
 Interactive image display control:
 - **Pan**: mouse drag updates image offset
@@ -461,7 +477,7 @@ Interactive image display control:
 - **Linking**: `OnLinkZoom`/`OnLinkMove` events synchronize two viewports in `TwoImageViewForm`
 - **Cursor crosshair**: external cursor position display
 
-### 7.5 GeoTransform (Models/GeoTransform.cs)
+### 7.6 GeoTransform (Models/GeoTransform.cs)
 
 Georeferencing model for raster-to-world coordinate mapping:
 
@@ -493,6 +509,8 @@ Localization uses .NET resource files (`Properties/Resources.resx`) with satelli
 
 **Scope**: ~65 resource keys covering status messages, error messages, tooltips, chart labels, export format names, and UI element text. File-dialog filters and PropertyGrid attribute strings are intentionally excluded (compile-time constraints / data-format interchange reasons).
 
+**Culture-aware CSV parsing**: Data file parsing (`float.TryParse`, `double.TryParse`) uses dual-culture fallback — first `CultureInfo.InvariantCulture` (dot decimal), then `CultureInfo.GetCultureInfo("ru-RU")` (comma decimal). The UI culture (selected language) does not affect data parsing, preventing locale-dependent import failures.
+
 ---
 
 ## 9. Dependencies
@@ -505,3 +523,5 @@ Localization uses .NET resource files (`Properties/Resources.resx`) with satelli
 | `MinVer` | 7.0.0 | Auto-versioning from git tags |
 
 Target framework: `net10.0-windows` with `UseWindowsForms=true` and `AllowUnsafeBlocks=true` (for `LockBits` bitmap rendering).
+
+**Application favicon**: Embedded via `<ApplicationIcon>Resources\favicon.ico</ApplicationIcon>` in the `.csproj`. Loaded at runtime on all forms via `Program.AppIcon` (static property, loaded once from the executable with `Icon.ExtractAssociatedIcon`).
