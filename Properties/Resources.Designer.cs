@@ -278,6 +278,33 @@ namespace modified_structure_analysis.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Run primary classification first..
+        /// </summary>
+        internal static string Filter_NeedPrimaryFirst {
+            get {
+                return ResourceManager.GetString("Filter_NeedPrimaryFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Select All.
+        /// </summary>
+        internal static string Filter_SelectAll {
+            get {
+                return ResourceManager.GetString("Filter_SelectAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Second Stage Filter.
+        /// </summary>
+        internal static string Filter_Title {
+            get {
+                return ResourceManager.GetString("Filter_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на CSV.
         /// </summary>
         internal static string Format_Csv {

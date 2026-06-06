@@ -37,8 +37,9 @@ namespace modified_structure_analysis.Forms
 
         private ClassificationEngine? _primaryClassificationEngine;
         private ClassificationResult? _primaryClassificationResult;
-		private ClassificationResult? _secondaryClassificationResult;
+        private ClassificationResult? _secondaryClassificationResult;
         private ClassStatistics[]? _primaryClassificationClassStats;
+        private HashSet<int>? _secondStageFilterIndices;
         private ClassStatistics[]? _secondaryClassificationClassStats;
 
         private PlotModel _kdeModel;
@@ -123,17 +124,17 @@ namespace modified_structure_analysis.Forms
 
             _primaryClassificationDataGridView.Enabled = !hasProcces;
             _secondaryClassificationDataGridView.Enabled = !hasProcces;
-			
-			_primaryClassificationDataGridView.Refresh();
-			_secondaryClassificationDataGridView.Refresh();
+
+            _primaryClassificationDataGridView.Refresh();
+            _secondaryClassificationDataGridView.Refresh();
 
             _ruleContextMenuStrip.Enabled = !hasProcces;
         }
 
         private void RuleDataGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-			DataGridView grid = sender.Equals(_primaryRuleDataGridView) ? _primaryRuleDataGridView : _secondaryRuleDataGridView; 
-			
+            DataGridView grid = sender.Equals(_primaryRuleDataGridView) ? _primaryRuleDataGridView : _secondaryRuleDataGridView;
+
             if (e.Button == MouseButtons.Right)
             {
                 grid.Rows[e.RowIndex].Selected = true;
@@ -154,16 +155,16 @@ namespace modified_structure_analysis.Forms
         private void RuleDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
-			
-			List<ClassificationRule> rules = sender.Equals(_primaryRuleDataGridView) ? _primaryClassificationRules : _secondaryClassificationRules; 
+
+            List<ClassificationRule> rules = sender.Equals(_primaryRuleDataGridView) ? _primaryClassificationRules : _secondaryClassificationRules;
 
             if (e.ColumnIndex == 1 && e.RowIndex < rules.Count)
             {
                 EditClassificationRule(rules, e.RowIndex, (DataGridView)sender);
             }
         }
-		
-		private void UpdateClassificationRulesGrid(DataGridView grid, List<ClassificationRule> rules)
+
+        private void UpdateClassificationRulesGrid(DataGridView grid, List<ClassificationRule> rules)
         {
             grid.Rows.Clear();
             foreach (var rule in rules)
@@ -177,17 +178,17 @@ namespace modified_structure_analysis.Forms
 
         private void AddClassificationRule(object sender, EventArgs e)
         {
-			DataGridView grid = _primaryRuleDataGridView;
-			List<ClassificationRule> rules = _primaryClassificationRules;
-			bool isSecondStage = false;
-			
-			if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
-			{
-				grid = _secondaryRuleDataGridView;
-				rules = _secondaryClassificationRules;
-				isSecondStage = true;
-			}
-			
+            DataGridView grid = _primaryRuleDataGridView;
+            List<ClassificationRule> rules = _primaryClassificationRules;
+            bool isSecondStage = false;
+
+            if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
+            {
+                grid = _secondaryRuleDataGridView;
+                rules = _secondaryClassificationRules;
+                isSecondStage = true;
+            }
+
             var editor = new RuleEditorForm(_bands, null, isSecondStage: isSecondStage, classStats: _primaryClassificationClassStats);
             if (editor.ShowDialog(this) == DialogResult.OK)
             {
@@ -210,15 +211,15 @@ namespace modified_structure_analysis.Forms
 
         private void EditClassificationRule(object sender, EventArgs e)
         {
-			DataGridView grid = _primaryRuleDataGridView;
-			List<ClassificationRule> rules = _primaryClassificationRules;
-			
-			if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
-			{
-				grid = _secondaryRuleDataGridView;
-				rules = _secondaryClassificationRules;
-			}
-			
+            DataGridView grid = _primaryRuleDataGridView;
+            List<ClassificationRule> rules = _primaryClassificationRules;
+
+            if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
+            {
+                grid = _secondaryRuleDataGridView;
+                rules = _secondaryClassificationRules;
+            }
+
             if (grid.SelectedRows.Count == 0)
             {
                 MessageBox.Show(Resources.Msg_SelectRuleToEdit, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -232,15 +233,15 @@ namespace modified_structure_analysis.Forms
 
         private void DeleteClassificationRule(object sender, EventArgs e)
         {
-			DataGridView grid = _primaryRuleDataGridView;
-			List<ClassificationRule> rules = _primaryClassificationRules;
-			
-			if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
-			{
-				grid = _secondaryRuleDataGridView;
-				rules = _secondaryClassificationRules;
-			}
-			
+            DataGridView grid = _primaryRuleDataGridView;
+            List<ClassificationRule> rules = _primaryClassificationRules;
+
+            if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
+            {
+                grid = _secondaryRuleDataGridView;
+                rules = _secondaryClassificationRules;
+            }
+
             if (grid.SelectedRows.Count == 0)
             {
                 MessageBox.Show(Resources.Msg_SelectRuleToDelete, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -272,15 +273,15 @@ namespace modified_structure_analysis.Forms
 
         private void CloneClassificationRule(object sender, EventArgs e)
         {
-			DataGridView grid = _primaryRuleDataGridView;
-			List<ClassificationRule> rules = _primaryClassificationRules;
-			
-			if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
-			{
-				grid = _secondaryRuleDataGridView;
-				rules = _secondaryClassificationRules;
-			}
-			
+            DataGridView grid = _primaryRuleDataGridView;
+            List<ClassificationRule> rules = _primaryClassificationRules;
+
+            if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
+            {
+                grid = _secondaryRuleDataGridView;
+                rules = _secondaryClassificationRules;
+            }
+
             if (grid.SelectedRows.Count == 0)
             {
                 MessageBox.Show(Resources.Msg_SelectRuleToClone, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -300,15 +301,15 @@ namespace modified_structure_analysis.Forms
 
         private void MoveRuleUp(object sender, EventArgs e)
         {
-			DataGridView grid = _primaryRuleDataGridView;
-			List<ClassificationRule> rules = _primaryClassificationRules;
-			
-			if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
-			{
-				grid = _secondaryRuleDataGridView;
-				rules = _secondaryClassificationRules;
-			}
-			
+            DataGridView grid = _primaryRuleDataGridView;
+            List<ClassificationRule> rules = _primaryClassificationRules;
+
+            if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
+            {
+                grid = _secondaryRuleDataGridView;
+                rules = _secondaryClassificationRules;
+            }
+
             if (grid.SelectedRows.Count == 0)
             {
                 MessageBox.Show(Resources.Msg_SelectRuleToMove, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -331,15 +332,15 @@ namespace modified_structure_analysis.Forms
 
         private void MoveRuleDown(object sender, EventArgs e)
         {
-			DataGridView grid = _primaryRuleDataGridView;
-			List<ClassificationRule> rules = _primaryClassificationRules;
-			
-			if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
-			{
-				grid = _secondaryRuleDataGridView;
-				rules = _secondaryClassificationRules;
-			}
-			
+            DataGridView grid = _primaryRuleDataGridView;
+            List<ClassificationRule> rules = _primaryClassificationRules;
+
+            if (_classificationTabControl.SelectedTab == _secondaryClassificationTabPage)
+            {
+                grid = _secondaryRuleDataGridView;
+                rules = _secondaryClassificationRules;
+            }
+
             if (grid.SelectedRows.Count == 0)
             {
                 MessageBox.Show(Resources.Msg_SelectRuleToMove, Resources.Msg_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -373,11 +374,11 @@ namespace modified_structure_analysis.Forms
 
         private void PopelateTableTab(DataGridView grid)
         {
-            var result = grid.Equals(_primaryClassificationDataGridView) ? _primaryClassificationResult :_secondaryClassificationResult;
+            var result = grid.Equals(_primaryClassificationDataGridView) ? _primaryClassificationResult : _secondaryClassificationResult;
             if (result?.Palette == null) return;
 
             grid.Rows.Clear();
-			
+
             var stats = result.GetClassStatistics();
             int totalPixels = result.Width * result.Height;
 
@@ -1243,7 +1244,7 @@ namespace modified_structure_analysis.Forms
                         if (values.Length <= Math.Max(xIndex, Math.Max(yIndex, bandIndices.Max())))
                             continue;
 
-                if (!TryParseDouble(values[xIndex], out double x) || !TryParseDouble(values[yIndex], out double y))
+                        if (!TryParseDouble(values[xIndex], out double x) || !TryParseDouble(values[yIndex], out double y))
                             continue;
 
                         minX = Math.Min(minX, x);
@@ -1488,8 +1489,8 @@ namespace modified_structure_analysis.Forms
                         gridData[(gridX, gridY)][kvp.Key] = kvp.Value;
                 }
             }
-			
-			_geoTransform = new GeoTransform(maxX, maxY, cellSize, -cellSize);
+
+            _geoTransform = new GeoTransform(maxX, maxY, cellSize, -cellSize);
 
             foreach (Band band in _bands)
             {
@@ -1828,17 +1829,52 @@ namespace modified_structure_analysis.Forms
             }
 
             int secondStageRuleCount = isSecondStage ? rules.Count : 0;
+
+            int[]? firstToCompact = null;
+            int compactFirstStageCount = firstStageClassCount;
+            if (isSecondStage && _secondStageFilterIndices != null && firstStageClassIndices != null)
+            {
+                var filtered = firstStageClassIndices
+                    .Where(c => c >= 0 && c < firstStageClassCount)
+                    .Distinct()
+                    .Where(c => _secondStageFilterIndices.Contains(c))
+                    .OrderBy(c => c)
+                    .ToArray();
+                compactFirstStageCount = filtered.Length;
+                firstToCompact = new int[firstStageClassCount];
+                Array.Fill(firstToCompact, -1);
+                for (int i = 0; i < filtered.Length; i++)
+                    firstToCompact[filtered[i]] = i;
+            }
+
             int totalClassCount = isSecondStage
-                ? firstStageClassCount * secondStageRuleCount
+                ? compactFirstStageCount * secondStageRuleCount
                 : mode == ClassificationMode.DirectCheck
                     ? 1 << rules.Count
                     : rules.Count;
 
-            Color[] palette = isSecondStage
-                ? (firstStagePalette != null
-                    ? PaletteGenerator.GenerateSecondStage(firstStagePalette, secondStageRuleCount)
-                    : PaletteGenerator.GenerateHSV(totalClassCount))
-                : PaletteGenerator.GenerateHSV(totalClassCount);
+            Color[] palette;
+            if (isSecondStage && firstToCompact != null && firstStagePalette != null)
+            {
+                var fullPalette = PaletteGenerator.GenerateSecondStage(firstStagePalette, secondStageRuleCount);
+                palette = new Color[totalClassCount];
+                int dest = 0;
+                for (int fsc = 0; fsc < firstStageClassCount; fsc++)
+                {
+                    int compact = firstToCompact[fsc];
+                    if (compact < 0) continue;
+                    for (int r = 0; r < secondStageRuleCount; r++)
+                        palette[dest++] = fullPalette[fsc * secondStageRuleCount + r];
+                }
+            }
+            else
+            {
+                palette = isSecondStage
+                    ? (firstStagePalette != null
+                        ? PaletteGenerator.GenerateSecondStage(firstStagePalette, secondStageRuleCount)
+                        : PaletteGenerator.GenerateHSV(totalClassCount))
+                    : PaletteGenerator.GenerateHSV(totalClassCount);
+            }
 
             var classificationResult = new ClassificationResult(_width, _height, palette);
 
@@ -1846,22 +1882,36 @@ namespace modified_structure_analysis.Forms
 
             Parallel.For(0, totalPixels, () => 0, (pixelIndex, loopState, localCount) =>
             {
+                int? classIndex = null;
                 if (firstStageClassIndices != null)
                 {
                     int firstClass = firstStageClassIndices[pixelIndex];
                     if (firstClass < 0 || firstClass >= firstStageClassCount)
                         return localCount;
+                    if (firstToCompact != null)
+                    {
+                        int compact = firstToCompact[firstClass];
+                        if (compact < 0) return localCount;
+                        int? secondClass = engine.EvaluatePixel(pixelIndex);
+                        if (secondClass.HasValue)
+                            classIndex = compact * secondStageRuleCount + secondClass.Value;
+                    }
+                    else
+                    {
+                        int? secondClass = engine.EvaluatePixel(pixelIndex);
+                        if (secondClass.HasValue)
+                            classIndex = firstClass * secondStageRuleCount + secondClass.Value;
+                    }
                 }
-
-                int? classIndex = engine.EvaluatePixel(pixelIndex);
+                else
+                {
+                    int? rawClass = engine.EvaluatePixel(pixelIndex);
+                    if (rawClass.HasValue)
+                        classIndex = rawClass.Value;
+                }
 
                 if (classIndex.HasValue)
-                {
-                    int finalClass = isSecondStage
-                        ? firstStageClassIndices![pixelIndex] * secondStageRuleCount + classIndex.Value
-                        : classIndex.Value;
-                    classificationResult.SetClass(pixelIndex, finalClass);
-                }
+                    classificationResult.SetClass(pixelIndex, classIndex.Value);
 
                 return localCount + 1;
             },
@@ -1876,7 +1926,7 @@ namespace modified_structure_analysis.Forms
                 double remainingMsDouble = remainingPixels / Math.Max(0.01, pixelsPerMs);
                 TimeSpan remaining = TimeSpan.FromMilliseconds(remainingMsDouble);
                 string remainingStr = remaining.ToString(@"hh\:mm\:ss");
-				string elapsedStr = elapsed.ToString(@"hh\:mm\:ss");
+                string elapsedStr = elapsed.ToString(@"hh\:mm\:ss");
 
                 worker.ReportProgress(progress, $"{stageName}: {finalCount}/{totalPixels} ({progress}%) ETA: {remainingStr} ({elapsedStr})");
             });
@@ -1885,9 +1935,9 @@ namespace modified_structure_analysis.Forms
 
             worker.ReportProgress(99, Resources.Progress_ComputeClassStats);
 
-			if (isSecondStage)
+            if (isSecondStage)
             {
-				_secondaryClassificationResult = classificationResult;
+                _secondaryClassificationResult = classificationResult;
 
                 if (engine.ZScoreCache != null)
                 {
@@ -2188,6 +2238,35 @@ namespace modified_structure_analysis.Forms
             if (float.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out result))
                 return true;
             return float.TryParse(s, NumberStyles.Float, new CultureInfo("ru-RU"), out result);
+        }
+
+        private void filterToolStripButton_Click(object sender, EventArgs e)
+        {
+            if (_primaryClassificationResult == null)
+            {
+                MessageBox.Show(Resources.Filter_NeedPrimaryFirst, Resources.Msg_Warning,
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int classCount = _primaryClassificationResult.Palette?.Length ?? 0;
+            string[] classNames;
+            if (classCount > 0 && _primaryClassificationRules.Count == classCount)
+                classNames = _primaryClassificationRules.Select(r => r.Name).ToArray();
+            else
+                classNames = Enumerable.Range(0, classCount).Select(i => string.Format(Resources.Label_ClassFormat, i)).ToArray();
+
+            int[] initiallySelected = _secondStageFilterIndices != null
+                ? _secondStageFilterIndices.ToArray()
+                : Enumerable.Range(0, classNames.Length).ToArray();
+
+            var filterForm = new FilterForm(classNames, initiallySelected, _primaryClassificationResult.Palette);
+            if (filterForm.ShowDialog(this) == DialogResult.OK)
+            {
+                _secondStageFilterIndices = filterForm.SelectedClassIndices.Length == classNames.Length
+                    ? null
+                    : new HashSet<int>(filterForm.SelectedClassIndices);
+            }
         }
     }
 }

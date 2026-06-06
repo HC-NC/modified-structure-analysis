@@ -457,4 +457,13 @@
   <data name="Progress_ComputeClassStats" xml:space="preserve">
     <value>Calculating class statistics...</value>
   </data>
+  <data name="Filter_Title" xml:space="preserve">
+    <value>Second Stage Filter</value>
+  </data>
+  <data name="Filter_SelectAll" xml:space="preserve">
+    <value>Select All</value>
+  </data>
+  <data name="Filter_NeedPrimaryFirst" xml:space="preserve">
+    <value>Run primary classification first.</value>
+  </data>
 </root>

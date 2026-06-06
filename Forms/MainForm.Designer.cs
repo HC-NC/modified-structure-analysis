@@ -173,6 +173,8 @@ namespace modified_structure_analysis.Forms
             _secondaryClassificationToolStrip = new ToolStrip();
             _secondaryClassificationCompareToolStripButton = new ToolStripButton();
             _secondaryClassificationClassifyToolStripButton = new ToolStripButton();
+            toolStripSeparator16 = new ToolStripSeparator();
+            filterToolStripButton = new ToolStripButton();
             toolStripSeparator3 = new ToolStripSeparator();
             _secondaryClassificationExportToolStripButton = new ToolStripButton();
             _classificationAbortButton = new Button();
@@ -274,12 +276,10 @@ namespace modified_structure_analysis.Forms
             // 
             // _dataSplitContainer.Panel1
             // 
-            resources.ApplyResources(_dataSplitContainer.Panel1, "_dataSplitContainer.Panel1");
             _dataSplitContainer.Panel1.Controls.Add(_bandsDataSplitContainer);
             // 
             // _dataSplitContainer.Panel2
             // 
-            resources.ApplyResources(_dataSplitContainer.Panel2, "_dataSplitContainer.Panel2");
             _dataSplitContainer.Panel2.Controls.Add(_dataTabControl);
             // 
             // _bandsDataSplitContainer
@@ -289,18 +289,16 @@ namespace modified_structure_analysis.Forms
             // 
             // _bandsDataSplitContainer.Panel1
             // 
-            resources.ApplyResources(_bandsDataSplitContainer.Panel1, "_bandsDataSplitContainer.Panel1");
             _bandsDataSplitContainer.Panel1.Controls.Add(_bandsDataGroupBox);
             // 
             // _bandsDataSplitContainer.Panel2
             // 
-            resources.ApplyResources(_bandsDataSplitContainer.Panel2, "_bandsDataSplitContainer.Panel2");
             _bandsDataSplitContainer.Panel2.Controls.Add(_bandsDataPropertiesGroupBox);
             // 
             // _bandsDataGroupBox
             // 
-            resources.ApplyResources(_bandsDataGroupBox, "_bandsDataGroupBox");
             _bandsDataGroupBox.Controls.Add(_bandListBox);
+            resources.ApplyResources(_bandsDataGroupBox, "_bandsDataGroupBox");
             _bandsDataGroupBox.Name = "_bandsDataGroupBox";
             _bandsDataGroupBox.TabStop = false;
             // 
@@ -313,15 +311,15 @@ namespace modified_structure_analysis.Forms
             // 
             // _bandsDataPropertiesGroupBox
             // 
-            resources.ApplyResources(_bandsDataPropertiesGroupBox, "_bandsDataPropertiesGroupBox");
             _bandsDataPropertiesGroupBox.Controls.Add(_bandPropertyGrid);
+            resources.ApplyResources(_bandsDataPropertiesGroupBox, "_bandsDataPropertiesGroupBox");
             _bandsDataPropertiesGroupBox.Name = "_bandsDataPropertiesGroupBox";
             _bandsDataPropertiesGroupBox.TabStop = false;
             // 
             // _bandPropertyGrid
             // 
-            resources.ApplyResources(_bandPropertyGrid, "_bandPropertyGrid");
             _bandPropertyGrid.BackColor = SystemColors.Control;
+            resources.ApplyResources(_bandPropertyGrid, "_bandPropertyGrid");
             _bandPropertyGrid.Name = "_bandPropertyGrid";
             // 
             // _dataTabControl
@@ -337,9 +335,9 @@ namespace modified_structure_analysis.Forms
             // 
             // _dataViewportTabPage
             // 
-            resources.ApplyResources(_dataViewportTabPage, "_dataViewportTabPage");
             _dataViewportTabPage.Controls.Add(_dataViewport);
             _dataViewportTabPage.Controls.Add(_dataViewportToolStrip);
+            resources.ApplyResources(_dataViewportTabPage, "_dataViewportTabPage");
             _dataViewportTabPage.Name = "_dataViewportTabPage";
             _dataViewportTabPage.UseVisualStyleBackColor = true;
             // 
@@ -350,93 +348,93 @@ namespace modified_structure_analysis.Forms
             // 
             // _dataViewportToolStrip
             // 
-            resources.ApplyResources(_dataViewportToolStrip, "_dataViewportToolStrip");
             _dataViewportToolStrip.GripStyle = ToolStripGripStyle.Hidden;
             _dataViewportToolStrip.ImageScalingSize = new Size(24, 24);
             _dataViewportToolStrip.Items.AddRange(new ToolStripItem[] { _redToolStripDropDownButton, _greenToolStripDropDownButton, _blueToolStripDropDownButton, toolStripSeparator9, toolStripLabel2, _dataUpToolStripButton, _dataDownToolStripButton, toolStripSeparator10, _dataLeftToolStripButton, _dataRightToolStripButton, toolStripSeparator11, _dataZoomInToolStripButton, _dataZoomOutToolStripButton });
+            resources.ApplyResources(_dataViewportToolStrip, "_dataViewportToolStrip");
             _dataViewportToolStrip.Name = "_dataViewportToolStrip";
             // 
             // _redToolStripDropDownButton
             // 
-            resources.ApplyResources(_redToolStripDropDownButton, "_redToolStripDropDownButton");
             _redToolStripDropDownButton.Image = Properties.Resources.red_sqaure;
+            resources.ApplyResources(_redToolStripDropDownButton, "_redToolStripDropDownButton");
             _redToolStripDropDownButton.Name = "_redToolStripDropDownButton";
             _redToolStripDropDownButton.Overflow = ToolStripItemOverflow.Never;
             // 
             // _greenToolStripDropDownButton
             // 
-            resources.ApplyResources(_greenToolStripDropDownButton, "_greenToolStripDropDownButton");
             _greenToolStripDropDownButton.Image = Properties.Resources.green_sqaure;
+            resources.ApplyResources(_greenToolStripDropDownButton, "_greenToolStripDropDownButton");
             _greenToolStripDropDownButton.Name = "_greenToolStripDropDownButton";
             _greenToolStripDropDownButton.Overflow = ToolStripItemOverflow.Never;
             // 
             // _blueToolStripDropDownButton
             // 
-            resources.ApplyResources(_blueToolStripDropDownButton, "_blueToolStripDropDownButton");
             _blueToolStripDropDownButton.Image = Properties.Resources.blue_sqaure;
+            resources.ApplyResources(_blueToolStripDropDownButton, "_blueToolStripDropDownButton");
             _blueToolStripDropDownButton.Name = "_blueToolStripDropDownButton";
             _blueToolStripDropDownButton.Overflow = ToolStripItemOverflow.Never;
             // 
             // toolStripSeparator9
             // 
-            resources.ApplyResources(toolStripSeparator9, "toolStripSeparator9");
             toolStripSeparator9.Name = "toolStripSeparator9";
+            resources.ApplyResources(toolStripSeparator9, "toolStripSeparator9");
             // 
             // toolStripLabel2
             // 
-            resources.ApplyResources(toolStripLabel2, "toolStripLabel2");
             toolStripLabel2.Name = "toolStripLabel2";
+            resources.ApplyResources(toolStripLabel2, "toolStripLabel2");
             // 
             // _dataUpToolStripButton
             // 
-            resources.ApplyResources(_dataUpToolStripButton, "_dataUpToolStripButton");
             _dataUpToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_dataUpToolStripButton, "_dataUpToolStripButton");
             _dataUpToolStripButton.Name = "_dataUpToolStripButton";
             // 
             // _dataDownToolStripButton
             // 
-            resources.ApplyResources(_dataDownToolStripButton, "_dataDownToolStripButton");
             _dataDownToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_dataDownToolStripButton, "_dataDownToolStripButton");
             _dataDownToolStripButton.Name = "_dataDownToolStripButton";
             // 
             // toolStripSeparator10
             // 
-            resources.ApplyResources(toolStripSeparator10, "toolStripSeparator10");
             toolStripSeparator10.Name = "toolStripSeparator10";
+            resources.ApplyResources(toolStripSeparator10, "toolStripSeparator10");
             // 
             // _dataLeftToolStripButton
             // 
-            resources.ApplyResources(_dataLeftToolStripButton, "_dataLeftToolStripButton");
             _dataLeftToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_dataLeftToolStripButton, "_dataLeftToolStripButton");
             _dataLeftToolStripButton.Name = "_dataLeftToolStripButton";
             // 
             // _dataRightToolStripButton
             // 
-            resources.ApplyResources(_dataRightToolStripButton, "_dataRightToolStripButton");
             _dataRightToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_dataRightToolStripButton, "_dataRightToolStripButton");
             _dataRightToolStripButton.Name = "_dataRightToolStripButton";
             // 
             // toolStripSeparator11
             // 
-            resources.ApplyResources(toolStripSeparator11, "toolStripSeparator11");
             toolStripSeparator11.Name = "toolStripSeparator11";
+            resources.ApplyResources(toolStripSeparator11, "toolStripSeparator11");
             // 
             // _dataZoomInToolStripButton
             // 
-            resources.ApplyResources(_dataZoomInToolStripButton, "_dataZoomInToolStripButton");
             _dataZoomInToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_dataZoomInToolStripButton, "_dataZoomInToolStripButton");
             _dataZoomInToolStripButton.Name = "_dataZoomInToolStripButton";
             // 
             // _dataZoomOutToolStripButton
             // 
-            resources.ApplyResources(_dataZoomOutToolStripButton, "_dataZoomOutToolStripButton");
             _dataZoomOutToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_dataZoomOutToolStripButton, "_dataZoomOutToolStripButton");
             _dataZoomOutToolStripButton.Name = "_dataZoomOutToolStripButton";
             // 
             // _dataHistogramTabPage
             // 
-            resources.ApplyResources(_dataHistogramTabPage, "_dataHistogramTabPage");
             _dataHistogramTabPage.Controls.Add(_histogramPlotView);
+            resources.ApplyResources(_dataHistogramTabPage, "_dataHistogramTabPage");
             _dataHistogramTabPage.Name = "_dataHistogramTabPage";
             _dataHistogramTabPage.UseVisualStyleBackColor = true;
             // 
@@ -458,7 +456,6 @@ namespace modified_structure_analysis.Forms
             // 
             // _kdeSplitContainer.Panel1
             // 
-            resources.ApplyResources(_kdeSplitContainer.Panel1, "_kdeSplitContainer.Panel1");
             _kdeSplitContainer.Panel1.Controls.Add(_kdeBandsListBox);
             _kdeSplitContainer.Panel1.Controls.Add(_kdeSingleButton);
             _kdeSplitContainer.Panel1.Controls.Add(_kdeProductButton);
@@ -467,7 +464,6 @@ namespace modified_structure_analysis.Forms
             // 
             // _kdeSplitContainer.Panel2
             // 
-            resources.ApplyResources(_kdeSplitContainer.Panel2, "_kdeSplitContainer.Panel2");
             _kdeSplitContainer.Panel2.Controls.Add(_kdePlotView);
             // 
             // _kdeBandsListBox
@@ -523,13 +519,11 @@ namespace modified_structure_analysis.Forms
             // 
             // _scatterSplitContainer1.Panel1
             // 
-            resources.ApplyResources(_scatterSplitContainer1.Panel1, "_scatterSplitContainer1.Panel1");
             _scatterSplitContainer1.Panel1.Controls.Add(_scatterSplitContainer2);
             _scatterSplitContainer1.Panel1.Controls.Add(_buildScatterButton);
             // 
             // _scatterSplitContainer1.Panel2
             // 
-            resources.ApplyResources(_scatterSplitContainer1.Panel2, "_scatterSplitContainer1.Panel2");
             _scatterSplitContainer1.Panel2.Controls.Add(_scatterPlotView);
             // 
             // _scatterSplitContainer2
@@ -539,18 +533,16 @@ namespace modified_structure_analysis.Forms
             // 
             // _scatterSplitContainer2.Panel1
             // 
-            resources.ApplyResources(_scatterSplitContainer2.Panel1, "_scatterSplitContainer2.Panel1");
             _scatterSplitContainer2.Panel1.Controls.Add(_scatterXAxisGroupBox);
             // 
             // _scatterSplitContainer2.Panel2
             // 
-            resources.ApplyResources(_scatterSplitContainer2.Panel2, "_scatterSplitContainer2.Panel2");
             _scatterSplitContainer2.Panel2.Controls.Add(_scatterYAxisGroupBox);
             // 
             // _scatterXAxisGroupBox
             // 
-            resources.ApplyResources(_scatterXAxisGroupBox, "_scatterXAxisGroupBox");
             _scatterXAxisGroupBox.Controls.Add(_scatterXListBox);
+            resources.ApplyResources(_scatterXAxisGroupBox, "_scatterXAxisGroupBox");
             _scatterXAxisGroupBox.Name = "_scatterXAxisGroupBox";
             _scatterXAxisGroupBox.TabStop = false;
             // 
@@ -562,8 +554,8 @@ namespace modified_structure_analysis.Forms
             // 
             // _scatterYAxisGroupBox
             // 
-            resources.ApplyResources(_scatterYAxisGroupBox, "_scatterYAxisGroupBox");
             _scatterYAxisGroupBox.Controls.Add(_scatterYListBox);
+            resources.ApplyResources(_scatterYAxisGroupBox, "_scatterYAxisGroupBox");
             _scatterYAxisGroupBox.Name = "_scatterYAxisGroupBox";
             _scatterYAxisGroupBox.TabStop = false;
             // 
@@ -598,13 +590,11 @@ namespace modified_structure_analysis.Forms
             // 
             // _primaryClassificationSplitContainer.Panel1
             // 
-            resources.ApplyResources(_primaryClassificationSplitContainer.Panel1, "_primaryClassificationSplitContainer.Panel1");
             _primaryClassificationSplitContainer.Panel1.Controls.Add(_primaryClassificationRuleSplitContainer);
             _primaryClassificationSplitContainer.Panel1.Controls.Add(_primaryClassificationRuleToolStrip);
             // 
             // _primaryClassificationSplitContainer.Panel2
             // 
-            resources.ApplyResources(_primaryClassificationSplitContainer.Panel2, "_primaryClassificationSplitContainer.Panel2");
             _primaryClassificationSplitContainer.Panel2.Controls.Add(_primaryClassificationTabControl);
             // 
             // _primaryClassificationRuleSplitContainer
@@ -615,17 +605,14 @@ namespace modified_structure_analysis.Forms
             // 
             // _primaryClassificationRuleSplitContainer.Panel1
             // 
-            resources.ApplyResources(_primaryClassificationRuleSplitContainer.Panel1, "_primaryClassificationRuleSplitContainer.Panel1");
             _primaryClassificationRuleSplitContainer.Panel1.Controls.Add(_primaryRuleDataGridView);
             // 
             // _primaryClassificationRuleSplitContainer.Panel2
             // 
-            resources.ApplyResources(_primaryClassificationRuleSplitContainer.Panel2, "_primaryClassificationRuleSplitContainer.Panel2");
             _primaryClassificationRuleSplitContainer.Panel2.Controls.Add(_primaryClassificationRichTextBox);
             // 
             // _primaryRuleDataGridView
             // 
-            resources.ApplyResources(_primaryRuleDataGridView, "_primaryRuleDataGridView");
             _primaryRuleDataGridView.AllowUserToAddRows = false;
             _primaryRuleDataGridView.AllowUserToDeleteRows = false;
             _primaryRuleDataGridView.AllowUserToResizeColumns = false;
@@ -633,6 +620,7 @@ namespace modified_structure_analysis.Forms
             _primaryRuleDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             _primaryRuleDataGridView.ColumnHeadersVisible = false;
             _primaryRuleDataGridView.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewButtonColumn1 });
+            resources.ApplyResources(_primaryRuleDataGridView, "_primaryRuleDataGridView");
             _primaryRuleDataGridView.MultiSelect = false;
             _primaryRuleDataGridView.Name = "_primaryRuleDataGridView";
             _primaryRuleDataGridView.ReadOnly = true;
@@ -661,57 +649,57 @@ namespace modified_structure_analysis.Forms
             // 
             // _primaryClassificationRichTextBox
             // 
-            resources.ApplyResources(_primaryClassificationRichTextBox, "_primaryClassificationRichTextBox");
             _primaryClassificationRichTextBox.BorderStyle = BorderStyle.FixedSingle;
+            resources.ApplyResources(_primaryClassificationRichTextBox, "_primaryClassificationRichTextBox");
             _primaryClassificationRichTextBox.Name = "_primaryClassificationRichTextBox";
             _primaryClassificationRichTextBox.ReadOnly = true;
             // 
             // _primaryClassificationRuleToolStrip
             // 
-            resources.ApplyResources(_primaryClassificationRuleToolStrip, "_primaryClassificationRuleToolStrip");
             _primaryClassificationRuleToolStrip.GripStyle = ToolStripGripStyle.Hidden;
             _primaryClassificationRuleToolStrip.ImageScalingSize = new Size(24, 24);
             _primaryClassificationRuleToolStrip.Items.AddRange(new ToolStripItem[] { _primaryClassificationAddRuleToolStripButton, _primaryClassificationDeleteRuleToolStripButton, toolStripSeparator7, _primaryClassificationMoveRuleUpToolStripButton, _primaryClassificationMoveRuleDownToolStripButton, _primaryClassificationAutoGenerateToolStripButton });
+            resources.ApplyResources(_primaryClassificationRuleToolStrip, "_primaryClassificationRuleToolStrip");
             _primaryClassificationRuleToolStrip.Name = "_primaryClassificationRuleToolStrip";
             // 
             // _primaryClassificationAddRuleToolStripButton
             // 
-            resources.ApplyResources(_primaryClassificationAddRuleToolStripButton, "_primaryClassificationAddRuleToolStripButton");
             _primaryClassificationAddRuleToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryClassificationAddRuleToolStripButton, "_primaryClassificationAddRuleToolStripButton");
             _primaryClassificationAddRuleToolStripButton.Name = "_primaryClassificationAddRuleToolStripButton";
             _primaryClassificationAddRuleToolStripButton.Click += AddClassificationRule;
             // 
             // _primaryClassificationDeleteRuleToolStripButton
             // 
-            resources.ApplyResources(_primaryClassificationDeleteRuleToolStripButton, "_primaryClassificationDeleteRuleToolStripButton");
             _primaryClassificationDeleteRuleToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryClassificationDeleteRuleToolStripButton, "_primaryClassificationDeleteRuleToolStripButton");
             _primaryClassificationDeleteRuleToolStripButton.Name = "_primaryClassificationDeleteRuleToolStripButton";
             _primaryClassificationDeleteRuleToolStripButton.Click += DeleteClassificationRule;
             // 
             // toolStripSeparator7
             // 
-            resources.ApplyResources(toolStripSeparator7, "toolStripSeparator7");
             toolStripSeparator7.Name = "toolStripSeparator7";
+            resources.ApplyResources(toolStripSeparator7, "toolStripSeparator7");
             // 
             // _primaryClassificationMoveRuleUpToolStripButton
             // 
-            resources.ApplyResources(_primaryClassificationMoveRuleUpToolStripButton, "_primaryClassificationMoveRuleUpToolStripButton");
             _primaryClassificationMoveRuleUpToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryClassificationMoveRuleUpToolStripButton, "_primaryClassificationMoveRuleUpToolStripButton");
             _primaryClassificationMoveRuleUpToolStripButton.Name = "_primaryClassificationMoveRuleUpToolStripButton";
             _primaryClassificationMoveRuleUpToolStripButton.Click += MoveRuleUp;
             // 
             // _primaryClassificationMoveRuleDownToolStripButton
             // 
-            resources.ApplyResources(_primaryClassificationMoveRuleDownToolStripButton, "_primaryClassificationMoveRuleDownToolStripButton");
             _primaryClassificationMoveRuleDownToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryClassificationMoveRuleDownToolStripButton, "_primaryClassificationMoveRuleDownToolStripButton");
             _primaryClassificationMoveRuleDownToolStripButton.Name = "_primaryClassificationMoveRuleDownToolStripButton";
             _primaryClassificationMoveRuleDownToolStripButton.Click += MoveRuleDown;
             // 
             // _primaryClassificationAutoGenerateToolStripButton
             // 
-            resources.ApplyResources(_primaryClassificationAutoGenerateToolStripButton, "_primaryClassificationAutoGenerateToolStripButton");
             _primaryClassificationAutoGenerateToolStripButton.Alignment = ToolStripItemAlignment.Right;
             _primaryClassificationAutoGenerateToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryClassificationAutoGenerateToolStripButton, "_primaryClassificationAutoGenerateToolStripButton");
             _primaryClassificationAutoGenerateToolStripButton.Name = "_primaryClassificationAutoGenerateToolStripButton";
             _primaryClassificationAutoGenerateToolStripButton.Click += AutoButton_Click;
             // 
@@ -726,9 +714,9 @@ namespace modified_structure_analysis.Forms
             // 
             // _primaryClassificationViewportTabPage
             // 
-            resources.ApplyResources(_primaryClassificationViewportTabPage, "_primaryClassificationViewportTabPage");
             _primaryClassificationViewportTabPage.Controls.Add(_primaryClassificationViewport);
             _primaryClassificationViewportTabPage.Controls.Add(toolStrip1);
+            resources.ApplyResources(_primaryClassificationViewportTabPage, "_primaryClassificationViewportTabPage");
             _primaryClassificationViewportTabPage.Name = "_primaryClassificationViewportTabPage";
             _primaryClassificationViewportTabPage.UseVisualStyleBackColor = true;
             // 
@@ -739,79 +727,79 @@ namespace modified_structure_analysis.Forms
             // 
             // toolStrip1
             // 
-            resources.ApplyResources(toolStrip1, "toolStrip1");
             toolStrip1.GripStyle = ToolStripGripStyle.Hidden;
             toolStrip1.ImageScalingSize = new Size(24, 24);
             toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripLabel3, _primaryUpToolStripButton, _primaryDownToolStripButton, toolStripSeparator13, _primaryLeftToolStripButton, _primaryRightToolStripButton, toolStripSeparator14, _primaryZoomInToolStripButton, _primaryZoomOutToolStripButton });
+            resources.ApplyResources(toolStrip1, "toolStrip1");
             toolStrip1.Name = "toolStrip1";
             // 
             // toolStripLabel3
             // 
-            resources.ApplyResources(toolStripLabel3, "toolStripLabel3");
             toolStripLabel3.Name = "toolStripLabel3";
+            resources.ApplyResources(toolStripLabel3, "toolStripLabel3");
             // 
             // _primaryUpToolStripButton
             // 
-            resources.ApplyResources(_primaryUpToolStripButton, "_primaryUpToolStripButton");
             _primaryUpToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryUpToolStripButton, "_primaryUpToolStripButton");
             _primaryUpToolStripButton.Name = "_primaryUpToolStripButton";
             // 
             // _primaryDownToolStripButton
             // 
-            resources.ApplyResources(_primaryDownToolStripButton, "_primaryDownToolStripButton");
             _primaryDownToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryDownToolStripButton, "_primaryDownToolStripButton");
             _primaryDownToolStripButton.Name = "_primaryDownToolStripButton";
             // 
             // toolStripSeparator13
             // 
-            resources.ApplyResources(toolStripSeparator13, "toolStripSeparator13");
             toolStripSeparator13.Name = "toolStripSeparator13";
+            resources.ApplyResources(toolStripSeparator13, "toolStripSeparator13");
             // 
             // _primaryLeftToolStripButton
             // 
-            resources.ApplyResources(_primaryLeftToolStripButton, "_primaryLeftToolStripButton");
             _primaryLeftToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryLeftToolStripButton, "_primaryLeftToolStripButton");
             _primaryLeftToolStripButton.Name = "_primaryLeftToolStripButton";
             // 
             // _primaryRightToolStripButton
             // 
-            resources.ApplyResources(_primaryRightToolStripButton, "_primaryRightToolStripButton");
             _primaryRightToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryRightToolStripButton, "_primaryRightToolStripButton");
             _primaryRightToolStripButton.Name = "_primaryRightToolStripButton";
             // 
             // toolStripSeparator14
             // 
-            resources.ApplyResources(toolStripSeparator14, "toolStripSeparator14");
             toolStripSeparator14.Name = "toolStripSeparator14";
+            resources.ApplyResources(toolStripSeparator14, "toolStripSeparator14");
             // 
             // _primaryZoomInToolStripButton
             // 
-            resources.ApplyResources(_primaryZoomInToolStripButton, "_primaryZoomInToolStripButton");
             _primaryZoomInToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryZoomInToolStripButton, "_primaryZoomInToolStripButton");
             _primaryZoomInToolStripButton.Name = "_primaryZoomInToolStripButton";
             // 
             // _primaryZoomOutToolStripButton
             // 
-            resources.ApplyResources(_primaryZoomOutToolStripButton, "_primaryZoomOutToolStripButton");
             _primaryZoomOutToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryZoomOutToolStripButton, "_primaryZoomOutToolStripButton");
             _primaryZoomOutToolStripButton.Name = "_primaryZoomOutToolStripButton";
             // 
             // _primaryClassificationTableTabPage
             // 
-            resources.ApplyResources(_primaryClassificationTableTabPage, "_primaryClassificationTableTabPage");
             _primaryClassificationTableTabPage.Controls.Add(_primaryClassificationDataGridView);
+            resources.ApplyResources(_primaryClassificationTableTabPage, "_primaryClassificationTableTabPage");
             _primaryClassificationTableTabPage.Name = "_primaryClassificationTableTabPage";
             _primaryClassificationTableTabPage.UseVisualStyleBackColor = true;
             // 
             // _primaryClassificationDataGridView
             // 
-            resources.ApplyResources(_primaryClassificationDataGridView, "_primaryClassificationDataGridView");
             _primaryClassificationDataGridView.AllowUserToAddRows = false;
             _primaryClassificationDataGridView.AllowUserToDeleteRows = false;
             _primaryClassificationDataGridView.AllowUserToResizeRows = false;
             _primaryClassificationDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             _primaryClassificationDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             _primaryClassificationDataGridView.Columns.AddRange(new DataGridViewColumn[] { _primaryClassificationColorCol, _primaryClassificationNameCol, _primaryClassificationCountCol, _primaryClassificationEditCol });
+            resources.ApplyResources(_primaryClassificationDataGridView, "_primaryClassificationDataGridView");
             _primaryClassificationDataGridView.Name = "_primaryClassificationDataGridView";
             _primaryClassificationDataGridView.ReadOnly = true;
             _primaryClassificationDataGridView.RowHeadersVisible = false;
@@ -855,13 +843,11 @@ namespace modified_structure_analysis.Forms
             // 
             // _secondaryClassificationSplitContainer.Panel1
             // 
-            resources.ApplyResources(_secondaryClassificationSplitContainer.Panel1, "_secondaryClassificationSplitContainer.Panel1");
             _secondaryClassificationSplitContainer.Panel1.Controls.Add(_secondaryClassificationRuleSplitContainer);
             _secondaryClassificationSplitContainer.Panel1.Controls.Add(_secondaryClassificationRuleToolStrip);
             // 
             // _secondaryClassificationSplitContainer.Panel2
             // 
-            resources.ApplyResources(_secondaryClassificationSplitContainer.Panel2, "_secondaryClassificationSplitContainer.Panel2");
             _secondaryClassificationSplitContainer.Panel2.Controls.Add(_secondaryClassificationTabControl);
             // 
             // _secondaryClassificationRuleSplitContainer
@@ -872,17 +858,14 @@ namespace modified_structure_analysis.Forms
             // 
             // _secondaryClassificationRuleSplitContainer.Panel1
             // 
-            resources.ApplyResources(_secondaryClassificationRuleSplitContainer.Panel1, "_secondaryClassificationRuleSplitContainer.Panel1");
             _secondaryClassificationRuleSplitContainer.Panel1.Controls.Add(_secondaryRuleDataGridView);
             // 
             // _secondaryClassificationRuleSplitContainer.Panel2
             // 
-            resources.ApplyResources(_secondaryClassificationRuleSplitContainer.Panel2, "_secondaryClassificationRuleSplitContainer.Panel2");
             _secondaryClassificationRuleSplitContainer.Panel2.Controls.Add(_secondaryClassificationRichTextBox);
             // 
             // _secondaryRuleDataGridView
             // 
-            resources.ApplyResources(_secondaryRuleDataGridView, "_secondaryRuleDataGridView");
             _secondaryRuleDataGridView.AllowUserToAddRows = false;
             _secondaryRuleDataGridView.AllowUserToDeleteRows = false;
             _secondaryRuleDataGridView.AllowUserToResizeColumns = false;
@@ -890,6 +873,7 @@ namespace modified_structure_analysis.Forms
             _secondaryRuleDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             _secondaryRuleDataGridView.ColumnHeadersVisible = false;
             _secondaryRuleDataGridView.Columns.AddRange(new DataGridViewColumn[] { NameColumn, EditColumn });
+            resources.ApplyResources(_secondaryRuleDataGridView, "_secondaryRuleDataGridView");
             _secondaryRuleDataGridView.MultiSelect = false;
             _secondaryRuleDataGridView.Name = "_secondaryRuleDataGridView";
             _secondaryRuleDataGridView.ReadOnly = true;
@@ -918,49 +902,49 @@ namespace modified_structure_analysis.Forms
             // 
             // _secondaryClassificationRichTextBox
             // 
-            resources.ApplyResources(_secondaryClassificationRichTextBox, "_secondaryClassificationRichTextBox");
             _secondaryClassificationRichTextBox.BorderStyle = BorderStyle.FixedSingle;
+            resources.ApplyResources(_secondaryClassificationRichTextBox, "_secondaryClassificationRichTextBox");
             _secondaryClassificationRichTextBox.Name = "_secondaryClassificationRichTextBox";
             _secondaryClassificationRichTextBox.ReadOnly = true;
             // 
             // _secondaryClassificationRuleToolStrip
             // 
-            resources.ApplyResources(_secondaryClassificationRuleToolStrip, "_secondaryClassificationRuleToolStrip");
             _secondaryClassificationRuleToolStrip.GripStyle = ToolStripGripStyle.Hidden;
             _secondaryClassificationRuleToolStrip.ImageScalingSize = new Size(24, 24);
             _secondaryClassificationRuleToolStrip.Items.AddRange(new ToolStripItem[] { _secondaryClassificationAddRuleToolStripButton, _secondaryClassificationDeleteRuleToolStripButton, toolStripSeparator6, _secondaryClassificationMoveRuleUpToolStripButton, _secondaryClassificationMoveRuleDownToolStripButton });
+            resources.ApplyResources(_secondaryClassificationRuleToolStrip, "_secondaryClassificationRuleToolStrip");
             _secondaryClassificationRuleToolStrip.Name = "_secondaryClassificationRuleToolStrip";
             // 
             // _secondaryClassificationAddRuleToolStripButton
             // 
-            resources.ApplyResources(_secondaryClassificationAddRuleToolStripButton, "_secondaryClassificationAddRuleToolStripButton");
             _secondaryClassificationAddRuleToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryClassificationAddRuleToolStripButton, "_secondaryClassificationAddRuleToolStripButton");
             _secondaryClassificationAddRuleToolStripButton.Name = "_secondaryClassificationAddRuleToolStripButton";
             _secondaryClassificationAddRuleToolStripButton.Click += AddClassificationRule;
             // 
             // _secondaryClassificationDeleteRuleToolStripButton
             // 
-            resources.ApplyResources(_secondaryClassificationDeleteRuleToolStripButton, "_secondaryClassificationDeleteRuleToolStripButton");
             _secondaryClassificationDeleteRuleToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryClassificationDeleteRuleToolStripButton, "_secondaryClassificationDeleteRuleToolStripButton");
             _secondaryClassificationDeleteRuleToolStripButton.Name = "_secondaryClassificationDeleteRuleToolStripButton";
             _secondaryClassificationDeleteRuleToolStripButton.Click += DeleteClassificationRule;
             // 
             // toolStripSeparator6
             // 
-            resources.ApplyResources(toolStripSeparator6, "toolStripSeparator6");
             toolStripSeparator6.Name = "toolStripSeparator6";
+            resources.ApplyResources(toolStripSeparator6, "toolStripSeparator6");
             // 
             // _secondaryClassificationMoveRuleUpToolStripButton
             // 
-            resources.ApplyResources(_secondaryClassificationMoveRuleUpToolStripButton, "_secondaryClassificationMoveRuleUpToolStripButton");
             _secondaryClassificationMoveRuleUpToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryClassificationMoveRuleUpToolStripButton, "_secondaryClassificationMoveRuleUpToolStripButton");
             _secondaryClassificationMoveRuleUpToolStripButton.Name = "_secondaryClassificationMoveRuleUpToolStripButton";
             _secondaryClassificationMoveRuleUpToolStripButton.Click += MoveRuleUp;
             // 
             // _secondaryClassificationMoveRuleDownToolStripButton
             // 
-            resources.ApplyResources(_secondaryClassificationMoveRuleDownToolStripButton, "_secondaryClassificationMoveRuleDownToolStripButton");
             _secondaryClassificationMoveRuleDownToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryClassificationMoveRuleDownToolStripButton, "_secondaryClassificationMoveRuleDownToolStripButton");
             _secondaryClassificationMoveRuleDownToolStripButton.Name = "_secondaryClassificationMoveRuleDownToolStripButton";
             _secondaryClassificationMoveRuleDownToolStripButton.Click += MoveRuleDown;
             // 
@@ -975,9 +959,9 @@ namespace modified_structure_analysis.Forms
             // 
             // _secondaryClassificationViewportTabPage
             // 
-            resources.ApplyResources(_secondaryClassificationViewportTabPage, "_secondaryClassificationViewportTabPage");
             _secondaryClassificationViewportTabPage.Controls.Add(_secondaryClassificationViewport);
             _secondaryClassificationViewportTabPage.Controls.Add(toolStrip2);
+            resources.ApplyResources(_secondaryClassificationViewportTabPage, "_secondaryClassificationViewportTabPage");
             _secondaryClassificationViewportTabPage.Name = "_secondaryClassificationViewportTabPage";
             _secondaryClassificationViewportTabPage.UseVisualStyleBackColor = true;
             // 
@@ -988,79 +972,79 @@ namespace modified_structure_analysis.Forms
             // 
             // toolStrip2
             // 
-            resources.ApplyResources(toolStrip2, "toolStrip2");
             toolStrip2.GripStyle = ToolStripGripStyle.Hidden;
             toolStrip2.ImageScalingSize = new Size(24, 24);
             toolStrip2.Items.AddRange(new ToolStripItem[] { toolStripLabel4, _secondaryUpToolStripButton, _secondaryDownToolStripButton, toolStripSeparator12, _secondaryLeftToolStripButton, _secondaryRightToolStripButton, toolStripSeparator15, _secondaryZoomInToolStripButton, _secondaryZoomOutToolStripButton });
+            resources.ApplyResources(toolStrip2, "toolStrip2");
             toolStrip2.Name = "toolStrip2";
             // 
             // toolStripLabel4
             // 
-            resources.ApplyResources(toolStripLabel4, "toolStripLabel4");
             toolStripLabel4.Name = "toolStripLabel4";
+            resources.ApplyResources(toolStripLabel4, "toolStripLabel4");
             // 
             // _secondaryUpToolStripButton
             // 
-            resources.ApplyResources(_secondaryUpToolStripButton, "_secondaryUpToolStripButton");
             _secondaryUpToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryUpToolStripButton, "_secondaryUpToolStripButton");
             _secondaryUpToolStripButton.Name = "_secondaryUpToolStripButton";
             // 
             // _secondaryDownToolStripButton
             // 
-            resources.ApplyResources(_secondaryDownToolStripButton, "_secondaryDownToolStripButton");
             _secondaryDownToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryDownToolStripButton, "_secondaryDownToolStripButton");
             _secondaryDownToolStripButton.Name = "_secondaryDownToolStripButton";
             // 
             // toolStripSeparator12
             // 
-            resources.ApplyResources(toolStripSeparator12, "toolStripSeparator12");
             toolStripSeparator12.Name = "toolStripSeparator12";
+            resources.ApplyResources(toolStripSeparator12, "toolStripSeparator12");
             // 
             // _secondaryLeftToolStripButton
             // 
-            resources.ApplyResources(_secondaryLeftToolStripButton, "_secondaryLeftToolStripButton");
             _secondaryLeftToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryLeftToolStripButton, "_secondaryLeftToolStripButton");
             _secondaryLeftToolStripButton.Name = "_secondaryLeftToolStripButton";
             // 
             // _secondaryRightToolStripButton
             // 
-            resources.ApplyResources(_secondaryRightToolStripButton, "_secondaryRightToolStripButton");
             _secondaryRightToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryRightToolStripButton, "_secondaryRightToolStripButton");
             _secondaryRightToolStripButton.Name = "_secondaryRightToolStripButton";
             // 
             // toolStripSeparator15
             // 
-            resources.ApplyResources(toolStripSeparator15, "toolStripSeparator15");
             toolStripSeparator15.Name = "toolStripSeparator15";
+            resources.ApplyResources(toolStripSeparator15, "toolStripSeparator15");
             // 
             // _secondaryZoomInToolStripButton
             // 
-            resources.ApplyResources(_secondaryZoomInToolStripButton, "_secondaryZoomInToolStripButton");
             _secondaryZoomInToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryZoomInToolStripButton, "_secondaryZoomInToolStripButton");
             _secondaryZoomInToolStripButton.Name = "_secondaryZoomInToolStripButton";
             // 
             // _secondaryZoomOutToolStripButton
             // 
-            resources.ApplyResources(_secondaryZoomOutToolStripButton, "_secondaryZoomOutToolStripButton");
             _secondaryZoomOutToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryZoomOutToolStripButton, "_secondaryZoomOutToolStripButton");
             _secondaryZoomOutToolStripButton.Name = "_secondaryZoomOutToolStripButton";
             // 
             // _secondaryClassificationTableTabPage
             // 
-            resources.ApplyResources(_secondaryClassificationTableTabPage, "_secondaryClassificationTableTabPage");
             _secondaryClassificationTableTabPage.Controls.Add(_secondaryClassificationDataGridView);
+            resources.ApplyResources(_secondaryClassificationTableTabPage, "_secondaryClassificationTableTabPage");
             _secondaryClassificationTableTabPage.Name = "_secondaryClassificationTableTabPage";
             _secondaryClassificationTableTabPage.UseVisualStyleBackColor = true;
             // 
             // _secondaryClassificationDataGridView
             // 
-            resources.ApplyResources(_secondaryClassificationDataGridView, "_secondaryClassificationDataGridView");
             _secondaryClassificationDataGridView.AllowUserToAddRows = false;
             _secondaryClassificationDataGridView.AllowUserToDeleteRows = false;
             _secondaryClassificationDataGridView.AllowUserToResizeRows = false;
             _secondaryClassificationDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             _secondaryClassificationDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             _secondaryClassificationDataGridView.Columns.AddRange(new DataGridViewColumn[] { _secondaryClassificationColorCol, _secondaryClassificationNameCol, _secondaryClassificationCountCol, _secondaryClassificationEditCol });
+            resources.ApplyResources(_secondaryClassificationDataGridView, "_secondaryClassificationDataGridView");
             _secondaryClassificationDataGridView.Name = "_secondaryClassificationDataGridView";
             _secondaryClassificationDataGridView.ReadOnly = true;
             _secondaryClassificationDataGridView.RowHeadersVisible = false;
@@ -1098,89 +1082,81 @@ namespace modified_structure_analysis.Forms
             // 
             // _menuStrip
             // 
-            resources.ApplyResources(_menuStrip, "_menuStrip");
             _menuStrip.ImageScalingSize = new Size(24, 24);
             _menuStrip.Items.AddRange(new ToolStripItem[] { _fileToolStripMenuItem, _toolsToolStripMenuItem });
+            resources.ApplyResources(_menuStrip, "_menuStrip");
             _menuStrip.Name = "_menuStrip";
             // 
             // _fileToolStripMenuItem
             // 
-            resources.ApplyResources(_fileToolStripMenuItem, "_fileToolStripMenuItem");
             _fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _openToolStripMenuItem, _exportGraphToolStripMenuItem, _exportClassificationToolStripMenuItem, toolStripSeparator1, _exitToolStripMenuItem });
             _fileToolStripMenuItem.Name = "_fileToolStripMenuItem";
+            resources.ApplyResources(_fileToolStripMenuItem, "_fileToolStripMenuItem");
             // 
             // _openToolStripMenuItem
             // 
-            resources.ApplyResources(_openToolStripMenuItem, "_openToolStripMenuItem");
             _openToolStripMenuItem.Name = "_openToolStripMenuItem";
+            resources.ApplyResources(_openToolStripMenuItem, "_openToolStripMenuItem");
             _openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
             // _exportGraphToolStripMenuItem
             // 
-            resources.ApplyResources(_exportGraphToolStripMenuItem, "_exportGraphToolStripMenuItem");
             _exportGraphToolStripMenuItem.Name = "_exportGraphToolStripMenuItem";
+            resources.ApplyResources(_exportGraphToolStripMenuItem, "_exportGraphToolStripMenuItem");
             _exportGraphToolStripMenuItem.Click += ExportActivePlot;
             // 
             // _exportClassificationToolStripMenuItem
             // 
-            resources.ApplyResources(_exportClassificationToolStripMenuItem, "_exportClassificationToolStripMenuItem");
             _exportClassificationToolStripMenuItem.Name = "_exportClassificationToolStripMenuItem";
+            resources.ApplyResources(_exportClassificationToolStripMenuItem, "_exportClassificationToolStripMenuItem");
             _exportClassificationToolStripMenuItem.Click += ExportClassification;
             // 
             // toolStripSeparator1
             // 
-            resources.ApplyResources(toolStripSeparator1, "toolStripSeparator1");
             toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(toolStripSeparator1, "toolStripSeparator1");
             // 
             // _exitToolStripMenuItem
             // 
-            resources.ApplyResources(_exitToolStripMenuItem, "_exitToolStripMenuItem");
             _exitToolStripMenuItem.Name = "_exitToolStripMenuItem";
+            resources.ApplyResources(_exitToolStripMenuItem, "_exitToolStripMenuItem");
             _exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
             // _toolsToolStripMenuItem
             // 
-            resources.ApplyResources(_toolsToolStripMenuItem, "_toolsToolStripMenuItem");
             _toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _settingsToolStripMenuItem });
             _toolsToolStripMenuItem.Name = "_toolsToolStripMenuItem";
+            resources.ApplyResources(_toolsToolStripMenuItem, "_toolsToolStripMenuItem");
             // 
             // _settingsToolStripMenuItem
             // 
-            resources.ApplyResources(_settingsToolStripMenuItem, "_settingsToolStripMenuItem");
             _settingsToolStripMenuItem.Name = "_settingsToolStripMenuItem";
+            resources.ApplyResources(_settingsToolStripMenuItem, "_settingsToolStripMenuItem");
             _settingsToolStripMenuItem.Click += SettingsToolStripMenuItem_Click;
-            // 
-            // _openFileDialog
-            // 
-            resources.ApplyResources(_openFileDialog, "_openFileDialog");
-            // 
-            // _saveFileDialog
-            // 
-            resources.ApplyResources(_saveFileDialog, "_saveFileDialog");
             // 
             // _statusStrip
             // 
-            resources.ApplyResources(_statusStrip, "_statusStrip");
             _statusStrip.ImageScalingSize = new Size(24, 24);
             _statusStrip.Items.AddRange(new ToolStripItem[] { _mainStatusLabel, _mainProgressBar });
+            resources.ApplyResources(_statusStrip, "_statusStrip");
             _statusStrip.Name = "_statusStrip";
             // 
             // _mainStatusLabel
             // 
-            resources.ApplyResources(_mainStatusLabel, "_mainStatusLabel");
             _mainStatusLabel.Name = "_mainStatusLabel";
+            resources.ApplyResources(_mainStatusLabel, "_mainStatusLabel");
             // 
             // _mainProgressBar
             // 
-            resources.ApplyResources(_mainProgressBar, "_mainProgressBar");
             _mainProgressBar.Name = "_mainProgressBar";
+            resources.ApplyResources(_mainProgressBar, "_mainProgressBar");
             // 
             // _mainTabControl
             // 
-            resources.ApplyResources(_mainTabControl, "_mainTabControl");
             _mainTabControl.Controls.Add(_dataTabPage);
             _mainTabControl.Controls.Add(_explorationTabPage);
             _mainTabControl.Controls.Add(_classificationTabPage);
+            resources.ApplyResources(_mainTabControl, "_mainTabControl");
             _mainTabControl.Multiline = true;
             _mainTabControl.Name = "_mainTabControl";
             _mainTabControl.SelectedIndex = 0;
@@ -1189,176 +1165,188 @@ namespace modified_structure_analysis.Forms
             // 
             // _dataTabPage
             // 
-            resources.ApplyResources(_dataTabPage, "_dataTabPage");
             _dataTabPage.Controls.Add(_dataSplitContainer);
+            resources.ApplyResources(_dataTabPage, "_dataTabPage");
             _dataTabPage.Name = "_dataTabPage";
             _dataTabPage.UseVisualStyleBackColor = true;
             // 
             // _explorationTabPage
             // 
-            resources.ApplyResources(_explorationTabPage, "_explorationTabPage");
             _explorationTabPage.Controls.Add(_explorationTabControl);
+            resources.ApplyResources(_explorationTabPage, "_explorationTabPage");
             _explorationTabPage.Name = "_explorationTabPage";
             _explorationTabPage.UseVisualStyleBackColor = true;
             // 
             // _explorationTabControl
             // 
-            resources.ApplyResources(_explorationTabControl, "_explorationTabControl");
             _explorationTabControl.Controls.Add(_correlationTabPage);
             _explorationTabControl.Controls.Add(_kdeTabPage);
             _explorationTabControl.Controls.Add(_scatterTabPage);
+            resources.ApplyResources(_explorationTabControl, "_explorationTabControl");
             _explorationTabControl.Name = "_explorationTabControl";
             _explorationTabControl.SelectedIndex = 0;
             // 
             // _correlationTabPage
             // 
-            resources.ApplyResources(_correlationTabPage, "_correlationTabPage");
             _correlationTabPage.Controls.Add(_correlationDataGridView);
+            resources.ApplyResources(_correlationTabPage, "_correlationTabPage");
             _correlationTabPage.Name = "_correlationTabPage";
             _correlationTabPage.UseVisualStyleBackColor = true;
             // 
             // _correlationDataGridView
             // 
-            resources.ApplyResources(_correlationDataGridView, "_correlationDataGridView");
             _correlationDataGridView.AllowUserToAddRows = false;
             _correlationDataGridView.AllowUserToDeleteRows = false;
             _correlationDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             _correlationDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             _correlationDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            resources.ApplyResources(_correlationDataGridView, "_correlationDataGridView");
             _correlationDataGridView.Name = "_correlationDataGridView";
             _correlationDataGridView.ReadOnly = true;
             _correlationDataGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             // 
             // _kdeTabPage
             // 
-            resources.ApplyResources(_kdeTabPage, "_kdeTabPage");
             _kdeTabPage.Controls.Add(_kdeSplitContainer);
+            resources.ApplyResources(_kdeTabPage, "_kdeTabPage");
             _kdeTabPage.Name = "_kdeTabPage";
             _kdeTabPage.UseVisualStyleBackColor = true;
             // 
             // _scatterTabPage
             // 
-            resources.ApplyResources(_scatterTabPage, "_scatterTabPage");
             _scatterTabPage.Controls.Add(_scatterSplitContainer1);
+            resources.ApplyResources(_scatterTabPage, "_scatterTabPage");
             _scatterTabPage.Name = "_scatterTabPage";
             _scatterTabPage.UseVisualStyleBackColor = true;
             // 
             // _classificationTabPage
             // 
-            resources.ApplyResources(_classificationTabPage, "_classificationTabPage");
             _classificationTabPage.Controls.Add(_classificationTabControl);
             _classificationTabPage.Controls.Add(_classificationAbortButton);
+            resources.ApplyResources(_classificationTabPage, "_classificationTabPage");
             _classificationTabPage.Name = "_classificationTabPage";
             _classificationTabPage.UseVisualStyleBackColor = true;
             // 
             // _classificationTabControl
             // 
-            resources.ApplyResources(_classificationTabControl, "_classificationTabControl");
             _classificationTabControl.Controls.Add(_primaryClassificationTabPage);
             _classificationTabControl.Controls.Add(_secondaryClassificationTabPage);
+            resources.ApplyResources(_classificationTabControl, "_classificationTabControl");
             _classificationTabControl.Name = "_classificationTabControl";
             _classificationTabControl.SelectedIndex = 0;
             _classificationTabControl.SizeMode = TabSizeMode.Fixed;
             // 
             // _primaryClassificationTabPage
             // 
-            resources.ApplyResources(_primaryClassificationTabPage, "_primaryClassificationTabPage");
             _primaryClassificationTabPage.Controls.Add(_primaryClassificationSplitContainer);
             _primaryClassificationTabPage.Controls.Add(_primaryClassificationToolStrip);
+            resources.ApplyResources(_primaryClassificationTabPage, "_primaryClassificationTabPage");
             _primaryClassificationTabPage.Name = "_primaryClassificationTabPage";
             _primaryClassificationTabPage.UseVisualStyleBackColor = true;
             // 
             // _primaryClassificationToolStrip
             // 
-            resources.ApplyResources(_primaryClassificationToolStrip, "_primaryClassificationToolStrip");
             _primaryClassificationToolStrip.GripStyle = ToolStripGripStyle.Hidden;
             _primaryClassificationToolStrip.ImageScalingSize = new Size(24, 24);
             _primaryClassificationToolStrip.Items.AddRange(new ToolStripItem[] { _primaryClassificationCompareToolStripButton, _primaryClassificationClassifyToolStripButton, toolStripSeparator2, toolStripLabel1, _primaryClassificationModeToolStripComboBox, toolStripSeparator8, _primaryClassificationExportToolStripButton });
+            resources.ApplyResources(_primaryClassificationToolStrip, "_primaryClassificationToolStrip");
             _primaryClassificationToolStrip.Name = "_primaryClassificationToolStrip";
             // 
             // _primaryClassificationCompareToolStripButton
             // 
-            resources.ApplyResources(_primaryClassificationCompareToolStripButton, "_primaryClassificationCompareToolStripButton");
             _primaryClassificationCompareToolStripButton.Alignment = ToolStripItemAlignment.Right;
             _primaryClassificationCompareToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryClassificationCompareToolStripButton, "_primaryClassificationCompareToolStripButton");
             _primaryClassificationCompareToolStripButton.Name = "_primaryClassificationCompareToolStripButton";
             _primaryClassificationCompareToolStripButton.Click += CompareToolStripButton_Click;
             // 
             // _primaryClassificationClassifyToolStripButton
             // 
-            resources.ApplyResources(_primaryClassificationClassifyToolStripButton, "_primaryClassificationClassifyToolStripButton");
             _primaryClassificationClassifyToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryClassificationClassifyToolStripButton, "_primaryClassificationClassifyToolStripButton");
             _primaryClassificationClassifyToolStripButton.Name = "_primaryClassificationClassifyToolStripButton";
             _primaryClassificationClassifyToolStripButton.Click += Classify_Click;
             // 
             // toolStripSeparator2
             // 
-            resources.ApplyResources(toolStripSeparator2, "toolStripSeparator2");
             toolStripSeparator2.Name = "toolStripSeparator2";
+            resources.ApplyResources(toolStripSeparator2, "toolStripSeparator2");
             // 
             // toolStripLabel1
             // 
-            resources.ApplyResources(toolStripLabel1, "toolStripLabel1");
             toolStripLabel1.Name = "toolStripLabel1";
+            resources.ApplyResources(toolStripLabel1, "toolStripLabel1");
             // 
             // _primaryClassificationModeToolStripComboBox
             // 
-            resources.ApplyResources(_primaryClassificationModeToolStripComboBox, "_primaryClassificationModeToolStripComboBox");
             _primaryClassificationModeToolStripComboBox.Items.AddRange(new object[] { resources.GetString("_primaryClassificationModeToolStripComboBox.Items"), resources.GetString("_primaryClassificationModeToolStripComboBox.Items1") });
             _primaryClassificationModeToolStripComboBox.Name = "_primaryClassificationModeToolStripComboBox";
+            resources.ApplyResources(_primaryClassificationModeToolStripComboBox, "_primaryClassificationModeToolStripComboBox");
             // 
             // toolStripSeparator8
             // 
-            resources.ApplyResources(toolStripSeparator8, "toolStripSeparator8");
             toolStripSeparator8.Name = "toolStripSeparator8";
+            resources.ApplyResources(toolStripSeparator8, "toolStripSeparator8");
             // 
             // _primaryClassificationExportToolStripButton
             // 
-            resources.ApplyResources(_primaryClassificationExportToolStripButton, "_primaryClassificationExportToolStripButton");
             _primaryClassificationExportToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_primaryClassificationExportToolStripButton, "_primaryClassificationExportToolStripButton");
             _primaryClassificationExportToolStripButton.Name = "_primaryClassificationExportToolStripButton";
             _primaryClassificationExportToolStripButton.Click += ExportClassification;
             // 
             // _secondaryClassificationTabPage
             // 
-            resources.ApplyResources(_secondaryClassificationTabPage, "_secondaryClassificationTabPage");
             _secondaryClassificationTabPage.Controls.Add(_secondaryClassificationSplitContainer);
             _secondaryClassificationTabPage.Controls.Add(_secondaryClassificationToolStrip);
+            resources.ApplyResources(_secondaryClassificationTabPage, "_secondaryClassificationTabPage");
             _secondaryClassificationTabPage.Name = "_secondaryClassificationTabPage";
             _secondaryClassificationTabPage.UseVisualStyleBackColor = true;
             // 
             // _secondaryClassificationToolStrip
             // 
-            resources.ApplyResources(_secondaryClassificationToolStrip, "_secondaryClassificationToolStrip");
             _secondaryClassificationToolStrip.GripStyle = ToolStripGripStyle.Hidden;
             _secondaryClassificationToolStrip.ImageScalingSize = new Size(24, 24);
-            _secondaryClassificationToolStrip.Items.AddRange(new ToolStripItem[] { _secondaryClassificationCompareToolStripButton, _secondaryClassificationClassifyToolStripButton, toolStripSeparator3, _secondaryClassificationExportToolStripButton });
+            _secondaryClassificationToolStrip.Items.AddRange(new ToolStripItem[] { _secondaryClassificationCompareToolStripButton, _secondaryClassificationClassifyToolStripButton, toolStripSeparator16, filterToolStripButton, toolStripSeparator3, _secondaryClassificationExportToolStripButton });
+            resources.ApplyResources(_secondaryClassificationToolStrip, "_secondaryClassificationToolStrip");
             _secondaryClassificationToolStrip.Name = "_secondaryClassificationToolStrip";
             // 
             // _secondaryClassificationCompareToolStripButton
             // 
-            resources.ApplyResources(_secondaryClassificationCompareToolStripButton, "_secondaryClassificationCompareToolStripButton");
             _secondaryClassificationCompareToolStripButton.Alignment = ToolStripItemAlignment.Right;
             _secondaryClassificationCompareToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryClassificationCompareToolStripButton, "_secondaryClassificationCompareToolStripButton");
             _secondaryClassificationCompareToolStripButton.Name = "_secondaryClassificationCompareToolStripButton";
             _secondaryClassificationCompareToolStripButton.Click += CompareToolStripButton_Click;
             // 
             // _secondaryClassificationClassifyToolStripButton
             // 
-            resources.ApplyResources(_secondaryClassificationClassifyToolStripButton, "_secondaryClassificationClassifyToolStripButton");
             _secondaryClassificationClassifyToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryClassificationClassifyToolStripButton, "_secondaryClassificationClassifyToolStripButton");
             _secondaryClassificationClassifyToolStripButton.Name = "_secondaryClassificationClassifyToolStripButton";
             _secondaryClassificationClassifyToolStripButton.Click += Classify_Click;
             // 
+            // toolStripSeparator16
+            // 
+            toolStripSeparator16.Name = "toolStripSeparator16";
+            resources.ApplyResources(toolStripSeparator16, "toolStripSeparator16");
+            // 
+            // filterToolStripButton
+            // 
+            filterToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(filterToolStripButton, "filterToolStripButton");
+            filterToolStripButton.Name = "filterToolStripButton";
+            filterToolStripButton.Click += filterToolStripButton_Click;
+            // 
             // toolStripSeparator3
             // 
-            resources.ApplyResources(toolStripSeparator3, "toolStripSeparator3");
             toolStripSeparator3.Name = "toolStripSeparator3";
+            resources.ApplyResources(toolStripSeparator3, "toolStripSeparator3");
             // 
             // _secondaryClassificationExportToolStripButton
             // 
-            resources.ApplyResources(_secondaryClassificationExportToolStripButton, "_secondaryClassificationExportToolStripButton");
             _secondaryClassificationExportToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(_secondaryClassificationExportToolStripButton, "_secondaryClassificationExportToolStripButton");
             _secondaryClassificationExportToolStripButton.Name = "_secondaryClassificationExportToolStripButton";
             _secondaryClassificationExportToolStripButton.Click += ExportClassification;
             // 
@@ -1371,49 +1359,49 @@ namespace modified_structure_analysis.Forms
             // 
             // _ruleContextMenuStrip
             // 
-            resources.ApplyResources(_ruleContextMenuStrip, "_ruleContextMenuStrip");
             _ruleContextMenuStrip.ImageScalingSize = new Size(24, 24);
             _ruleContextMenuStrip.Items.AddRange(new ToolStripItem[] { _moveUpToolStripMenuItem, _moveDownToolStripMenuItem, toolStripSeparator4, _editToolStripMenuItem, _cloneToolStripMenuItem, toolStripSeparator5, _removeToolStripMenuItem });
             _ruleContextMenuStrip.Name = "_ruleContextMenuStrip";
+            resources.ApplyResources(_ruleContextMenuStrip, "_ruleContextMenuStrip");
             // 
             // _moveUpToolStripMenuItem
             // 
-            resources.ApplyResources(_moveUpToolStripMenuItem, "_moveUpToolStripMenuItem");
             _moveUpToolStripMenuItem.Name = "_moveUpToolStripMenuItem";
+            resources.ApplyResources(_moveUpToolStripMenuItem, "_moveUpToolStripMenuItem");
             _moveUpToolStripMenuItem.Click += MoveRuleUp;
             // 
             // _moveDownToolStripMenuItem
             // 
-            resources.ApplyResources(_moveDownToolStripMenuItem, "_moveDownToolStripMenuItem");
             _moveDownToolStripMenuItem.Name = "_moveDownToolStripMenuItem";
+            resources.ApplyResources(_moveDownToolStripMenuItem, "_moveDownToolStripMenuItem");
             _moveDownToolStripMenuItem.Click += MoveRuleDown;
             // 
             // toolStripSeparator4
             // 
-            resources.ApplyResources(toolStripSeparator4, "toolStripSeparator4");
             toolStripSeparator4.Name = "toolStripSeparator4";
+            resources.ApplyResources(toolStripSeparator4, "toolStripSeparator4");
             // 
             // _editToolStripMenuItem
             // 
-            resources.ApplyResources(_editToolStripMenuItem, "_editToolStripMenuItem");
             _editToolStripMenuItem.Name = "_editToolStripMenuItem";
+            resources.ApplyResources(_editToolStripMenuItem, "_editToolStripMenuItem");
             _editToolStripMenuItem.Click += EditClassificationRule;
             // 
             // _cloneToolStripMenuItem
             // 
-            resources.ApplyResources(_cloneToolStripMenuItem, "_cloneToolStripMenuItem");
             _cloneToolStripMenuItem.Name = "_cloneToolStripMenuItem";
+            resources.ApplyResources(_cloneToolStripMenuItem, "_cloneToolStripMenuItem");
             _cloneToolStripMenuItem.Click += CloneClassificationRule;
             // 
             // toolStripSeparator5
             // 
-            resources.ApplyResources(toolStripSeparator5, "toolStripSeparator5");
             toolStripSeparator5.Name = "toolStripSeparator5";
+            resources.ApplyResources(toolStripSeparator5, "toolStripSeparator5");
             // 
             // _removeToolStripMenuItem
             // 
-            resources.ApplyResources(_removeToolStripMenuItem, "_removeToolStripMenuItem");
             _removeToolStripMenuItem.Name = "_removeToolStripMenuItem";
+            resources.ApplyResources(_removeToolStripMenuItem, "_removeToolStripMenuItem");
             _removeToolStripMenuItem.Click += DeleteClassificationRule;
             // 
             // _classifyWorker
@@ -1717,5 +1705,7 @@ namespace modified_structure_analysis.Forms
         private DataGridViewTextBoxColumn _secondaryClassificationNameCol;
         private DataGridViewTextBoxColumn _secondaryClassificationCountCol;
         private DataGridViewButtonColumn _secondaryClassificationEditCol;
+        private ToolStripSeparator toolStripSeparator16;
+        private ToolStripButton filterToolStripButton;
     }
 }
