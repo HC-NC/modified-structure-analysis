@@ -41,36 +41,34 @@
             // 
             // splitContainer1
             // 
-            resources.ApplyResources(splitContainer1, "splitContainer1");
             splitContainer1.BackColor = SystemColors.ControlDark;
+            resources.ApplyResources(splitContainer1, "splitContainer1");
             splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
-            resources.ApplyResources(splitContainer1.Panel1, "splitContainer1.Panel1");
             splitContainer1.Panel1.Controls.Add(viewport1);
             // 
             // splitContainer1.Panel2
             // 
-            resources.ApplyResources(splitContainer1.Panel2, "splitContainer1.Panel2");
             splitContainer1.Panel2.Controls.Add(viewport2);
             // 
             // viewport1
             // 
-            resources.ApplyResources(viewport1, "viewport1");
             viewport1.BackColor = SystemColors.Control;
+            resources.ApplyResources(viewport1, "viewport1");
             viewport1.Name = "viewport1";
             // 
             // viewport2
             // 
-            resources.ApplyResources(viewport2, "viewport2");
             viewport2.BackColor = SystemColors.Control;
+            resources.ApplyResources(viewport2, "viewport2");
             viewport2.Name = "viewport2";
             // 
             // statusStrip1
             // 
-            resources.ApplyResources(statusStrip1, "statusStrip1");
             statusStrip1.ImageScalingSize = new Size(24, 24);
+            resources.ApplyResources(statusStrip1, "statusStrip1");
             statusStrip1.Name = "statusStrip1";
             // 
             // TwoImageViewForm
@@ -81,7 +79,6 @@
             Controls.Add(statusStrip1);
             MinimizeBox = false;
             Name = "TwoImageViewForm";
-            ShowIcon = false;
             ShowInTaskbar = false;
             TopMost = true;
             FormClosing += TwoImageViewForm_FormClosing;

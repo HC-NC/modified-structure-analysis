@@ -120,19 +120,17 @@
             // 
             // splitContainer1.Panel1
             // 
-            resources.ApplyResources(splitContainer1.Panel1, "splitContainer1.Panel1");
             splitContainer1.Panel1.Controls.Add(groupBox1);
             splitContainer1.Panel1.Controls.Add(toolStrip1);
             // 
             // splitContainer1.Panel2
             // 
-            resources.ApplyResources(splitContainer1.Panel2, "splitContainer1.Panel2");
             splitContainer1.Panel2.Controls.Add(tabControl1);
             // 
             // groupBox1
             // 
-            resources.ApplyResources(groupBox1, "groupBox1");
             groupBox1.Controls.Add(_classesListBox);
+            resources.ApplyResources(groupBox1, "groupBox1");
             groupBox1.Name = "groupBox1";
             groupBox1.TabStop = false;
             // 
@@ -145,51 +143,51 @@
             // 
             // toolStrip1
             // 
-            resources.ApplyResources(toolStrip1, "toolStrip1");
             toolStrip1.GripStyle = ToolStripGripStyle.Hidden;
             toolStrip1.ImageScalingSize = new Size(24, 24);
             toolStrip1.Items.AddRange(new ToolStripItem[] { _exportToolStripDropDownButton });
+            resources.ApplyResources(toolStrip1, "toolStrip1");
             toolStrip1.Name = "toolStrip1";
             // 
             // _exportToolStripDropDownButton
             // 
-            resources.ApplyResources(_exportToolStripDropDownButton, "_exportToolStripDropDownButton");
             _exportToolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
             _exportToolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { _allStatsToolStripMenuItem, _pixelsToolStripMenuItem, _plotToolStripMenuItem });
+            resources.ApplyResources(_exportToolStripDropDownButton, "_exportToolStripDropDownButton");
             _exportToolStripDropDownButton.Name = "_exportToolStripDropDownButton";
             // 
             // _allStatsToolStripMenuItem
             // 
-            resources.ApplyResources(_allStatsToolStripMenuItem, "_allStatsToolStripMenuItem");
             _allStatsToolStripMenuItem.Name = "_allStatsToolStripMenuItem";
+            resources.ApplyResources(_allStatsToolStripMenuItem, "_allStatsToolStripMenuItem");
             _allStatsToolStripMenuItem.Click += ExportToolStripButton_Click;
             // 
             // _pixelsToolStripMenuItem
             // 
-            resources.ApplyResources(_pixelsToolStripMenuItem, "_pixelsToolStripMenuItem");
             _pixelsToolStripMenuItem.Name = "_pixelsToolStripMenuItem";
+            resources.ApplyResources(_pixelsToolStripMenuItem, "_pixelsToolStripMenuItem");
             _pixelsToolStripMenuItem.Click += ExportPixelsTable_Click;
             // 
             // _plotToolStripMenuItem
             // 
-            resources.ApplyResources(_plotToolStripMenuItem, "_plotToolStripMenuItem");
             _plotToolStripMenuItem.Name = "_plotToolStripMenuItem";
+            resources.ApplyResources(_plotToolStripMenuItem, "_plotToolStripMenuItem");
             _plotToolStripMenuItem.Click += ExportActivePlot_Click;
             // 
             // tabControl1
             // 
-            resources.ApplyResources(tabControl1, "tabControl1");
             tabControl1.Controls.Add(_statsTabPage);
             tabControl1.Controls.Add(_kdeTabPage);
             tabControl1.Controls.Add(_scatterTabPage);
             tabControl1.Controls.Add(_pixelsTabPage);
+            resources.ApplyResources(tabControl1, "tabControl1");
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
             // 
             // _statsTabPage
             // 
-            resources.ApplyResources(_statsTabPage, "_statsTabPage");
             _statsTabPage.Controls.Add(splitContainer2);
+            resources.ApplyResources(_statsTabPage, "_statsTabPage");
             _statsTabPage.Name = "_statsTabPage";
             _statsTabPage.UseVisualStyleBackColor = true;
             // 
@@ -201,18 +199,16 @@
             // 
             // splitContainer2.Panel1
             // 
-            resources.ApplyResources(splitContainer2.Panel1, "splitContainer2.Panel1");
             splitContainer2.Panel1.Controls.Add(groupBox2);
             // 
             // splitContainer2.Panel2
             // 
-            resources.ApplyResources(splitContainer2.Panel2, "splitContainer2.Panel2");
             splitContainer2.Panel2.Controls.Add(groupBox3);
             // 
             // groupBox2
             // 
-            resources.ApplyResources(groupBox2, "groupBox2");
             groupBox2.Controls.Add(_bandsListBox);
+            resources.ApplyResources(groupBox2, "groupBox2");
             groupBox2.Name = "groupBox2";
             groupBox2.TabStop = false;
             // 
@@ -225,21 +221,21 @@
             // 
             // groupBox3
             // 
-            resources.ApplyResources(groupBox3, "groupBox3");
             groupBox3.Controls.Add(_propertyGrid);
+            resources.ApplyResources(groupBox3, "groupBox3");
             groupBox3.Name = "groupBox3";
             groupBox3.TabStop = false;
             // 
             // _propertyGrid
             // 
-            resources.ApplyResources(_propertyGrid, "_propertyGrid");
             _propertyGrid.BackColor = SystemColors.Control;
+            resources.ApplyResources(_propertyGrid, "_propertyGrid");
             _propertyGrid.Name = "_propertyGrid";
             // 
             // _kdeTabPage
             // 
-            resources.ApplyResources(_kdeTabPage, "_kdeTabPage");
             _kdeTabPage.Controls.Add(_kdeSplitContainer);
+            resources.ApplyResources(_kdeTabPage, "_kdeTabPage");
             _kdeTabPage.Name = "_kdeTabPage";
             _kdeTabPage.UseVisualStyleBackColor = true;
             // 
@@ -251,7 +247,6 @@
             // 
             // _kdeSplitContainer.Panel1
             // 
-            resources.ApplyResources(_kdeSplitContainer.Panel1, "_kdeSplitContainer.Panel1");
             _kdeSplitContainer.Panel1.Controls.Add(_kdeListBox);
             _kdeSplitContainer.Panel1.Controls.Add(_kdeSingleButton);
             _kdeSplitContainer.Panel1.Controls.Add(_kdeProductButton);
@@ -261,7 +256,6 @@
             // 
             // _kdeSplitContainer.Panel2
             // 
-            resources.ApplyResources(_kdeSplitContainer.Panel2, "_kdeSplitContainer.Panel2");
             _kdeSplitContainer.Panel2.Controls.Add(_kdePlotView);
             // 
             // _kdeListBox
@@ -316,8 +310,8 @@
             // 
             // _scatterTabPage
             // 
-            resources.ApplyResources(_scatterTabPage, "_scatterTabPage");
             _scatterTabPage.Controls.Add(_scatterSplitContainer1);
+            resources.ApplyResources(_scatterTabPage, "_scatterTabPage");
             _scatterTabPage.Name = "_scatterTabPage";
             _scatterTabPage.UseVisualStyleBackColor = true;
             // 
@@ -329,14 +323,12 @@
             // 
             // _scatterSplitContainer1.Panel1
             // 
-            resources.ApplyResources(_scatterSplitContainer1.Panel1, "_scatterSplitContainer1.Panel1");
             _scatterSplitContainer1.Panel1.Controls.Add(_scatterSplitContainer2);
             _scatterSplitContainer1.Panel1.Controls.Add(_buildScatterButton);
             _scatterSplitContainer1.Panel1.Controls.Add(_scatterProgressBar);
             // 
             // _scatterSplitContainer1.Panel2
             // 
-            resources.ApplyResources(_scatterSplitContainer1.Panel2, "_scatterSplitContainer1.Panel2");
             _scatterSplitContainer1.Panel2.Controls.Add(_scatterPlotView);
             // 
             // _scatterSplitContainer2
@@ -346,18 +338,16 @@
             // 
             // _scatterSplitContainer2.Panel1
             // 
-            resources.ApplyResources(_scatterSplitContainer2.Panel1, "_scatterSplitContainer2.Panel1");
             _scatterSplitContainer2.Panel1.Controls.Add(_scatterXAxisGroupBox);
             // 
             // _scatterSplitContainer2.Panel2
             // 
-            resources.ApplyResources(_scatterSplitContainer2.Panel2, "_scatterSplitContainer2.Panel2");
             _scatterSplitContainer2.Panel2.Controls.Add(_scatterYAxisGroupBox);
             // 
             // _scatterXAxisGroupBox
             // 
-            resources.ApplyResources(_scatterXAxisGroupBox, "_scatterXAxisGroupBox");
             _scatterXAxisGroupBox.Controls.Add(_scatterXListBox);
+            resources.ApplyResources(_scatterXAxisGroupBox, "_scatterXAxisGroupBox");
             _scatterXAxisGroupBox.Name = "_scatterXAxisGroupBox";
             _scatterXAxisGroupBox.TabStop = false;
             // 
@@ -369,8 +359,8 @@
             // 
             // _scatterYAxisGroupBox
             // 
-            resources.ApplyResources(_scatterYAxisGroupBox, "_scatterYAxisGroupBox");
             _scatterYAxisGroupBox.Controls.Add(_scatterYListBox);
+            resources.ApplyResources(_scatterYAxisGroupBox, "_scatterYAxisGroupBox");
             _scatterYAxisGroupBox.Name = "_scatterYAxisGroupBox";
             _scatterYAxisGroupBox.TabStop = false;
             // 
@@ -404,18 +394,18 @@
             // 
             // _pixelsTabPage
             // 
-            resources.ApplyResources(_pixelsTabPage, "_pixelsTabPage");
             _pixelsTabPage.Controls.Add(dataGridView1);
+            resources.ApplyResources(_pixelsTabPage, "_pixelsTabPage");
             _pixelsTabPage.Name = "_pixelsTabPage";
             _pixelsTabPage.UseVisualStyleBackColor = true;
             // 
             // dataGridView1
             // 
-            resources.ApplyResources(dataGridView1, "dataGridView1");
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { _indexColumn, _colColumn, _rowColumn, _mapXColumn, _mapYColumn, _valueColumn, _zScoreColumn });
+            resources.ApplyResources(dataGridView1, "dataGridView1");
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowHeadersVisible = false;
@@ -471,19 +461,15 @@
             // 
             // statusStrip1
             // 
-            resources.ApplyResources(statusStrip1, "statusStrip1");
             statusStrip1.ImageScalingSize = new Size(24, 24);
             statusStrip1.Items.AddRange(new ToolStripItem[] { _summaryToolStripStatusLabel });
+            resources.ApplyResources(statusStrip1, "statusStrip1");
             statusStrip1.Name = "statusStrip1";
             // 
             // _summaryToolStripStatusLabel
             // 
-            resources.ApplyResources(_summaryToolStripStatusLabel, "_summaryToolStripStatusLabel");
             _summaryToolStripStatusLabel.Name = "_summaryToolStripStatusLabel";
-            // 
-            // _saveFileDialog
-            // 
-            resources.ApplyResources(_saveFileDialog, "_saveFileDialog");
+            resources.ApplyResources(_summaryToolStripStatusLabel, "_summaryToolStripStatusLabel");
             // 
             // _backgroundWorker
             // 
@@ -508,7 +494,6 @@
             Controls.Add(splitContainer1);
             Controls.Add(statusStrip1);
             Name = "ClassAnalysisForm";
-            ShowIcon = false;
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel1.PerformLayout();
             splitContainer1.Panel2.ResumeLayout(false);

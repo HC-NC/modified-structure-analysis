@@ -9,6 +9,14 @@ namespace modified_structure_analysis
 {
     internal static class Program
     {
+        public static Icon? AppIcon { get; }
+
+        static Program()
+        {
+            try { AppIcon = Icon.ExtractAssociatedIcon(Environment.ProcessPath ?? ""); }
+            catch { }
+        }
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>

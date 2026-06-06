@@ -86,8 +86,8 @@
             // 
             // _formatCombo
             // 
-            resources.ApplyResources(_formatCombo, "_formatCombo");
             _layout.SetColumnSpan(_formatCombo, 2);
+            resources.ApplyResources(_formatCombo, "_formatCombo");
             _formatCombo.DropDownStyle = ComboBoxStyle.DropDownList;
             _formatCombo.Name = "_formatCombo";
             _formatCombo.SelectedIndexChanged += UpdateQualityVisibility;
@@ -99,8 +99,8 @@
             // 
             // _widthUpDown
             // 
-            resources.ApplyResources(_widthUpDown, "_widthUpDown");
             _layout.SetColumnSpan(_widthUpDown, 2);
+            resources.ApplyResources(_widthUpDown, "_widthUpDown");
             _widthUpDown.Increment = new decimal(new int[] { 100, 0, 0, 0 });
             _widthUpDown.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             _widthUpDown.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
@@ -114,8 +114,8 @@
             // 
             // _heightUpDown
             // 
-            resources.ApplyResources(_heightUpDown, "_heightUpDown");
             _layout.SetColumnSpan(_heightUpDown, 2);
+            resources.ApplyResources(_heightUpDown, "_heightUpDown");
             _heightUpDown.Increment = new decimal(new int[] { 100, 0, 0, 0 });
             _heightUpDown.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             _heightUpDown.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
@@ -129,8 +129,8 @@
             // 
             // _dpiUpDown
             // 
-            resources.ApplyResources(_dpiUpDown, "_dpiUpDown");
             _layout.SetColumnSpan(_dpiUpDown, 2);
+            resources.ApplyResources(_dpiUpDown, "_dpiUpDown");
             _dpiUpDown.Increment = new decimal(new int[] { 10, 0, 0, 0 });
             _dpiUpDown.Maximum = new decimal(new int[] { 1200, 0, 0, 0 });
             _dpiUpDown.Minimum = new decimal(new int[] { 72, 0, 0, 0 });
@@ -144,8 +144,8 @@
             // 
             // _qualityUpDown
             // 
-            resources.ApplyResources(_qualityUpDown, "_qualityUpDown");
             _layout.SetColumnSpan(_qualityUpDown, 2);
+            resources.ApplyResources(_qualityUpDown, "_qualityUpDown");
             _qualityUpDown.Increment = new decimal(new int[] { 5, 0, 0, 0 });
             _qualityUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             _qualityUpDown.Name = "_qualityUpDown";
@@ -158,14 +158,14 @@
             // 
             // _titleTextBox
             // 
-            resources.ApplyResources(_titleTextBox, "_titleTextBox");
             _layout.SetColumnSpan(_titleTextBox, 2);
+            resources.ApplyResources(_titleTextBox, "_titleTextBox");
             _titleTextBox.Name = "_titleTextBox";
             // 
             // _grayscaleCheckBox
             // 
-            resources.ApplyResources(_grayscaleCheckBox, "_grayscaleCheckBox");
             _layout.SetColumnSpan(_grayscaleCheckBox, 2);
+            resources.ApplyResources(_grayscaleCheckBox, "_grayscaleCheckBox");
             _grayscaleCheckBox.Name = "_grayscaleCheckBox";
             // 
             // _saveLabel
@@ -194,14 +194,14 @@
             // 
             // _cancelButton
             // 
-            resources.ApplyResources(_cancelButton, "_cancelButton");
             _cancelButton.DialogResult = DialogResult.Cancel;
+            resources.ApplyResources(_cancelButton, "_cancelButton");
             _cancelButton.Name = "_cancelButton";
             // 
             // _okButton
             // 
-            resources.ApplyResources(_okButton, "_okButton");
             _okButton.DialogResult = DialogResult.OK;
+            resources.ApplyResources(_okButton, "_okButton");
             _okButton.Name = "_okButton";
             _okButton.Click += OkClick;
             // 

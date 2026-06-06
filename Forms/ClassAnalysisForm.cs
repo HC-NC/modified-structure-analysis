@@ -44,7 +44,7 @@ public partial class ClassAnalysisForm : Form
         _totalPixels = width * height;
 
         InitializeComponent();
-
+        
         _toolTip = new ToolTip();
         _toolTip.SetToolTip(_buildScatterButton, Resources._buildScatterButton_ToolTip);
         _toolTip.SetToolTip(_kdeClearButton, Resources._kdeClearButton_ToolTip);

@@ -93,34 +93,34 @@
             // 
             // _cancelButton
             // 
-            resources.ApplyResources(_cancelButton, "_cancelButton");
             _cancelButton.DialogResult = DialogResult.Cancel;
+            resources.ApplyResources(_cancelButton, "_cancelButton");
             _cancelButton.Name = "_cancelButton";
             _cancelButton.UseVisualStyleBackColor = true;
             _cancelButton.Click += _cancelButton_Click;
             // 
             // _okButton
             // 
-            resources.ApplyResources(_okButton, "_okButton");
             _okButton.DialogResult = DialogResult.OK;
+            resources.ApplyResources(_okButton, "_okButton");
             _okButton.Name = "_okButton";
             _okButton.UseVisualStyleBackColor = true;
             _okButton.Click += _okButton_Click;
             // 
             // tabControl1
             // 
-            resources.ApplyResources(tabControl1, "tabControl1");
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
             tabControl1.Controls.Add(tabPage3);
             tabControl1.Controls.Add(tabPage4);
+            resources.ApplyResources(tabControl1, "tabControl1");
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
             // 
             // tabPage1
             // 
-            resources.ApplyResources(tabPage1, "tabPage1");
             tabPage1.Controls.Add(tableLayoutPanel1);
+            resources.ApplyResources(tabPage1, "tabPage1");
             tabPage1.Name = "tabPage1";
             tabPage1.UseVisualStyleBackColor = true;
             // 
@@ -173,8 +173,8 @@
             // 
             // tabPage2
             // 
-            resources.ApplyResources(tabPage2, "tabPage2");
             tabPage2.Controls.Add(tableLayoutPanel2);
+            resources.ApplyResources(tabPage2, "tabPage2");
             tabPage2.Name = "tabPage2";
             tabPage2.UseVisualStyleBackColor = true;
             // 
@@ -216,8 +216,8 @@
             // 
             // _binsRuleCombo
             // 
-            resources.ApplyResources(_binsRuleCombo, "_binsRuleCombo");
             tableLayoutPanel2.SetColumnSpan(_binsRuleCombo, 2);
+            resources.ApplyResources(_binsRuleCombo, "_binsRuleCombo");
             _binsRuleCombo.DropDownStyle = ComboBoxStyle.DropDownList;
             _binsRuleCombo.FormattingEnabled = true;
             _binsRuleCombo.Name = "_binsRuleCombo";
@@ -225,8 +225,8 @@
             // 
             // _customBinsNud
             // 
-            resources.ApplyResources(_customBinsNud, "_customBinsNud");
             tableLayoutPanel2.SetColumnSpan(_customBinsNud, 2);
+            resources.ApplyResources(_customBinsNud, "_customBinsNud");
             _customBinsNud.Increment = new decimal(new int[] { 5, 0, 0, 0 });
             _customBinsNud.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             _customBinsNud.Minimum = new decimal(new int[] { 5, 0, 0, 0 });
@@ -266,8 +266,8 @@
             // 
             // tabPage3
             // 
-            resources.ApplyResources(tabPage3, "tabPage3");
             tabPage3.Controls.Add(tableLayoutPanel3);
+            resources.ApplyResources(tabPage3, "tabPage3");
             tabPage3.Name = "tabPage3";
             tabPage3.UseVisualStyleBackColor = true;
             // 
@@ -328,8 +328,8 @@
             // 
             // tabPage4
             // 
-            resources.ApplyResources(tabPage4, "tabPage4");
             tabPage4.Controls.Add(tableLayoutPanel4);
+            resources.ApplyResources(tabPage4, "tabPage4");
             tabPage4.Name = "tabPage4";
             tabPage4.UseVisualStyleBackColor = true;
             // 
@@ -364,7 +364,7 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "SettingsForm";
-            ShowIcon = false;
+            ShowInTaskbar = false;
             Load += SettingsForm_Load;
             flowLayoutPanel1.ResumeLayout(false);
             tabControl1.ResumeLayout(false);

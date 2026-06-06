@@ -243,7 +243,6 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "ConditionEditorForm";
-            ShowIcon = false;
             ShowInTaskbar = false;
             TopMost = true;
             Load += ConditionEditorForm_Load;

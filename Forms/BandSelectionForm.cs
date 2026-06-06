@@ -13,7 +13,7 @@ namespace modified_structure_analysis.Forms
         public BandSelectionForm(List<Band> bands)
         {
             InitializeComponent();
-
+            
             _bands = bands;
         }
 

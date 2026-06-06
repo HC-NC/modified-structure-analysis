@@ -75,7 +75,6 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "BandSelectionForm";
-            ShowIcon = false;
             ShowInTaskbar = false;
             TopMost = true;
             Load += BandSelectionForm_Load;

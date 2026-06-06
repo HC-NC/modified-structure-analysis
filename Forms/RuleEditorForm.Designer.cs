@@ -52,59 +52,59 @@
             // 
             // _conditionsListBox
             // 
-            resources.ApplyResources(_conditionsListBox, "_conditionsListBox");
             _conditionsListBox.ContextMenuStrip = contextMenuStrip1;
             _conditionsListBox.DisplayMember = "Display";
+            resources.ApplyResources(_conditionsListBox, "_conditionsListBox");
             _conditionsListBox.Name = "_conditionsListBox";
             // 
             // contextMenuStrip1
             // 
-            resources.ApplyResources(contextMenuStrip1, "contextMenuStrip1");
             contextMenuStrip1.ImageScalingSize = new Size(24, 24);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { addToolStripMenuItem1, editToolStripMenuItem1, cloneToolStripMenuItem, toolStripSeparator1, removeToolStripMenuItem1 });
             contextMenuStrip1.Name = "contextMenuStrip1";
+            resources.ApplyResources(contextMenuStrip1, "contextMenuStrip1");
             contextMenuStrip1.LocationChanged += contextMenuStrip1_LocationChanged;
             // 
             // addToolStripMenuItem1
             // 
-            resources.ApplyResources(addToolStripMenuItem1, "addToolStripMenuItem1");
             addToolStripMenuItem1.Name = "addToolStripMenuItem1";
+            resources.ApplyResources(addToolStripMenuItem1, "addToolStripMenuItem1");
             addToolStripMenuItem1.Click += AddCondition_Click;
             // 
             // editToolStripMenuItem1
             // 
-            resources.ApplyResources(editToolStripMenuItem1, "editToolStripMenuItem1");
             editToolStripMenuItem1.Name = "editToolStripMenuItem1";
+            resources.ApplyResources(editToolStripMenuItem1, "editToolStripMenuItem1");
             editToolStripMenuItem1.Click += EditCondition_Click;
             // 
             // cloneToolStripMenuItem
             // 
-            resources.ApplyResources(cloneToolStripMenuItem, "cloneToolStripMenuItem");
             cloneToolStripMenuItem.Name = "cloneToolStripMenuItem";
+            resources.ApplyResources(cloneToolStripMenuItem, "cloneToolStripMenuItem");
             cloneToolStripMenuItem.Click += CloneCondition_Click;
             // 
             // toolStripSeparator1
             // 
-            resources.ApplyResources(toolStripSeparator1, "toolStripSeparator1");
             toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(toolStripSeparator1, "toolStripSeparator1");
             // 
             // removeToolStripMenuItem1
             // 
-            resources.ApplyResources(removeToolStripMenuItem1, "removeToolStripMenuItem1");
             removeToolStripMenuItem1.Name = "removeToolStripMenuItem1";
+            resources.ApplyResources(removeToolStripMenuItem1, "removeToolStripMenuItem1");
             removeToolStripMenuItem1.Click += RemoveCondition_Click;
             // 
             // _okBtn
             // 
-            resources.ApplyResources(_okBtn, "_okBtn");
             _okBtn.DialogResult = DialogResult.OK;
+            resources.ApplyResources(_okBtn, "_okBtn");
             _okBtn.Name = "_okBtn";
             _okBtn.Click += Close_Click;
             // 
             // _cancelBtn
             // 
-            resources.ApplyResources(_cancelBtn, "_cancelBtn");
             _cancelBtn.DialogResult = DialogResult.Cancel;
+            resources.ApplyResources(_cancelBtn, "_cancelBtn");
             _cancelBtn.Name = "_cancelBtn";
             _cancelBtn.Click += Close_Click;
             // 
@@ -117,33 +117,33 @@
             // 
             // menuStrip1
             // 
-            resources.ApplyResources(menuStrip1, "menuStrip1");
             menuStrip1.ImageScalingSize = new Size(24, 24);
             menuStrip1.Items.AddRange(new ToolStripItem[] { addToolStripMenuItem, editToolStripMenuItem, cloneToolStripMenuItem1, removeToolStripMenuItem });
+            resources.ApplyResources(menuStrip1, "menuStrip1");
             menuStrip1.Name = "menuStrip1";
             // 
             // addToolStripMenuItem
             // 
-            resources.ApplyResources(addToolStripMenuItem, "addToolStripMenuItem");
             addToolStripMenuItem.Name = "addToolStripMenuItem";
+            resources.ApplyResources(addToolStripMenuItem, "addToolStripMenuItem");
             addToolStripMenuItem.Click += AddCondition_Click;
             // 
             // editToolStripMenuItem
             // 
-            resources.ApplyResources(editToolStripMenuItem, "editToolStripMenuItem");
             editToolStripMenuItem.Name = "editToolStripMenuItem";
+            resources.ApplyResources(editToolStripMenuItem, "editToolStripMenuItem");
             editToolStripMenuItem.Click += EditCondition_Click;
             // 
             // cloneToolStripMenuItem1
             // 
-            resources.ApplyResources(cloneToolStripMenuItem1, "cloneToolStripMenuItem1");
             cloneToolStripMenuItem1.Name = "cloneToolStripMenuItem1";
+            resources.ApplyResources(cloneToolStripMenuItem1, "cloneToolStripMenuItem1");
             cloneToolStripMenuItem1.Click += CloneCondition_Click;
             // 
             // removeToolStripMenuItem
             // 
-            resources.ApplyResources(removeToolStripMenuItem, "removeToolStripMenuItem");
             removeToolStripMenuItem.Name = "removeToolStripMenuItem";
+            resources.ApplyResources(removeToolStripMenuItem, "removeToolStripMenuItem");
             removeToolStripMenuItem.Click += RemoveCondition_Click;
             // 
             // RuleEditorForm
@@ -157,7 +157,6 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "RuleEditorForm";
-            ShowIcon = false;
             ShowInTaskbar = false;
             TopMost = true;
             Load += RuleEditorForm_Load;
