@@ -48,7 +48,7 @@ namespace modified_structure_analysis.Forms
         {
             InitializeComponent();
 
-            _openFileDialog.Filter = "All|*.tif;*.tiff;*.img;*.csv;*.txt|GeoTIFF|*.tif;*.tiff|ERDAS|*.img|CSV|*.csv|Text file|*.txt";
+            _openFileDialog.Filter = "All|*.tif;*.tiff;*.img;*.png;*.jpg;*.jpeg*.csv;*.txt|GeoTIFF|*.tif;*.tiff|ERDAS|*.png|PNG|*.jpg;*.jpeg|JPEG|*.img|CSV|*.csv|Text file|*.txt";
             _openFileDialog.Multiselect = true;
 
             _mainStatusLabel.Text = $"{Resources.Open_file} (Ctrl+O)";
@@ -963,7 +963,7 @@ namespace modified_structure_analysis.Forms
             {
                 string ext = Path.GetExtension(fn).ToLower();
                 if (ext == ".csv" || ext == ".txt") hasText = true;
-                else if (ext == ".tif" || ext == ".tiff" || ext == ".img") hasImage = true;
+                else if (ext == ".tif" || ext == ".tiff" || ext == ".img" || ext == ".png" || ext == ".jpg" || ext == ".jpeg") hasImage = true;
             }
 
             if (hasText && hasImage)
@@ -1030,9 +1030,9 @@ namespace modified_structure_analysis.Forms
             foreach (string fileName in info.FileNames)
             {
                 string ext = Path.GetExtension(fileName).ToLower();
-                worker.ReportProgress(fileIndex * 100 / info.FileNames.Length, $"Loading {Path.GetFileName(fileName)}...");
+                worker.ReportProgress(fileIndex * 100 / info.FileNames.Length, $"{Resources.Loading} {Path.GetFileName(fileName)}...");
 
-                if (ext == ".tif" || ext == ".tiff" || ext == ".img")
+                if (ext == ".tif" || ext == ".tiff" || ext == ".img" || ext == ".png" || ext == ".jpg" || ext == ".jpeg")
                 {
                     var (newBands, newGeo, newWidth, newHeight) = LoadGeoTiffCore(fileName, geoTransform, bands, messages);
                     bands.AddRange(newBands);
