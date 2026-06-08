@@ -597,7 +597,7 @@ namespace modified_structure_analysis.Forms
                     points.Add((vx, vy));
                 }
 
-                int pct = (int)(i * 100 / (long)totalPixels);
+                int pct = (int)Math.Clamp((long)i * 100 / totalPixels, 0, 100);
 
                 if (pct != lastPct)
                 {

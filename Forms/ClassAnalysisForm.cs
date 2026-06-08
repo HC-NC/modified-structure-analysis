@@ -377,6 +377,8 @@ public partial class ClassAnalysisForm : Form
         var rng = new Random(42);
         var points = new List<(double x, double y)>(ScatterMaxPoints);
 
+        int lastPct = 0;
+
         for (int i = 0; i < total; i += step)
         {
             int px = pixelIndices[i];
@@ -384,6 +386,14 @@ public partial class ClassAnalysisForm : Form
             float vy = getY(px);
             if (!float.IsNaN(vx) && !float.IsNaN(vy))
                 points.Add((vx, vy));
+
+            int pct = (int)Math.Clamp((long)i * 100 / total, 0, 100);
+
+            if (pct != lastPct)
+            {
+                worker?.ReportProgress(pct);
+                lastPct = pct;
+            }
         }
 
         while (points.Count > ScatterMaxPoints)
@@ -796,7 +806,7 @@ public partial class ClassAnalysisForm : Form
                 sb.AppendLine();
             }
 
-            File.WriteAllText(_saveFileDialog.FileName, sb.ToString());
+            File.WriteAllText(_saveFileDialog.FileName, sb.ToString(), Encoding.UTF8);
             MessageBox.Show(Resources.Msg_PixelExportComplete, Resources.Msg_Export, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)
@@ -821,7 +831,7 @@ public partial class ClassAnalysisForm : Form
             var sb = new StringBuilder();
             var ci = System.Globalization.CultureInfo.InvariantCulture;
 
-            sb.Append(Resources.Class); sb.Append(delim);
+            sb.Append("Class"); sb.Append(delim);
             sb.Append("Band"); sb.Append(delim);
             sb.Append("Count"); sb.Append(delim);
             sb.Append("Sum"); sb.Append(delim);
@@ -883,7 +893,7 @@ public partial class ClassAnalysisForm : Form
                 }
             }
 
-            File.WriteAllText(_saveFileDialog.FileName, sb.ToString());
+            File.WriteAllText(_saveFileDialog.FileName, sb.ToString(), Encoding.UTF8);
             MessageBox.Show(Resources.Msg_StatsExportComplete, Resources.Msg_Export, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex)

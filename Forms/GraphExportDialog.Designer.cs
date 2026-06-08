@@ -72,7 +72,7 @@
             _layout.Controls.Add(_qualityUpDown, 1, 4);
             _layout.Controls.Add(_titleLabel, 0, 5);
             _layout.Controls.Add(_titleTextBox, 1, 5);
-            _layout.Controls.Add(_grayscaleCheckBox, 1, 6);
+            _layout.Controls.Add(_grayscaleCheckBox, 0, 6);
             _layout.Controls.Add(_saveLabel, 0, 7);
             _layout.Controls.Add(_pathTextBox, 1, 7);
             _layout.Controls.Add(_browseButton, 2, 7);
@@ -86,8 +86,8 @@
             // 
             // _formatCombo
             // 
-            _layout.SetColumnSpan(_formatCombo, 2);
             resources.ApplyResources(_formatCombo, "_formatCombo");
+            _layout.SetColumnSpan(_formatCombo, 2);
             _formatCombo.DropDownStyle = ComboBoxStyle.DropDownList;
             _formatCombo.Name = "_formatCombo";
             _formatCombo.SelectedIndexChanged += UpdateQualityVisibility;
@@ -99,8 +99,8 @@
             // 
             // _widthUpDown
             // 
-            _layout.SetColumnSpan(_widthUpDown, 2);
             resources.ApplyResources(_widthUpDown, "_widthUpDown");
+            _layout.SetColumnSpan(_widthUpDown, 2);
             _widthUpDown.Increment = new decimal(new int[] { 100, 0, 0, 0 });
             _widthUpDown.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             _widthUpDown.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
@@ -114,8 +114,8 @@
             // 
             // _heightUpDown
             // 
-            _layout.SetColumnSpan(_heightUpDown, 2);
             resources.ApplyResources(_heightUpDown, "_heightUpDown");
+            _layout.SetColumnSpan(_heightUpDown, 2);
             _heightUpDown.Increment = new decimal(new int[] { 100, 0, 0, 0 });
             _heightUpDown.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             _heightUpDown.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
@@ -129,8 +129,8 @@
             // 
             // _dpiUpDown
             // 
-            _layout.SetColumnSpan(_dpiUpDown, 2);
             resources.ApplyResources(_dpiUpDown, "_dpiUpDown");
+            _layout.SetColumnSpan(_dpiUpDown, 2);
             _dpiUpDown.Increment = new decimal(new int[] { 10, 0, 0, 0 });
             _dpiUpDown.Maximum = new decimal(new int[] { 1200, 0, 0, 0 });
             _dpiUpDown.Minimum = new decimal(new int[] { 72, 0, 0, 0 });
@@ -144,8 +144,8 @@
             // 
             // _qualityUpDown
             // 
-            _layout.SetColumnSpan(_qualityUpDown, 2);
             resources.ApplyResources(_qualityUpDown, "_qualityUpDown");
+            _layout.SetColumnSpan(_qualityUpDown, 2);
             _qualityUpDown.Increment = new decimal(new int[] { 5, 0, 0, 0 });
             _qualityUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             _qualityUpDown.Name = "_qualityUpDown";
@@ -158,14 +158,14 @@
             // 
             // _titleTextBox
             // 
-            _layout.SetColumnSpan(_titleTextBox, 2);
             resources.ApplyResources(_titleTextBox, "_titleTextBox");
+            _layout.SetColumnSpan(_titleTextBox, 2);
             _titleTextBox.Name = "_titleTextBox";
             // 
             // _grayscaleCheckBox
             // 
-            _layout.SetColumnSpan(_grayscaleCheckBox, 2);
             resources.ApplyResources(_grayscaleCheckBox, "_grayscaleCheckBox");
+            _layout.SetColumnSpan(_grayscaleCheckBox, 3);
             _grayscaleCheckBox.Name = "_grayscaleCheckBox";
             // 
             // _saveLabel
@@ -194,14 +194,14 @@
             // 
             // _cancelButton
             // 
-            _cancelButton.DialogResult = DialogResult.Cancel;
             resources.ApplyResources(_cancelButton, "_cancelButton");
+            _cancelButton.DialogResult = DialogResult.Cancel;
             _cancelButton.Name = "_cancelButton";
             // 
             // _okButton
             // 
-            _okButton.DialogResult = DialogResult.OK;
             resources.ApplyResources(_okButton, "_okButton");
+            _okButton.DialogResult = DialogResult.OK;
             _okButton.Name = "_okButton";
             _okButton.Click += OkClick;
             // 
