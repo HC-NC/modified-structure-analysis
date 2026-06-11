@@ -48,7 +48,7 @@ namespace modified_structure_analysis.Forms
         {
             InitializeComponent();
 
-            _openFileDialog.Filter = "All|*.tif;*.tiff;*.img;*.png;*.jpg;*.jpeg*.csv;*.txt|GeoTIFF|*.tif;*.tiff|ERDAS|*.png|PNG|*.jpg;*.jpeg|JPEG|*.img|CSV|*.csv|Text file|*.txt";
+            _openFileDialog.Filter = "All|*.tif;*.tiff;*.img;*.png;*.jpg;*.jpeg*.csv;*.txt|GeoTIFF|*.tif;*.tiff|ERDAS|*.img|PNG|*.png|JPEG|*.jpg;*.jpeg|CSV|*.csv|Text file|*.txt";
             _openFileDialog.Multiselect = true;
 
             _mainStatusLabel.Text = $"{Resources.Open_file} (Ctrl+O)";
